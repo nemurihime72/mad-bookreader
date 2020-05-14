@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*To add my own toolbar instead of the default*/
         Toolbar toolbar=findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
     }
