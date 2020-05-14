@@ -11,7 +11,7 @@
 
     </style>
 
-    <!--Menu Item Theme-->
+    <!--Menu Item Theme of the toolbar-->
 
     <style name="CustomPopupStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/colorAccent</item>
