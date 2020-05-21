@@ -26,9 +26,15 @@ public class MainActivity extends AppCompatActivity {
         //Toolbar toolbar=findViewById(R.id.app_bar);
         //setSupportActionBar(toolbar);
 
-        importedBooks b1=new importedBooks("Isla",R.drawable.isla);
+
         listBooks=new ArrayList<>();
-        listBooks.add(b1);
+        for (int i=0;i<50;i++){
+            importedBooks b1=new importedBooks("Isla",R.drawable.isla);
+
+            listBooks.add(b1);
+        }
+
+
         recyclerFunction(listBooks);
 
 
