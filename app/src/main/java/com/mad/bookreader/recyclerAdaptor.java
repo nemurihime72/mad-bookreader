@@ -1,5 +1,6 @@
 package com.mad.bookreader;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +25,19 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         Log.v(TAG,"View inflated with recyclerlayout set as the layout");
         return new recyclerViewHolder(item);
     }
-    public void onBindViewHolder(recyclerViewHolder holder,int position){
+    public void onBindViewHolder(final recyclerViewHolder holder, final int position){
         String s=data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageResource(data.get(position).getImage());
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                intent.putExtra("Title",data.get(position).getTitle());
+                intent.putExtra("Image",data.get(position).getImage());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     public int getItemCount(){
