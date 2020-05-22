@@ -16,6 +16,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    final static String TAG="Main Activity";
+
     List<importedBooks> listBooks;
 
     @Override
@@ -23,15 +25,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*To add my own toolbar instead of the default*/
-        //Toolbar toolbar=findViewById(R.id.app_bar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar=findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
 
 
         listBooks=new ArrayList<>();
-        for (int i=0;i<50;i++){
+        for (int i=0;i<100;i++){
             importedBooks b1=new importedBooks("Isla",R.drawable.isla);
-
+            importedBooks b2=new importedBooks("Isla 2",R.drawable.isla2);
             listBooks.add(b1);
+            listBooks.add(b2);
         }
 
 

@@ -1,6 +1,5 @@
 package com.mad.bookreader;
 
-import android.widget.ImageView;
 
 public class importedBooks {
     private String Title;
