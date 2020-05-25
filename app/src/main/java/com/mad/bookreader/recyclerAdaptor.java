@@ -35,6 +35,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
             public void onClick(View v) {
                 Intent intent=new Intent(v.getContext(),bookreadActivity.class);
                 intent.putExtra("PdfName",p);
+                Log.v(TAG,"PDF put inside intent, going to the book read activity now");
                 v.getContext().startActivity(intent);
             }
         });

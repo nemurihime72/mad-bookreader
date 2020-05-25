@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        //Create list and populate( populate To be removed)
         listBooks=new ArrayList<>();
         for (int i=0;i<100;i++){
             importedBooks b1=new importedBooks("Isla",R.drawable.isla,"testpdf.pdf");
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        //Call the recyclerView function
         recyclerFunction(listBooks);
 
 

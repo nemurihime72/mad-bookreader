@@ -16,7 +16,9 @@ import com.github.barteksc.pdfviewer.PDFView;
 
 public class bookreadActivity extends AppCompatActivity {
 
+    //Pdf view from the layout
     PDFView pdfview;
+    //pdf name of the pdf file
     String pdfName;
 
     @Override
@@ -24,10 +26,12 @@ public class bookreadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
         Intent pdfPage=getIntent();
+        //Get the pdf name from previous page
         pdfName=pdfPage.getStringExtra("PdfName");
         Toolbar toolbar=findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
+        //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
         pdfview.fromAsset(pdfName).load();
 
