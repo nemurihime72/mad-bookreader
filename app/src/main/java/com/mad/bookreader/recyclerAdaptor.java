@@ -33,8 +33,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                intent.putExtra("Title",data.get(position).getTitle());
-                intent.putExtra("Image",data.get(position).getImage());
                 v.getContext().startActivity(intent);
             }
         });

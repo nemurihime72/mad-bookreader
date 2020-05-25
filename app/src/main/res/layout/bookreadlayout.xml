@@ -6,16 +6,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingConstraints">
 
-    <TextView
-        android:id="@+id/textTest"
+    <include
+        layout="@layout/app_bar"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="TEST"/>
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        />
 
-    <ImageView
-        android:id="@+id/testImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 </LinearLayout>

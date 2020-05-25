@@ -1,30 +1,46 @@
 package com.mad.bookreader;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.barteksc.pdfviewer.PDFView;
+
 public class bookreadActivity extends AppCompatActivity {
 
-    private TextView testTitle;
-    private ImageView testImage;
+    PDFView pdfview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
+        Toolbar toolbar=findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
 
-        testTitle=findViewById(R.id.textTest);
-        testImage=findViewById(R.id.testImage);
+        pdfview=findViewById(R.id.pdfView);
+        pdfview.fromAsset("testpdf.pdf").load();
 
-        Intent intent=getIntent();
-        String titleBook=intent.getExtras().getString("Title");
-        int imageBook=intent.getExtras().getInt("Image");
 
-        testTitle.setText(titleBook);
-        testImage.setImageResource(imageBook);
+
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }
