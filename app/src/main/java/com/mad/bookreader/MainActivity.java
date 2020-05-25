@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.github.barteksc.pdfviewer.PDFView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         listBooks=new ArrayList<>();
         for (int i=0;i<100;i++){
-            importedBooks b1=new importedBooks("Isla",R.drawable.isla);
-            importedBooks b2=new importedBooks("Isla 2",R.drawable.isla2);
+            importedBooks b1=new importedBooks("Isla",R.drawable.isla,"testpdf.pdf");
+            importedBooks b2=new importedBooks("Isla 2",R.drawable.isla2,"kendo.pdf");
             listBooks.add(b1);
             listBooks.add(b2);
         }

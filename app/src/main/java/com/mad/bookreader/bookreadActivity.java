@@ -17,16 +17,19 @@ import com.github.barteksc.pdfviewer.PDFView;
 public class bookreadActivity extends AppCompatActivity {
 
     PDFView pdfview;
+    String pdfName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
+        Intent pdfPage=getIntent();
+        pdfName=pdfPage.getStringExtra("PdfName");
         Toolbar toolbar=findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
         pdfview=findViewById(R.id.pdfView);
-        pdfview.fromAsset("testpdf.pdf").load();
+        pdfview.fromAsset(pdfName).load();
 
 
 

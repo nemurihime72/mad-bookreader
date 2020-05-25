@@ -6,16 +6,16 @@ import com.github.barteksc.pdfviewer.PDFView;
 public class importedBooks {
     private String Title;
     private int Image;
+    private String PdfName;
 
-    public PDFView getPdf() {
-        return pdf;
+    public String getPdfName() {
+        return PdfName;
     }
 
-    public void setPdf(PDFView pdf) {
-        this.pdf = pdf;
+    public void setPdfName(String pdfName) {
+        PdfName = pdfName;
     }
 
-    private PDFView pdf;
 
     public String getTitle() {
         return Title;
@@ -37,8 +37,9 @@ public class importedBooks {
     }
 
 
-    public importedBooks(String title,int image) {
+    public importedBooks(String title,int image,String pdf) {
         Title=title;
         Image=image;
+        PdfName=pdf;
     }
 }

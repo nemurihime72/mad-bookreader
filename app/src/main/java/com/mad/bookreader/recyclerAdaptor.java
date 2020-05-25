@@ -29,10 +29,12 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         String s=data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageResource(data.get(position).getImage());
+        final String p=data.get(position).getPdfName();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                intent.putExtra("PdfName",p);
                 v.getContext().startActivity(intent);
             }
         });
