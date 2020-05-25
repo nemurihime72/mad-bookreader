@@ -25,9 +25,14 @@ public class bookreadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
-        Intent pdfPage=getIntent();
+
         //Get the pdf name from previous page
+        Intent pdfPage=getIntent();
+
+        //Setting variable pdfName as the name of the pdf file
         pdfName=pdfPage.getStringExtra("PdfName");
+
+        //Setting custom toolbar
         Toolbar toolbar=findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
