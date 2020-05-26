@@ -9,25 +9,24 @@
 
 
         <include
-            layout="@layout/app_bar"
             android:id="@+id/app_bar"
+            layout="@layout/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="251dp"
+            android:layout_weight="12" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
             android:layout_weight="12"
-            />
+            android:text="Button" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bookCycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-
-
-
-
-
-
+            android:layout_weight="1" />
 
 
 </android.widget.LinearLayout>
