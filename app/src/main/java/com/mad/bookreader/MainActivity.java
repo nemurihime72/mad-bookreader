@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_import:
+                //intent to import files
                 Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData();
