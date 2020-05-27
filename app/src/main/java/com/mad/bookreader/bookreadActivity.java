@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,12 +15,16 @@ import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
+import java.io.File;
+
 public class bookreadActivity extends AppCompatActivity {
 
     //Pdf view from the layout
     PDFView pdfview;
     //pdf name of the pdf file
     String pdfName;
+    File pdfFile;
+    Uri pdfUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +43,8 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
-        pdfview.fromAsset(pdfName).load();
-
+        //pdfview.fromAsset(pdfName).load();
+        pdfview.fromUri(pdfUri);
 
 
 

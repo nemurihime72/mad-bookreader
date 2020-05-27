@@ -20,17 +20,6 @@
         android:layout_weight="3">
 
 
-        <Button
-            android:id="@+id/buttonImport"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="12"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
-            android:text="IMPORT" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bookCycler"
             android:layout_width="match_parent"

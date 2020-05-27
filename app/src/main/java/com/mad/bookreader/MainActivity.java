@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "Main Activity";
 
-    List<importedBooks> listBooks;
+    List<importedBooks> listBooks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Create list and populate( populate To be removed)
-        listBooks = new ArrayList<>();
         //for (int i=0;i<50;i++){
-        importedBooks b1 = new importedBooks("Manga", R.drawable.isla, "testpdf.pdf");
-        importedBooks b2 = new importedBooks("Kendo", R.drawable.isla2, "kendo.pdf");
-        listBooks.add(b1);
-        listBooks.add(b2);
+        //importedBooks b1 = new importedBooks("Manga", R.drawable.isla, "testpdf.pdf");
+        //importedBooks b2 = new importedBooks("Kendo", R.drawable.isla2, "kendo.pdf");
+        //listBooks.add(b1);
+        //listBooks.add(b2);
         //}
 
 
@@ -91,15 +90,21 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData();
+
             File file = new File(selectedFile.getPath());
             final String[] split = file.getPath().split(":");
             String filePath = split[1];
+            File pdfFile = new File(filePath);
             String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
-            Log.v(TAG, fileName);
-            importedBooks book = new importedBooks(fileName, R.drawable.isla, fileName);
+
+            //importedBooks book = new importedBooks(fileName, R.drawable.isla, selectedFile);
+            //listBooks.add(book);
+            //recyclerFunction(listBooks);
+            /*
+            importedBooks book = new importedBooks(fileName, R.drawable.isla, pdfFile);
             listBooks.add(book);
             recyclerFunction(listBooks);
-
+            */
         }
     }
 }
