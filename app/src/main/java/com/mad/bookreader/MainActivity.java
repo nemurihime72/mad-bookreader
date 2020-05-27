@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
         //Create list and populate( populate To be removed)
         listBooks=new ArrayList<>();
-        for (int i=0;i<50;i++){
-            importedBooks b1=new importedBooks("Manga",R.drawable.isla,"testpdf.pdf");
-            importedBooks b2=new importedBooks("Kendo",R.drawable.isla2,"kendo.pdf");
-            listBooks.add(b1);
-            listBooks.add(b2);
-        }
+        //for (int i=0;i<50;i++){
+        importedBooks b1=new importedBooks("Manga",R.drawable.isla,"testpdf.pdf");
+        importedBooks b2=new importedBooks("Kendo",R.drawable.isla2,"kendo.pdf");
+        listBooks.add(b1);
+        listBooks.add(b2);
+        //}
 
 
         //Call the recyclerView function
