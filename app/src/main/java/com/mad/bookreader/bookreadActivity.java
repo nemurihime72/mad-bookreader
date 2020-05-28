@@ -29,7 +29,7 @@ public class bookreadActivity extends AppCompatActivity {
     //pdf name of the pdf file
     String pdfName;
     File pdfFile;
-    Uri pdfUri;
+    String pdfUri;
     CountDownTimer tapCountdown;
     private final static String TAG="bookreadActivity.java";
 
@@ -46,6 +46,8 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Setting variable pdfName as the name of the pdf file
         pdfName=pdfPage.getStringExtra("PdfName");
+        pdfUri = pdfPage.getStringExtra("PdfUri");
+        Uri uri = Uri.parse(pdfUri);
 
         //Setting custom toolbar
         Toolbar toolbar=findViewById(R.id.app_bar);
@@ -55,7 +57,7 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
-        pdfview.fromAsset(pdfName).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
+        pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override
             public void onPageChanged(int page, int pageCount) {
                 pageLastRead=pdfview.getCurrentPage();
@@ -66,14 +68,14 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
         setSwipeHorizon(pdfview);
-        pdfview.setOnTouchListener(new View.OnTouchListener() {
+        /*pdfview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Log.v(TAG, "pdf tapped");
                 setTapCountdown();
                 return false;
             }
-        });
+        });*/
 
 
     }

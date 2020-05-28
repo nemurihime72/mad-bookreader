@@ -1,6 +1,7 @@
 package com.mad.bookreader;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,15 +27,16 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         return new recyclerViewHolder(item);
     }
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
-        String s=data.get(position).getTitle();
+        String s = data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageResource(data.get(position).getImage());
-        final String p=data.get(position).getPdfName();
+        final String p = data.get(position).getPdfName();
+        final String uri = data.get(position).getPdfUri();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                intent.putExtra("PdfName",p);
+                intent.putExtra("PdfUri", uri);
                 Log.v(TAG,"PDF put inside intent, going to the book read activity now");
                 v.getContext().startActivity(intent);
             }

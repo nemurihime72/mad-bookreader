@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         //listBooks.add(b2);
         //}
         
-        importedBooks b1=new importedBooks("manga",R.drawable.isla,"kendo.pdf");
-        listBooks.add(b1);
+        /*importedBooks b1=new importedBooks("manga",R.drawable.isla,"kendo.pdf");
+        listBooks.add(b1);*/
 
 
 
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData();
+            String selectedFileString = selectedFile.toString();
 
             File file = new File(selectedFile.getPath());
             final String[] split = file.getPath().split(":");
@@ -102,14 +103,14 @@ public class MainActivity extends AppCompatActivity {
             File pdfFile = new File(filePath);
             String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
 
-            //importedBooks book = new importedBooks(fileName, R.drawable.isla, selectedFile);
-            //listBooks.add(book);
-            //recyclerFunction(listBooks);
-            /*
-            importedBooks book = new importedBooks(fileName, R.drawable.isla, pdfFile);
+            importedBooks book = new importedBooks(fileName, R.drawable.isla, selectedFileString);
             listBooks.add(book);
             recyclerFunction(listBooks);
-            */
+
+           /* importedBooks book = new importedBooks(fileName, R.drawable.isla, pdfFile);
+            listBooks.add(book);
+            recyclerFunction(listBooks);*/
+
         }
     }
 }

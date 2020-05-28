@@ -11,23 +11,24 @@ public class importedBooks {
     private String Title;
     private int Image;
     private String PdfName;
-    /*private File pdfFile;
-    private Uri pdfUri;
+    private File pdfFile;
 
-    public Uri getPdfUri() {
-        return pdfUri;
+    public String getPdfUri() {
+        return PdfUri;
+    }
+
+    public void setPdfUri(String pdfUri) {
+        PdfUri = pdfUri;
+    }
+
+    private String PdfUri;
+
+   /* public Uri getPdfUri() {
+        return PdfUri;
     }
 
     public void setPdfUri(Uri pdfUri) {
-        this.pdfUri = pdfUri;
-    }
-
-    public File getPdfFile() {
-        return pdfFile;
-    }
-
-    public void setPdfFile(File pdfFile) {
-        this.pdfFile = pdfFile;
+        PdfUri = pdfUri;
     }*/
 
     public String getPdfName() {
@@ -59,16 +60,15 @@ public class importedBooks {
     }
 
 
-    public importedBooks(String title,int image,String pdf) {
+   /* public importedBooks(String title,int image,String pdf) {
         Title = title;
         Image = image;
         PdfName = pdf;
-    }
-/*    public importedBooks(String title, int img, Uri uri) {
+    }*/
+    public importedBooks(String title, int img, String uri) {
         Title = title;
         Image = img;
-        pdfUri = uri;
+        PdfUri = uri;
     }
 
- */
 }
