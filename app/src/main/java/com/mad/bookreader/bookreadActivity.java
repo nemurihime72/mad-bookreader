@@ -7,10 +7,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +30,7 @@ public class bookreadActivity extends AppCompatActivity {
     String pdfName;
     File pdfFile;
     Uri pdfUri;
+    CountDownTimer tapCountdown;
     private final static String TAG="bookreadActivity.java";
 
     //DB for this part
@@ -46,6 +50,7 @@ public class bookreadActivity extends AppCompatActivity {
         //Setting custom toolbar
         Toolbar toolbar=findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
         Log.v(TAG,"Top toolbar set");
 
         //Find the PDFView and load the pdf from previous page to the view
@@ -61,6 +66,14 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
         setSwipeHorizon(pdfview);
+        pdfview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.v(TAG, "pdf tapped");
+                setTapCountdown();
+                return false;
+            }
+        });
 
 
     }
@@ -79,5 +92,20 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setTapCountdown() {
+        tapCountdown = new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                getSupportActionBar().show();
+                Log.v(TAG, "Countdown for app bar: " + millisUntilFinished/1000);
+            }
+
+            @Override
+            public void onFinish() {
+                getSupportActionBar().hide();
+            }
+        }.start();
     }
 }
