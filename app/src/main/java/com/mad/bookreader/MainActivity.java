@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static String TAG = "Main Activity";
+    final static String TAG = "MainActivity.java";
 
     List<importedBooks> listBooks = new ArrayList<>();
 
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         /*To add my own toolbar instead of the default*/
         Toolbar toolbar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+        Log.v(TAG,"Top toolbar set");
 
 
         //Create list and populate( populate To be removed)
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
         //listBooks.add(b1);
         //listBooks.add(b2);
         //}
+        
+        importedBooks b1=new importedBooks("manga",R.drawable.isla,"kendo.pdf");
+        listBooks.add(b1);
+
 
 
         //Call the recyclerView function
