@@ -7,13 +7,19 @@ import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
@@ -89,23 +95,59 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData();
-            String selectedFileString = selectedFile.toString();
-            Log.v(TAG, selectedFileString);
-            File file = new File(selectedFile.getPath());
-            //final String[] split = file.getPath().split(":");
-            //String filePath = split[1];
-            //File pdfFile = new File(filePath);
-            String fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
-            Log.v(TAG, fileName);
-            importedBooks book = new importedBooks(fileName, R.drawable.isla, selectedFileString);
-            listBooks.add(book);
-            recyclerFunction(listBooks);
+            final String selectedFileString = selectedFile.toString();
+            Log.v(TAG,selectedFileString);
+            String fileName =selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+            Log.v(TAG,fileName);
+
+
+
+            android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+
+            View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
+            final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
+
+            builder.setView(view).setTitle("Set title for book")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String titleName=editTextTitle.getText().toString();
+                            importedBooks book = new importedBooks(titleName, R.drawable.isla, selectedFileString);
+                            listBooks.add(book);
+                            recyclerFunction(listBooks);
+                        }
+                    });
+            AlertDialog alert=builder.create();
+            alert.show();
+
+
+            //File file = new File(selectedFile.getPath());
+            /*final String[] split = file.getPath().split(":");
+            Log.v(TAG,file.getPath());
+            String filePath = split[1];
+            File pdfFile = new File(filePath);*/
+
+
+
+
+
+
+
+
 
            /* importedBooks book = new importedBooks(fileName, R.drawable.isla, pdfFile);
             listBooks.add(book);
