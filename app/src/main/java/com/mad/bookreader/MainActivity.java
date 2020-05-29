@@ -120,12 +120,13 @@ public class MainActivity extends AppCompatActivity {
 
             View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
             final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
-
+            editTextTitle.setHint(fileName);
+            editTextTitle.setText(fileName);
             builder.setView(view).setTitle("Set title for book")
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            editTextTitle.setText(fileName);
+
                             String titleName=editTextTitle.getText().toString();
                             importedBooks book = new importedBooks(titleName, R.drawable.isla, selectedFileString);
                             listBooks.add(book);
