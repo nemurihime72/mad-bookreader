@@ -96,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedFile = data.getData();
             String selectedFileString = selectedFile.toString();
-
+            Log.v(TAG, selectedFileString);
             File file = new File(selectedFile.getPath());
-            final String[] split = file.getPath().split(":");
-            String filePath = split[1];
-            File pdfFile = new File(filePath);
-            String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
-
+            //final String[] split = file.getPath().split(":");
+            //String filePath = split[1];
+            //File pdfFile = new File(filePath);
+            String fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+            Log.v(TAG, fileName);
             importedBooks book = new importedBooks(fileName, R.drawable.isla, selectedFileString);
             listBooks.add(book);
             recyclerFunction(listBooks);
