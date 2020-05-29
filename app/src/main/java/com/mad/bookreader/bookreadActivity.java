@@ -68,6 +68,8 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
         setSwipeHorizon(pdfview);
+
+
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
