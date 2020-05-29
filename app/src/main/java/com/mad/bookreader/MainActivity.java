@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedFile = data.getData();
             final String selectedFileString = selectedFile.toString();
             Log.v(TAG,selectedFileString);
-            String fileName =selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+            final String fileName =selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
             Log.v(TAG,fileName);
 
 
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            editTextTitle.setText(fileName);
                             String titleName=editTextTitle.getText().toString();
                             importedBooks book = new importedBooks(titleName, R.drawable.isla, selectedFileString);
                             listBooks.add(book);
