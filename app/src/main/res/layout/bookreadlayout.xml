@@ -7,8 +7,8 @@
     tools:ignore="MissingConstraints">
 
     <include
-        android:id="@+id/app_bar"
-        layout="@layout/app_bar"
+        android:id="@+id/bookreadbar"
+        layout="@layout/bookread_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="12" />

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
+import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
 
 import java.io.File;
 
@@ -35,6 +36,7 @@ public class bookreadActivity extends AppCompatActivity {
 
     //DB for this part
     public static int pageLastRead=0;
+    public static int pageSwipeDirection=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +52,8 @@ public class bookreadActivity extends AppCompatActivity {
         Uri uri = Uri.parse(pdfUri);
 
         //Setting custom toolbar
-        Toolbar toolbar=findViewById(R.id.app_bar);
+        Toolbar toolbar=findViewById(R.id.bookreadbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().hide();
         Log.v(TAG,"Top toolbar set");
 
         //Find the PDFView and load the pdf from previous page to the view
@@ -62,12 +63,19 @@ public class bookreadActivity extends AppCompatActivity {
             public void onPageChanged(int page, int pageCount) {
                 pageLastRead=pdfview.getCurrentPage();
                 Log.v(TAG,"Page changed to: "+pageLastRead);
+                if (pageLastRead+1==pdfview.getPageCount()){
+                    pageLastRead=0;
+                    Log.v(TAG,"Finished reading, page returned to the start");
+                }
             }
         }).load();
+
+
+
         //pdfview.fromUri(pdfUri);
 
         //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
-        setSwipeHorizon(pdfview);
+
 
 
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
@@ -78,24 +86,33 @@ public class bookreadActivity extends AppCompatActivity {
                 return false;
             }
         });*/
-
-
     }
-
-    public void setSwipeHorizon(PDFView pdfview){
-        pdfview.setSwipeVertical(false);
-        Log.v(TAG,"Setting scrolling to horizontal");
-    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.menu,menu);
+        inflater.inflate(R.menu.bookreadmenu,menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.scrolldirection:
+                if (pageSwipeDirection==0){
+                    pdfview.setSwipeVertical(false);
+                    Log.v(TAG,"Setting scrolling to horizontal");
+                    pageSwipeDirection=1;
+                    return true;
+                }
+                else{
+                    pdfview.setSwipeVertical(true);
+                    pageSwipeDirection=0;
+                    return true;
+                }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setTapCountdown() {

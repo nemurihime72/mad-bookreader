@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Go to page"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/scrolldirection"
+        android:title="Change scroll direction"
+        app:showAsAction="never"/>
+
+    <item
+        android:title="Color Mode"
+        app:showAsAction="never"/>
+
+</menu>

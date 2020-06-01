@@ -21,4 +21,20 @@
 
     </style>
 
+    <style name="BookReadBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:background">@color/colorPrimary</item>
+    <item name="android:textColorSecondary">@color/colorDarkWhite</item>
+    <!-- Customize your theme here. -->
+
+</style>
+
+    <!--Menu Item Theme of the toolbar-->
+
+<style name="BookReadPopup" parent="Theme.AppCompat.Light.NoActionBar">
+<item name="android:background">@color/colorAccent</item>
+<item name="overlapAnchor">false</item>
+<item name="android:dropDownVerticalOffset">-4dp</item>
+
+</style>
+
 </resources>
