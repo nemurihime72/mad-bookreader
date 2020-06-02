@@ -58,7 +58,7 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
-        pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
+        pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override
             public void onPageChanged(int page, int pageCount) {
                 pageLastRead=pdfview.getCurrentPage();
