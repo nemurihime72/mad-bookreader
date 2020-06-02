@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
-import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
 
 import java.io.File;
 
@@ -56,6 +55,7 @@ public class bookreadActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Log.v(TAG,"Top toolbar set");
 
+
         //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
         pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
@@ -69,6 +69,7 @@ public class bookreadActivity extends AppCompatActivity {
                 }
             }
         }).load();
+
 
 
 
@@ -87,7 +88,7 @@ public class bookreadActivity extends AppCompatActivity {
             }
         });*/
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
@@ -108,6 +109,7 @@ public class bookreadActivity extends AppCompatActivity {
                 else{
                     pdfview.setSwipeVertical(true);
                     pageSwipeDirection=0;
+                    Log.v(TAG,"Setting scrolling changed to vertical");
                     return true;
                 }
             default:
