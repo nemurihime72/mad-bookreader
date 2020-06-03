@@ -6,8 +6,8 @@ Created by Kwong Ming Wei,Ryan and Arrick from Ngee Ann Poly
 Used barkteksc PdfViewer v1.6.0: 
 implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
-Week 3:
-
+-Week 3:
+-
 Planning of activities to be added into the book reader
 · Library of books
 · Read books
@@ -23,7 +23,8 @@ Planning of activities to be added into the book reader
 · Social media sharing(like share a link to friends via whatsapp)
 · Light/Dark mode
 
-Week 4:
+-Week 4:
+-
 
 -Division of features between part 1 and 2
 
@@ -35,7 +36,8 @@ Implementation done:
 -CardView to store each book item
 -Book Class
 
-Week 5:
+-Week 5:
+-
 
 -Attempted to import epublib files and an activity for reading the files but failed
 
