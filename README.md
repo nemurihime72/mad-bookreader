@@ -35,5 +35,7 @@ Implementation done:
 
 Week 5:
 -Attempted to import epublib files and an activity for reading the files but failed
+
+Implementations done:
 -Decided on using pdf files for our book reader instead
 -import button created on title bar
