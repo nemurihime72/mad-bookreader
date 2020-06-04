@@ -41,7 +41,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Attempted to import epublib files and an activity for reading the files but failed
 * import button created on title bar
 
-## Week 6
+## Week 6:
 ### Decision:
 * Failed attempt at importing files to assets folder of the application, therefore decided to use Uri instead
 * Decided on using pdf files for our book reader instead since we had issues with using epublib
@@ -51,7 +51,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Importing of files from device into the app using Uri (have not implemented database to store it yet)
 * Prompt users using AlertDialog with a EditText to manually enter the title of the book to display at the cardview
 
-## Week 7
+## Week 7:
 ### Implementations done:
 * Added onclicklisteners to bring users to the pdf reader activity with intent
 * Sqlite created to store Uri of files, title of book, image of book and last page read
