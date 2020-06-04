@@ -89,3 +89,5 @@ Implementations done:
 -Sqlite created to store Uri of files, title of book, image of book and last page read
 
 -top app bar modified
+
+-Created 2 different methods to scroll when reading book, horizontal and vertical
