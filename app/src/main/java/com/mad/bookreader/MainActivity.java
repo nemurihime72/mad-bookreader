@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Call the recyclerView function
+        Log.v(TAG,"Displaying recyclerview of book items");
         recyclerFunction(listBooks);
 
 
@@ -85,11 +86,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_settings:
+                Log.v(TAG,"Settings selected");
+                Intent settingsIntent=new Intent(MainActivity.this,settingsMain.class);
+                startActivity(settingsIntent);
+                return true;
+
+
             case R.id.action_import:
+                Log.v(TAG,"Import files selected");
                 //intent to import files
                 Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -114,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             Log.v(TAG,fileName);
 
 
-
+            Log.v(TAG,"Alert dialog to prompt for book title creating");
             android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
 
@@ -134,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
             AlertDialog alert=builder.create();
+            Log.v(TAG,"Alert dialog successfully created");
             alert.show();
 
 
