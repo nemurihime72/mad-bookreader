@@ -1,5 +1,5 @@
 # Team members and roles
--
+
 Member: Kwong Ming Wei (S10195172)
 
 Leader: Ryan lee rui yuan (S10195732)
@@ -7,11 +7,11 @@ Leader: Ryan lee rui yuan (S10195732)
 Member: Arrick (S101)
 
 # Description of app
--
+
 A book reader that imports pdf file of books and allows user to import and gather all their pdf books into one place which makes it more convenient for the user. 
 
 # Contribution
--
+
 ## Kwong Ming Wei: 
 * Pdf viewer
 * App bar for the bookreadActivity.java
@@ -32,7 +32,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Intent activities and onClickListeners
 
 # User guide
--
+
 ## Importing a book
 ### Click on the import button
 ![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_22-PM_LI.jpg)
