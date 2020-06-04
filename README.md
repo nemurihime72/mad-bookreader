@@ -12,7 +12,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 Contribution
 -
-Kwong Ming Wei: 
+#Kwong Ming Wei: 
 
 -Pdf viewer
 
@@ -29,7 +29,7 @@ pdfViewer will open the book at the page last read
 -Scrolling directions the book reader, allows users to change the direction of scrolling
 
 
-Ryan Lee:
+#Ryan Lee:
 
 -Import function with alertdialog to manually enter title
 
@@ -38,10 +38,14 @@ Ryan Lee:
 -Importing of uri files
 
 
-Arrick:
+#Arrick:
 
 -Settings page app bar
 
 -All the sqlite
 
 -Intent activities and onClickListeners
+
+User guide
+-
+
