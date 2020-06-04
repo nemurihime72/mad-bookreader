@@ -32,5 +32,5 @@ Contribution
 * Intent activities and onClickListeners
 
 User guide
-![Import](https://www.picturepaste.ca/image/tsurumaki-kokoro-bang-dream-blonde-big-smile-pretty-anime-37.H9n4S)
+![Import](https://www.picturepaste.ca/images/2020/06/04/tsurumaki-kokoro-bang-dream-blonde-big-smile-pretty-anime-37297.jpg)
 
