@@ -32,5 +32,13 @@ Contribution
 * Intent activities and onClickListeners
 
 User guide
-![Import](https://www.picturepaste.ca/images/2020/06/04/tsurumaki-kokoro-bang-dream-blonde-big-smile-pretty-anime-37297.jpg)
+-
+# Importing a book
+## Click on the import button
+![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_22-PM_LI.jpg)
 
+## Select the pdf file
+![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_46-PM.png)
+
+## Set title
+![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_11_04-PM.png)
