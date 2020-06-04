@@ -20,11 +20,9 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Light/Dark mode
 
 ## Week 4:
-
--Division of features between part 1 and 2
-
--What to use to make this app possible: A few options include epublib, skyepub and epub3reader. For now, epublib and skyepub are more attractive, with documentation to help development. For now, epublib will be used. More information will be added when we understand more about the epub libraries for android.
-
+### Planning
+* Division of features between part 1 and 2
+* What to use to make this app possible: A few options include epublib, skyepub and epub3reader. For now, epublib and skyepub are more attractive, with documentation to help development. For now, epublib will be used. More information will be added when we understand more about the epub libraries for android.
 ### Decision of features to implement for stage 1
 * Import function to import epublib books
 * Recyclerview to display all the books
