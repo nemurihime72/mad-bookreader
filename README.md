@@ -13,39 +13,24 @@ A book reader that imports pdf file of books and allows user to import and gathe
 Contribution
 -
 # Kwong Ming Wei: 
-
--Pdf viewer
-
--App bar for the bookreadActivity.java
-
--Recyclerview
-
--Java class for each book
-
--CardView for each book item
-
-pdfViewer will open the book at the page last read
-
--Scrolling directions the book reader, allows users to change the direction of scrolling
-
+* Pdf viewer
+* App bar for the bookreadActivity.java
+* Recyclerview
+* Java class for each book
+* CardView for each book item
+* pdfViewer will open the book at the page last read
+* Scrolling directions the book reader, allows users to change the direction of scrolling
 
 # Ryan Lee:
-
--Import function with alertdialog to manually enter title
-
--Importing of pdf files using Uri
-
--Importing of uri files
-
+* Import function with alertdialog to manually enter title
+* Importing of pdf files using Uri
+* Importing of uri files
 
 # Arrick:
-
--Settings page app bar
-
--All the sqlite
-
--Intent activities and onClickListeners
+* Settings page app bar
+* All the sqlite
+* Intent activities and onClickListeners
 
 User guide
--
+![Import](https://www.picturepaste.ca/image/tsurumaki-kokoro-bang-dream-blonde-big-smile-pretty-anime-37.H9n4S)
 
