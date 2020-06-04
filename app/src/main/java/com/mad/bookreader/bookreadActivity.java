@@ -42,12 +42,18 @@ public class bookreadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
 
+        //Create database handler
+        BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+
+
         //Get the pdf name from previous page
         Intent pdfPage=getIntent();
 
         //Setting variable pdfName as the name of the pdf file
         pdfName=pdfPage.getStringExtra("PdfName");
         pdfUri = pdfPage.getStringExtra("PdfUri");
+        importedBooks book = new importedBooks(pdfName, 0, pdfUri);
+        dbHandler.addBook(book, 0);
         Uri uri = Uri.parse(pdfUri);
 
         //Setting custom toolbar
@@ -57,7 +63,8 @@ public class bookreadActivity extends AppCompatActivity {
 
 
         //Find the PDFView and load the pdf from previous page to the view
-        pdfview=findViewById(R.id.pdfView);
+        loadPDF(book);
+        /*pdfview=findViewById(R.id.pdfView);
         pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override
             public void onPageChanged(int page, int pageCount) {
@@ -68,10 +75,7 @@ public class bookreadActivity extends AppCompatActivity {
                     Log.v(TAG,"Finished reading, page returned to the start");
                 }
             }
-        }).load();
-
-
-
+        }).load();*/
 
         //pdfview.fromUri(pdfUri);
 
@@ -87,6 +91,22 @@ public class bookreadActivity extends AppCompatActivity {
                 return false;
             }
         });*/
+    }
+
+    public void loadPDF(importedBooks book){
+        Uri uri = Uri.parse(book.getPdfUri());
+        pdfview = findViewById(R.id.pdfView);
+        pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
+            @Override
+            public void onPageChanged(int page, int pageCount) {
+                pageLastRead = pdfview.getCurrentPage();
+                Log.v(TAG,"Page changed to: "+pageLastRead);
+                if (pageLastRead+1==pdfview.getPageCount()){
+                    pageLastRead = 0;
+                    Log.v(TAG,"Finished reading, page returned to the start");
+                }
+            }
+        }).load();
     }
 
     @Override

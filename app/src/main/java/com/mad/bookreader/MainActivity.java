@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerFunction(listBooks);
 
 
+        //displayBooks(listsBooks);
     }
 
     private void recyclerFunction(List<importedBooks> bList) {
@@ -95,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void displayBooks(List<importedBooks> storedBooks){
+        BookDBHandler db = new BookDBHandler(this, null, null, 1);
+        db.startBooks(storedBooks);
 
-
+    }
 
 
 
