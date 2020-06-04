@@ -21,7 +21,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
 ## Week 4:
 
-- Division of features between part 1 and 2
+-Division of features between part 1 and 2
 
 -What to use to make this app possible: A few options include epublib, skyepub and epub3reader. For now, epublib and skyepub are more attractive, with documentation to help development. For now, epublib will be used. More information will be added when we understand more about the epub libraries for android.
 
@@ -53,7 +53,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Importing of files from device into the app using Uri (have not implemented database to store it yet)
 * Prompt users using AlertDialog with a EditText to manually enter the title of the book to display at the cardview
 
-##Week 7
+## Week 7
 ### Implementations done:
 * Added onclicklisteners to bring users to the pdf reader activity with intent
 * Sqlite created to store Uri of files, title of book, image of book and last page read
