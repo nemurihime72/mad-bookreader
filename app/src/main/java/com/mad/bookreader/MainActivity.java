@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void displayBooks(List<importedBooks> storedBooks){
+    /*public void displayBooks(List<importedBooks> storedBooks){
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
         db.startBooks(storedBooks);
 
-    }
+    }*/
 
 
 
