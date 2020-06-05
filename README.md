@@ -20,6 +20,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * CardView for each book item
 * pdfViewer will open the book at the page last read
 * Scrolling directions the book reader, allows users to change the direction of scrolling
+* Grid layout
 
 ## Ryan Lee:
 * Import function with alertdialog to manually enter title
