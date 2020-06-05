@@ -31,6 +31,7 @@ public class bookreadActivity extends AppCompatActivity {
     File pdfFile;
     String pdfUri;
     CountDownTimer tapCountdown;
+    Uri uri;
     private final static String TAG="bookreadActivity.java";
 
     //DB for this part
@@ -50,11 +51,11 @@ public class bookreadActivity extends AppCompatActivity {
         Intent pdfPage=getIntent();
 
         //Setting variable pdfName as the name of the pdf file
+        Log.v(TAG,"Getting information from intent");
         pdfName=pdfPage.getStringExtra("PdfName");
         pdfUri = pdfPage.getStringExtra("PdfUri");
         importedBooks book = new importedBooks(pdfName, 0, pdfUri);
         dbHandler.addBook(book, 0);
-        Uri uri = Uri.parse(pdfUri);
 
         //Setting custom toolbar
         Toolbar toolbar=findViewById(R.id.bookreadbar);
@@ -72,10 +73,14 @@ public class bookreadActivity extends AppCompatActivity {
                 Log.v(TAG,"Page changed to: "+pageLastRead);
                 if (pageLastRead+1==pdfview.getPageCount()){
                     pageLastRead=0;
-                    Log.v(TAG,"Finished reading, page returned to the start");
+                    Log.v(TAG,"Finished reading, page last read returned to the start");
                 }
             }
         }).load();*/
+        Log.v(TAG,"PDF loaded");
+
+
+
 
         //pdfview.fromUri(pdfUri);
 
@@ -94,7 +99,7 @@ public class bookreadActivity extends AppCompatActivity {
     }
 
     public void loadPDF(importedBooks book){
-        Uri uri = Uri.parse(book.getPdfUri());
+        uri = Uri.parse(book.getPdfUri());
         pdfview = findViewById(R.id.pdfView);
         pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override
@@ -120,15 +125,35 @@ public class bookreadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.scrolldirection:
-                if (pageSwipeDirection==0){
-                    pdfview.setSwipeVertical(false);
+                if (pageSwipeDirection==1){
+                    pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                        }
+                    }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
                     pageSwipeDirection=1;
                     return true;
                 }
                 else{
-                    pdfview.setSwipeVertical(true);
-                    pageSwipeDirection=0;
+                    pageSwipeDirection=1;
+                    pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                        }
+                    }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
                     return true;
                 }
