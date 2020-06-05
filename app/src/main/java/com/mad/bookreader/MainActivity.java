@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_import:
                 //intent to import files
-                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
             default:
@@ -107,10 +107,22 @@ public class MainActivity extends AppCompatActivity {
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
+            String fileName;
             Uri selectedFile = data.getData();
             final String selectedFileString = selectedFile.toString();
             Log.v(TAG,selectedFileString);
-            final String fileName =selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+            try {
+                File file = new File(selectedFile.getPath());
+                final String[] split = file.getPath().split(":");
+                Log.v(TAG,file.getPath());
+                String filePath = split[1];
+                File pdfFile = new File(filePath);
+                fileName = pdfFile.getName();
+                Log.v(TAG, "File name: " + fileName);
+            } catch (Exception e) {
+                fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+                Log.v(TAG, "File name: " + fileName);
+            }
             Log.v(TAG,fileName);
 
 
@@ -135,13 +147,10 @@ public class MainActivity extends AppCompatActivity {
                     });
             AlertDialog alert=builder.create();
             alert.show();
+            Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
 
 
-            //File file = new File(selectedFile.getPath());
-            /*final String[] split = file.getPath().split(":");
-            Log.v(TAG,file.getPath());
-            String filePath = split[1];
-            File pdfFile = new File(filePath);*/
+
 
 
 
