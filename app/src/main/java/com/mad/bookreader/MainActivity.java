@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Create list and populate( populate To be removed)
-        //for (int i=0;i<50;i++){
-        //importedBooks b1 = new importedBooks("Manga", R.drawable.isla, "testpdf.pdf");
-        //importedBooks b2 = new importedBooks("Kendo", R.drawable.isla2, "kendo.pdf");
-        //listBooks.add(b1);
-        //listBooks.add(b2);
-        //}
+        /*for (int i=0;i<50;i++){
+        importedBooks b1 = new importedBooks("Manga", R.drawable.isla, "testpdf.pdf");
+        listBooks.add(b1);
+        }
+        */
         
         /*importedBooks b1=new importedBooks("manga",R.drawable.isla,"kendo.pdf");
         listBooks.add(b1);*/
@@ -68,10 +68,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int getScreenWidth() {
+        Log.v(TAG,"Screen width : "+(Resources.getSystem().getDisplayMetrics().widthPixels)/130);
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
     private void recyclerFunction(List<importedBooks> bList) {
         RecyclerView rview = (RecyclerView) findViewById(R.id.bookCycler);
         recyclerAdaptor rAdaptor = new recyclerAdaptor(bList);
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 3);
+        int spanCount=pxToDp(getScreenWidth())/130;
+        GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
         rview.setLayoutManager(gLayoutManager);
         rview.setAdapter(rAdaptor);
     }
@@ -139,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
 
                             String titleName=editTextTitle.getText().toString();
-                            importedBooks book = new importedBooks(titleName, R.drawable.isla, selectedFileString);
+                            importedBooks book = new importedBooks(titleName, R.drawable.no_image, selectedFileString);
                             listBooks.add(book);
                             recyclerFunction(listBooks);
                         }
