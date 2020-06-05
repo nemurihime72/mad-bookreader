@@ -45,7 +45,7 @@ repositories {
 
 dependencies {
     implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
-
+    implementation 'com.github.barteksc:pdfium-android:1.9.0'
 }
 
 dependencies {

@@ -1,6 +1,7 @@
 package com.mad.bookreader;
 
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -9,7 +10,7 @@ import java.io.File;
 
 public class importedBooks {
     private String Title;
-    private int Image;
+    private Bitmap Image;
     private String PdfName;
     private File pdfFile;
 
@@ -49,11 +50,11 @@ public class importedBooks {
         Title = title;
     }
 
-    public int getImage() {
+    public Bitmap getImage() {
         return Image;
     }
 
-    public void setImage(int image) {
+    public void setImage(Bitmap image) {
         Image = image;
     }
 
@@ -66,7 +67,7 @@ public class importedBooks {
         Image = image;
         PdfName = pdf;
     }*/
-    public importedBooks(String title, int img, String uri) {
+    public importedBooks(String title, Bitmap img, String uri) {
         Title = title;
         Image = img;
         PdfUri = uri;

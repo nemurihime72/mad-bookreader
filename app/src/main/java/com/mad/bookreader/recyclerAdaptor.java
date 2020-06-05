@@ -29,7 +29,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
         String s = data.get(position).getTitle();
         holder.txt.setText(s);
-        holder.img.setImageResource(data.get(position).getImage());
+        holder.img.setImageBitmap(data.get(position).getImage());
         final String p = data.get(position).getPdfName();
         final String uri = data.get(position).getPdfUri();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
