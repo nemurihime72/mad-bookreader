@@ -58,3 +58,4 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * top app bar created for bookreadActivity.java
 * Created 2 different methods to scroll when reading book, horizontal and vertical
 * Created a page for settings and a new custom app bar
+* Made grid view display number of items in a row depending on the width of the device
