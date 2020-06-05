@@ -26,6 +26,8 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Import function with alertdialog to manually enter title
 * Importing of pdf files using Uri
 * Importing of uri files
+* Import pdf files with function to automatically retrieve and set cover image
+* Import function automatically retrieves title from filename
 
 ## Arrick:
 * Settings page app bar
@@ -43,3 +45,6 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 ### Set title
 ![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_11_04-PM.png)
+
+### Future plans
+* Implement an EPUB reader (hopefully)
