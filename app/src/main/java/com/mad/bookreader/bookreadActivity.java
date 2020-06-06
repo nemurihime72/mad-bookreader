@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -32,11 +33,11 @@ public class bookreadActivity extends AppCompatActivity {
     String pdfUri;
     CountDownTimer tapCountdown;
     Uri uri;
-    private final static String TAG="bookreadActivity.java";
+    private final static String TAG= "bookreadActivity.java";
 
     //DB for this part
     public static int pageLastRead=0;
-    public static int pageSwipeDirection=0;
+    public static int pageSwipeDirection=0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class bookreadActivity extends AppCompatActivity {
         Log.v(TAG,"Getting information from intent");
         pdfName=pdfPage.getStringExtra("PdfName");
         pdfUri = pdfPage.getStringExtra("PdfUri");
+        //since Uri is still string, convert back to Uri to load
+        uri = Uri.parse(pdfUri);
         importedBooks book = new importedBooks(pdfName, 0, pdfUri);
         dbHandler.addBook(book, 0);
 
@@ -83,11 +86,6 @@ public class bookreadActivity extends AppCompatActivity {
 
 
         //pdfview.fromUri(pdfUri);
-
-        //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
-
-
-
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -99,6 +97,7 @@ public class bookreadActivity extends AppCompatActivity {
     }
 
     public void loadPDF(importedBooks book){
+        //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(book.getPdfUri());
         pdfview = findViewById(R.id.pdfView);
         pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
@@ -120,12 +119,17 @@ public class bookreadActivity extends AppCompatActivity {
         inflater.inflate(R.menu.bookreadmenu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    /*sharedPreferences = getSharedPreferences(GLOBAL_PREFS, MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(pageSwipeDirection, )*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
+                //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
+                    pageSwipeDirection=0;
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -138,9 +142,9 @@ public class bookreadActivity extends AppCompatActivity {
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
-                    pageSwipeDirection=1;
                     return true;
                 }
+                //Change from horizontal to vertical scrolling
                 else{
                     pageSwipeDirection=1;
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
