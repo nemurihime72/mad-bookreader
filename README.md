@@ -1,10 +1,7 @@
 # Team members and roles
-
-Member: Kwong Ming Wei (S10195172)
-
-Leader: Ryan lee rui yuan (S10195732)
-
-Member: Arrick (S101)
+* Member: Kwong Ming Wei (S10195172)
+* Leader: Ryan lee rui yuan (S10195732)
+* Member: Arrick Tee Ren Yi (S10198673)
 
 # Description of app
 
