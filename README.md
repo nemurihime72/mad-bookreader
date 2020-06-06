@@ -50,7 +50,6 @@ A book reader that imports pdf file of books and allows user to import and gathe
 # Future plans
 * Implement an EPUB reader (hopefully)
 * Implement a search bar
-* Better UX
 * Edit the file name
 * Delete file
 * Screen rotation
