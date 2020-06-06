@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Go to page"
+        android:title="@string/go_to_page"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/scrolldirection"
-        android:title="Change scroll direction"
+        android:title="@string/scroll_dir"
         app:showAsAction="never"/>
 
     <item
-        android:title="Color Mode"
+        android:title="@string/DLtheme"
         app:showAsAction="never"/>
 
 </menu>
