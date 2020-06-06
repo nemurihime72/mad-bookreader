@@ -35,11 +35,9 @@ public class bookreadActivity extends AppCompatActivity {
     Uri uri;
     private final static String TAG= "bookreadActivity.java";
 
-    public String GLOBAL_PREFS = "MyPrefs";
-    SharedPreferences sharedPreferences;
     //DB for this part
     public static int pageLastRead=0;
-    public static int pageSwipeDirection=0;
+    public static int pageSwipeDirection=0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +51,7 @@ public class bookreadActivity extends AppCompatActivity {
         Log.v(TAG,"Getting information from intent");
         pdfName=pdfPage.getStringExtra("PdfName");
         pdfUri = pdfPage.getStringExtra("PdfUri");
+        //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfUri);
 
         //Setting custom toolbar
@@ -101,12 +100,11 @@ public class bookreadActivity extends AppCompatActivity {
         inflater.inflate(R.menu.bookreadmenu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    /*sharedPreferences = getSharedPreferences(GLOBAL_PREFS, MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(pageSwipeDirection, )*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        sharedPreferences = getSharedPreferences(GLOBAL_PREFS, MODE_PRIVATE);
-        //SharedPreferences.Editor editor = sharedPreferences.edit();
-        //editor.putInt(pageSwipeDirection, )
         switch (item.getItemId()) {
             case R.id.scrolldirection:
                 if (pageSwipeDirection==1){
