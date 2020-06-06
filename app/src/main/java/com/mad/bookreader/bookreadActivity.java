@@ -110,6 +110,7 @@ public class bookreadActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.scrolldirection:
                 if (pageSwipeDirection==1){
+                    pageSwipeDirection=0;
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -122,7 +123,6 @@ public class bookreadActivity extends AppCompatActivity {
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
-                    pageSwipeDirection=1;
                     return true;
                 }
                 else{
