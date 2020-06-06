@@ -11,12 +11,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             final Uri selectedFile = data.getData();
             final String selectedFileString = selectedFile.toString();
             Log.v(TAG,selectedFileString);
-            try {
+            /*try {
                 File file = new File(selectedFile.getPath());
                 final String[] split = file.getPath().split(":");
                 Log.v(TAG,file.getPath());
@@ -143,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
                 Log.v(TAG, "File name: " + fileName);
-            }
+            }*/
+            fileName = getFileName(selectedFile);
             Log.v(TAG,fileName);
 
 
@@ -202,5 +205,27 @@ public class MainActivity extends AppCompatActivity {
             return noImage;
         }
 
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int split = result.lastIndexOf('/');
+            if (split != -1) {
+                result = result.substring(split + 1);
+            }
+        }
+        return result;
     }
 }
