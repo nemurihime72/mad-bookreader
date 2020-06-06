@@ -19,7 +19,7 @@
         <ImageView
             android:id="@+id/bookPic"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:background="@android:color/black"/>
         
@@ -28,7 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Book Title"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:background="@color/colorDarkWhite"/>
     </LinearLayout>
 
 
