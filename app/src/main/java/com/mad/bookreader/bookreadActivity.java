@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -32,8 +33,10 @@ public class bookreadActivity extends AppCompatActivity {
     String pdfUri;
     CountDownTimer tapCountdown;
     Uri uri;
-    private final static String TAG="bookreadActivity.java";
+    private final static String TAG= "bookreadActivity.java";
 
+    public String GLOBAL_PREFS = "MyPrefs";
+    SharedPreferences sharedPreferences;
     //DB for this part
     public static int pageLastRead=0;
     public static int pageSwipeDirection=0;
@@ -101,6 +104,9 @@ public class bookreadActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        sharedPreferences = getSharedPreferences(GLOBAL_PREFS, MODE_PRIVATE);
+        //SharedPreferences.Editor editor = sharedPreferences.edit();
+        //editor.putInt(pageSwipeDirection, )
         switch (item.getItemId()) {
             case R.id.scrolldirection:
                 if (pageSwipeDirection==1){

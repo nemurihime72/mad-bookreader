@@ -11,8 +11,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,13 +24,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -48,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Log.v(TAG,"Top toolbar set");
 
-
         //Create list and populate( populate To be removed)
         /*for (int i=0;i<50;i++){
         importedBooks b1 = new importedBooks("Manga", R.drawable.isla, "testpdf.pdf");
@@ -58,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         
         /*importedBooks b1=new importedBooks("manga",R.drawable.isla,"kendo.pdf");
         listBooks.add(b1);*/
-
-
 
         //Call the recyclerView function
         Log.v(TAG,"Displaying recyclerview of book items");
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
                 //intent to import files
-                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
 
@@ -116,11 +121,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -128,10 +128,22 @@ public class MainActivity extends AppCompatActivity {
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
-            Uri selectedFile = data.getData();
+            String fileName;
+            final Uri selectedFile = data.getData();
             final String selectedFileString = selectedFile.toString();
             Log.v(TAG,selectedFileString);
-            final String fileName =selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+            try {
+                File file = new File(selectedFile.getPath());
+                final String[] split = file.getPath().split(":");
+                Log.v(TAG,file.getPath());
+                String filePath = split[1];
+                File pdfFile = new File(filePath);
+                fileName = pdfFile.getName();
+                Log.v(TAG, "File name: " + fileName);
+            } catch (Exception e) {
+                fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
+                Log.v(TAG, "File name: " + fileName);
+            }
             Log.v(TAG,fileName);
 
 
@@ -149,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
 
                             String titleName=editTextTitle.getText().toString();
-                            importedBooks book = new importedBooks(titleName, R.drawable.no_image, selectedFileString);
+                            Bitmap thumbnail = getCover(selectedFile);
+                            importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
                             listBooks.add(book);
                             recyclerFunction(listBooks);
                         }
@@ -157,26 +170,37 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert=builder.create();
             Log.v(TAG,"Alert dialog successfully created");
             alert.show();
-
-
-            //File file = new File(selectedFile.getPath());
-            /*final String[] split = file.getPath().split(":");
-            Log.v(TAG,file.getPath());
-            String filePath = split[1];
-            File pdfFile = new File(filePath);*/
-
-
-
-
-
-
-
-
+            Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
 
            /* importedBooks book = new importedBooks(fileName, R.drawable.isla, pdfFile);
             listBooks.add(book);
             recyclerFunction(listBooks);*/
 
         }
+    }
+
+    public Bitmap getCover(Uri uri) {
+
+        PdfiumCore pdfiumCore = new PdfiumCore(getApplicationContext());
+        int pageNum = 0;
+        try {
+            ParcelFileDescriptor fd = getApplicationContext().getContentResolver().openFileDescriptor(uri, "r");;
+            PdfDocument pdfDocument = pdfiumCore.newDocument(fd);
+            pdfiumCore.openPage(pdfDocument, pageNum);
+            int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum);
+            int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum);
+
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            pdfiumCore.renderPageBitmap(pdfDocument, bitmap, pageNum, 0, 0,
+                    width, height);
+            pdfiumCore.closeDocument(pdfDocument);
+            return bitmap;
+        } catch (Exception ex) {
+            Log.v(TAG, "Error occurred at openPdf finding bitmap");
+            ex.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+
     }
 }
