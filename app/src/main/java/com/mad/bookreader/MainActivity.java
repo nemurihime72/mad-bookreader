@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.action_settings:
                 Log.v(TAG,"Settings selected");
                 Intent settingsIntent=new Intent(MainActivity.this,settingsMain.class);
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
+
 
 
             default:
