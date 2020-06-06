@@ -57,3 +57,5 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Settings option
 * Edit the cover image of book in recyclerview
 * Sorting of books by name,date added, last read
+* Allows user to jump to a page they want
+* Light/Dark mode
