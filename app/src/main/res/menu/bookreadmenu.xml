@@ -12,7 +12,7 @@
         app:showAsAction="never"/>
 
     <item
-        android:title="Color Mode"
+        android:title="Change to Dark/Light mode"
         app:showAsAction="never"/>
 
 </menu>
