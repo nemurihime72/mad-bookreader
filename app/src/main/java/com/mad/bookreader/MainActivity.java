@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerFunction(listBooks);
 
         Log.v(TAG, "Displaying previously imported books");
-        //displayBooks(listBooks);
+        displayBooks(listBooks);
     }
 
     // To convert from px measurement to dp
@@ -120,16 +120,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void displayBooks(List<List<String>> storedBooks){
+    public void displayBooks(List<importedBooks> bookList){
+        List<List<String>> storedBooks = new ArrayList<>();
+        importedBooks book;
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
+        db.deleteallBooks();
         Log.v(TAG, "Loading booking in DB");
-        //db.deleteallBooks();
         storedBooks = db.startBooks(storedBooks);
-        Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
-        Bundle bookList = new Bundle();
-        bookList.putSerializable("ARRAYLIST", (Serializable) storedBooks);
-        intent.putExtra("BUNDLE", bookList);
-        startActivity(intent);
+        for (int i = 0; i < storedBooks.get(1).size(); i++){
+            Uri uri = Uri.parse(storedBooks.get(1).get(i));
+            Bitmap image =  getCover(uri);
+            book = new importedBooks(storedBooks.get(1).get(i), image, storedBooks.get(2).get(i));
+            bookList.add(book);
+            Log.v(TAG, "Book added: " + book.getTitle());
+        }
+        recyclerFunction(bookList);
+        /*Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
+        Bundle importBookList = new Bundle();
+        importBookList.putSerializable("ARRAYLIST", (Serializable) bookList);
+        intent.putExtra("BUNDLE", importBookList);
+        startActivity(intent);*/
     }
 
 
@@ -162,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
             fileName = getFileName(selectedFile);
             Log.v(TAG,fileName);
 
+            final BookDBHandler db = new BookDBHandler(this, null, null, 1);
 
             Log.v(TAG,"Alert dialog to prompt for book title creating");
             //alert dialog to prompt to edit name if wanted
@@ -177,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                             String titleName=editTextTitle.getText().toString();
                             Bitmap thumbnail = getCover(selectedFile);
                             importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
+                            db.addBook(titleName, selectedFileString);
                             listBooks.add(book);
                             recyclerFunction(listBooks);
                         }

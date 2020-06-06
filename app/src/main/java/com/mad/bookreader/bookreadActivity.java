@@ -53,10 +53,11 @@ public class bookreadActivity extends AppCompatActivity {
 
         Intent listBooks = getIntent();
         if(listBooks.hasExtra("BUNDLE ")){
-            Bundle bookList = listBooks.getBundleExtra("BUNDLE");
-            List<List<String>> storedBooks = (List<List<String>>) bookList.getSerializable("ARRAYLIST");
-            for(int i = 0; i < storedBooks.size(); i++){
-                loadPDF((storedBooks.get(0)).get(i), storedBooks.get(1).get(i));
+            Bundle importedBookList = listBooks.getBundleExtra("BUNDLE");
+            List<importedBooks> bookList = (List<importedBooks>) importedBookList.getSerializable("ARRAYLIST");
+            for(int i = 0; i < bookList.size(); i++){
+                importedBooks book = bookList.get(i);
+                loadPDF(book.getTitle(), book.getPdfUri());
             }
         }
 
@@ -77,18 +78,6 @@ public class bookreadActivity extends AppCompatActivity {
 
             //Find the PDFView and load the pdf from previous page to the view
             loadPDF(pdfName, pdfUri);
-            /*pdfview=findViewById(R.id.pdfView);
-            pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
-                @Override
-                public void onPageChanged(int page, int pageCount) {
-                    pageLastRead=pdfview.getCurrentPage();
-                    Log.v(TAG,"Page changed to: "+pageLastRead);
-                    if (pageLastRead+1==pdfview.getPageCount()){
-                        pageLastRead=0;
-                        Log.v(TAG,"Finished reading, page last read returned to the start");
-                    }
-                }
-            }).load();*/
             Log.v(TAG, "PDF loaded");
         }
 
