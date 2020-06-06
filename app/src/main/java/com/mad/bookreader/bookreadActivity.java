@@ -22,6 +22,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 
 import java.io.File;
+import java.util.List;
 
 public class bookreadActivity extends AppCompatActivity {
 
@@ -47,41 +48,49 @@ public class bookreadActivity extends AppCompatActivity {
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
 
+        //Get listBooks from MainActivity
+
+
+        Intent listBooks = getIntent();
+        if(listBooks.hasExtra("BUNDLE ")){
+            Bundle bookList = listBooks.getBundleExtra("BUNDLE");
+            List<List<String>> storedBooks = (List<List<String>>) bookList.getSerializable("ARRAYLIST");
+            for(int i = 0; i < storedBooks.size(); i++){
+                loadPDF((storedBooks.get(0)).get(i), storedBooks.get(1).get(i));
+            }
+        }
+
 
         //Get the pdf name from previous page
         Intent pdfPage=getIntent();
+        if (pdfPage.hasExtra("PdfName") | pdfPage.hasExtra("PdfUri")) {
 
-        //Setting variable pdfName as the name of the pdf file
-        Log.v(TAG,"Getting information from intent");
-        pdfName=pdfPage.getStringExtra("PdfName");
-        pdfUri = pdfPage.getStringExtra("PdfUri");
-        //since Uri is still string, convert back to Uri to load
-        uri = Uri.parse(pdfUri);
-        importedBooks book = new importedBooks(pdfName, 0, pdfUri);
-        dbHandler.addBook(book, 0);
+            //Setting variable pdfName as the name of the pdf file
+            Log.v(TAG, "Getting information from intent");
+            pdfName = pdfPage.getStringExtra("PdfName");
+            pdfUri = pdfPage.getStringExtra("PdfUri");
 
-        //Setting custom toolbar
-        Toolbar toolbar=findViewById(R.id.bookreadbar);
-        setSupportActionBar(toolbar);
-        Log.v(TAG,"Top toolbar set");
+            //Setting custom toolbar
+            Toolbar toolbar = findViewById(R.id.bookreadbar);
+            setSupportActionBar(toolbar);
+            Log.v(TAG, "Top toolbar set");
 
-
-        //Find the PDFView and load the pdf from previous page to the view
-        loadPDF(book);
-        /*pdfview=findViewById(R.id.pdfView);
-        pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
-            @Override
-            public void onPageChanged(int page, int pageCount) {
-                pageLastRead=pdfview.getCurrentPage();
-                Log.v(TAG,"Page changed to: "+pageLastRead);
-                if (pageLastRead+1==pdfview.getPageCount()){
-                    pageLastRead=0;
-                    Log.v(TAG,"Finished reading, page last read returned to the start");
+            //Find the PDFView and load the pdf from previous page to the view
+            loadPDF(pdfName, pdfUri);
+            /*pdfview=findViewById(R.id.pdfView);
+            pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
+                @Override
+                public void onPageChanged(int page, int pageCount) {
+                    pageLastRead=pdfview.getCurrentPage();
+                    Log.v(TAG,"Page changed to: "+pageLastRead);
+                    if (pageLastRead+1==pdfview.getPageCount()){
+                        pageLastRead=0;
+                        Log.v(TAG,"Finished reading, page last read returned to the start");
+                    }
                 }
-            }
-        }).load();*/
-        Log.v(TAG,"PDF loaded");
-
+            }).load();*/
+            Log.v(TAG, "PDF loaded");
+        }
 
 
 
@@ -96,9 +105,9 @@ public class bookreadActivity extends AppCompatActivity {
         });*/
     }
 
-    public void loadPDF(importedBooks book){
+    public void loadPDF(String pdfName, String pdfURI){
         //since Uri is still string, convert back to Uri to load
-        uri = Uri.parse(book.getPdfUri());
+        uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
         pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override

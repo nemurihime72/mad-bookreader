@@ -39,9 +39,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.siegmann.epublib.epub.Main;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG,"Displaying recyclerview of book items");
         recyclerFunction(listBooks);
 
-
-        //displayBooks(listsBooks);
+        Log.v(TAG, "Displaying previously imported books");
+        //displayBooks(listBooks);
     }
 
     // To convert from px measurement to dp
@@ -117,11 +120,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*public void displayBooks(List<importedBooks> storedBooks){
+    public void displayBooks(List<List<String>> storedBooks){
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
-        db.startBooks(storedBooks);
-
-    }*/
+        Log.v(TAG, "Loading booking in DB");
+        //db.deleteallBooks();
+        storedBooks = db.startBooks(storedBooks);
+        Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
+        Bundle bookList = new Bundle();
+        bookList.putSerializable("ARRAYLIST", (Serializable) storedBooks);
+        intent.putExtra("BUNDLE", bookList);
+        startActivity(intent);
+    }
 
 
 

@@ -27,6 +27,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         return new recyclerViewHolder(item);
     }
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
+        Log.v(TAG, "Setting up holder");
         String s = data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageBitmap(data.get(position).getImage());
