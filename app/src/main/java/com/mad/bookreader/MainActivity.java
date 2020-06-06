@@ -65,12 +65,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // To convert from px measurement to dp
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
+    // Get current screen width in px
     public static int getScreenWidth() {
-        Log.v(TAG,"Screen width : "+(Resources.getSystem().getDisplayMetrics().widthPixels)/130);
+        Log.v(TAG,"Screen width in px : "+(Resources.getSystem().getDisplayMetrics().widthPixels));
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 

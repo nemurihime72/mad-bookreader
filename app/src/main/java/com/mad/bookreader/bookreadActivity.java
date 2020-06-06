@@ -62,6 +62,7 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Find the PDFView and load the pdf from previous page to the view
         pdfview=findViewById(R.id.pdfView);
+        Log.v(TAG,"Setting pdf file onto the pdfviewer");
         pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
             @Override
             public void onPageChanged(int page, int pageCount) {
@@ -79,11 +80,6 @@ public class bookreadActivity extends AppCompatActivity {
 
 
         //pdfview.fromUri(pdfUri);
-
-        //Set instead of vertical scrolling, becomes horizontal scrolling, there will be a setting for this later on
-
-
-
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -106,7 +102,9 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
+                //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
@@ -123,6 +121,7 @@ public class bookreadActivity extends AppCompatActivity {
                     Log.v(TAG,"Setting scrolling to horizontal");
                     return true;
                 }
+                //Change from horizontal to vertical scrolling
                 else{
                     pageSwipeDirection=1;
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
