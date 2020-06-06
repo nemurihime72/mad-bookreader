@@ -55,3 +55,4 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Delete file
 * Screen rotation
 * Settings option
+* Edit the cover image of book in recyclerview
