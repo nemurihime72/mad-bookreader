@@ -48,10 +48,10 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                 v.getContext().startActivity(intent);
             }
         });
-        holder.imgbutton.setOnClickListener(new View.OnClickListener() {
+        holder.imgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                PopupMenu popup = new PopupMenu(v.getContext(),holder.imgbutton);
+                PopupMenu popup = new PopupMenu(v.getContext(), holder.imgButton);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.edit_delete, popup.getMenu());
                 popup.show();
@@ -61,10 +61,10 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                         switch (item.getItemId()) {
                             case R.id.deleteBook:
                                 Log.v(TAG,"Delete book");
-                                AlertDialog.Builder delalert=new AlertDialog.Builder(v.getContext());
-                                delalert.setMessage("Would you like to delete this book?");
-                                delalert.setCancelable(true);
-                                delalert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                AlertDialog.Builder delAlert=new AlertDialog.Builder(v.getContext());
+                                delAlert.setMessage("Would you like to delete this book?");
+                                delAlert.setCancelable(true);
+                                delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.v(TAG,"Deleting book");
                                         data.remove(holder.getAdapterPosition());
@@ -72,28 +72,28 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                         notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
                                     }
                                 });
-                                delalert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                delAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.v(TAG,"User choose not to delete book");
                                     }
                                 });
-                                AlertDialog alert= delalert.create();
+                                AlertDialog alert = delAlert.create();
                                 alert.setTitle("Delete book");
                                 alert.show();
 
 
                             case R.id.editBook:
-                                Log.v(TAG,"Editting book");
-                                AlertDialog.Builder editalert=new AlertDialog.Builder(v.getContext());
-                                View editView=LayoutInflater.from(v.getContext()).inflate(R.layout.dialogue,null);
+                                Log.v(TAG,"Editing book");
+                                AlertDialog.Builder editAlert = new AlertDialog.Builder(v.getContext());
+                                View editView = LayoutInflater.from(v.getContext()).inflate(R.layout.dialogue,null);
                                 final EditText titleEdit=editView.findViewById(R.id.fileTitle);
-                                editalert.setView(editView).setTitle("Edit title of book").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                editAlert.setView(editView).setTitle("Edit title of book").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        String newtitle=titleEdit.getText().toString();
-                                        data.get(position).setTitle(newtitle);
-                                        holder.txt.setText(newtitle);
+                                        String newTitle=titleEdit.getText().toString();
+                                        data.get(position).setTitle(newTitle);
+                                        holder.txt.setText(newTitle);
                                         Log.v(TAG,"New title set");
                                     }
                                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -102,13 +102,10 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                         Log.v(TAG,"Edit cancelled");
                                     }
                                 });
-                                AlertDialog alert2=editalert.create();
+                                AlertDialog alert2=editAlert.create();
                                 alert2.show();
-                                return true;
-
+                                //return true;
                         }
-
-
                         return false;
                     }
                 });

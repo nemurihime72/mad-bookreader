@@ -78,12 +78,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void recyclerFunction(List<importedBooks> bList) {
         //function to display recyclerview
-        RecyclerView rview = (RecyclerView) findViewById(R.id.bookCycler);
+        RecyclerView rView = (RecyclerView) findViewById(R.id.bookCycler);
         recyclerAdaptor rAdaptor = new recyclerAdaptor(bList);
         int spanCount=pxToDp(getScreenWidth())/130;
         GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
-        rview.setLayoutManager(gLayoutManager);
-        rview.setAdapter(rAdaptor);
+        rView.setLayoutManager(gLayoutManager);
+        rView.setAdapter(rAdaptor);
     }
 
     @Override
@@ -120,8 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
@@ -159,10 +157,14 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String titleName=editTextTitle.getText().toString();
-                            Bitmap thumbnail = getCover(selectedFile);
-                            importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
-                            listBooks.add(book);
-                            recyclerFunction(listBooks);
+                            if (titleName.equals("") || titleName.equals(null)) {
+                                Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Bitmap thumbnail = getCover(selectedFile);
+                                importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
+                                listBooks.add(book);
+                                recyclerFunction(listBooks);
+                            }
                         }
                     });
             AlertDialog alert=builder.create();

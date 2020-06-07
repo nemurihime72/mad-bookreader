@@ -16,13 +16,13 @@ public class recyclerViewHolder extends RecyclerView.ViewHolder {
     ImageView img;
     CardView cardView;
     String pdfName;
-    ImageButton imgbutton;
+    ImageButton imgButton;
 
     public recyclerViewHolder(View itemView){
         super(itemView);
         txt=itemView.findViewById(R.id.nameOfBook);
         img=itemView.findViewById(R.id.bookPic);
         cardView=itemView.findViewById(R.id.cardid);
-        imgbutton=itemView.findViewById(R.id.editdeletebutton);
+        imgButton=itemView.findViewById(R.id.editdeletebutton);
     }
 }
