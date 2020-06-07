@@ -70,3 +70,4 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Made grid view display number of items in a row depending on the width of the device
 * Edit feature to edit title of book
 * Deleting feature to delete book from the recyclerview
+* Delete all books

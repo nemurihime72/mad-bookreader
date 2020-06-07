@@ -102,10 +102,36 @@ public class MainActivity extends AppCompatActivity {
         final BookDBHandler db = new BookDBHandler(this,null, null, 1);
         switch (item.getItemId()) {
             case R.id.deleteallbooks:
-                Log.v(TAG,"Delete all books");
-                db.deleteallBooks();
-                listBooks.clear();
-                displayBooks(listBooks);
+                if (listBooks.size()==0){
+                    Log.v(TAG,"No books to delete");
+                    Toast.makeText(this,"No books imported",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.v(TAG,"Delete all books");
+                    androidx.appcompat.app.AlertDialog.Builder delAlert=new androidx.appcompat.app.AlertDialog.Builder(this);
+                    delAlert.setMessage("Would you like to delete all the books?");
+                    delAlert.setCancelable(true);
+                    delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.v(TAG,"Deleting all book");
+                            db.deleteallBooks();
+                            listBooks.clear();
+                            displayBooks(listBooks);
+                            Log.v(TAG,"All books deleted");
+                            Toast.makeText(getApplicationContext(),"All books deleted",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    delAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.v(TAG,"User choose not to delete all books");
+                            Toast.makeText(getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    androidx.appcompat.app.AlertDialog alert = delAlert.create();
+                    alert.setTitle("Delete books");
+                    alert.show();
+                }
                 return true;
 
 
