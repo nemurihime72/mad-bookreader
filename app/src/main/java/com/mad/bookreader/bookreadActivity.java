@@ -42,7 +42,7 @@ public class bookreadActivity extends AppCompatActivity {
 
     //DB for this part
     public static int pageLastRead=0;
-    public static int pageSwipeDirection; ;
+    public static int pageSwipeDirection; 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
