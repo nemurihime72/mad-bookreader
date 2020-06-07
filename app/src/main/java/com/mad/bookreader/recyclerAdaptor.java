@@ -10,12 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +46,27 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                intent.putExtra("PdfUri", uri);
-                intent.putExtra("PdfName", p);
-                Log.v(TAG,"PDF put inside intent, going to the book read activity now");
-                v.getContext().startActivity(intent);
+                Uri fileUri = Uri.parse(uri);
+                File file = new File(fileUri.getPath());
+                String[] split = file.getPath().split(":");
+                String filePath = split[1];
+                Log.v(TAG, filePath);
+                File pdfFile = new File(filePath);
+                if (pdfFile.exists()) {
+                    Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                    intent.putExtra("PdfUri", uri);
+                    intent.putExtra("PdfName", p);
+                    Log.v(TAG,"PDF put inside intent, going to the book read activity now");
+                    v.getContext().startActivity(intent);
+                }
+                else {
+                    BookDBHandler db = new BookDBHandler(v.getContext(), null, null, 1);
+                    Toast.makeText(v.getContext(), "File not found, deleting book from database", Toast.LENGTH_SHORT).show();
+                    db.deleteBook(p);
+                    data.remove(holder.getAdapterPosition());
+                    notifyItemRemoved(holder.getAdapterPosition());
+                    notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
+                }
             }
         });
         holder.imgButton.setOnClickListener(new View.OnClickListener() {
