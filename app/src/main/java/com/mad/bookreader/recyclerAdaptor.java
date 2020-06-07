@@ -48,6 +48,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
             public void onClick(View v) {
                 Uri fileUri = Uri.parse(uri);
                 File file = new File(fileUri.getPath());
+                Log.v(TAG, file.toString());
                 String[] split = file.getPath().split(":");
                 String filePath = split[1];
                 Log.v(TAG, filePath);
