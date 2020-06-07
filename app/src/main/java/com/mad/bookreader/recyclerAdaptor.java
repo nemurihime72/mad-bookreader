@@ -81,6 +81,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                 AlertDialog alert = delAlert.create();
                                 alert.setTitle("Delete book");
                                 alert.show();
+                                return true;
 
 
                             case R.id.editBook:
@@ -105,6 +106,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                 AlertDialog alert2=editAlert.create();
                                 alert2.show();
                                 //return true;
+                                return true;
                         }
                         return false;
                     }
