@@ -35,7 +35,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
     }
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
         Log.v(TAG, "Setting up holder");
-        String s = data.get(position).getTitle();
+        final String s = data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageBitmap(data.get(position).getImage());
         final String p = data.get(position).getPdfName();
@@ -61,6 +61,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.deleteBook:
+                                final BookDBHandler db = new BookDBHandler(v.getContext(),null, null, 1);
                                 Log.v(TAG,"Delete book");
                                 AlertDialog.Builder delAlert=new AlertDialog.Builder(v.getContext());
                                 delAlert.setMessage("Would you like to delete this book?");
@@ -68,6 +69,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                 delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.v(TAG,"Deleting book");
+                                        db.deleteBook(s);
                                         data.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
                                         notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
