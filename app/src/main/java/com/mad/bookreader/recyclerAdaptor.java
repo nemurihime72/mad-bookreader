@@ -1,12 +1,19 @@
 package com.mad.bookreader;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -42,7 +49,73 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                 v.getContext().startActivity(intent);
             }
         });
+        holder.imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                PopupMenu popup = new PopupMenu(v.getContext(), holder.imgButton);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.edit_delete, popup.getMenu());
+                popup.show();
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.deleteBook:
+                                Log.v(TAG,"Delete book");
+                                AlertDialog.Builder delAlert=new AlertDialog.Builder(v.getContext());
+                                delAlert.setMessage("Would you like to delete this book?");
+                                delAlert.setCancelable(true);
+                                delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.v(TAG,"Deleting book");
+                                        data.remove(holder.getAdapterPosition());
+                                        notifyItemRemoved(holder.getAdapterPosition());
+                                        notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
+                                    }
+                                });
+                                delAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.v(TAG,"User choose not to delete book");
+                                    }
+                                });
+                                AlertDialog alert = delAlert.create();
+                                alert.setTitle("Delete book");
+                                alert.show();
+                                return true;
+
+
+                            case R.id.editBook:
+                                Log.v(TAG,"Editing book");
+                                AlertDialog.Builder editAlert = new AlertDialog.Builder(v.getContext());
+                                View editView = LayoutInflater.from(v.getContext()).inflate(R.layout.dialogue,null);
+                                final EditText titleEdit=editView.findViewById(R.id.fileTitle);
+                                editAlert.setView(editView).setTitle("Edit title of book").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String newTitle=titleEdit.getText().toString();
+                                        data.get(position).setTitle(newTitle);
+                                        holder.txt.setText(newTitle);
+                                        Log.v(TAG,"New title set");
+                                    }
+                                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.v(TAG,"Edit cancelled");
+                                    }
+                                });
+                                AlertDialog alert2=editAlert.create();
+                                alert2.show();
+                                //return true;
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
     }
+
 
     public int getItemCount(){
         return data.size();

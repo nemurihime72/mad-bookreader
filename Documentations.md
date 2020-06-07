@@ -3,6 +3,15 @@
 Used barkteksc PdfViewer v1.6.0: 
 implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
+# Stage 1
+## All implementation problem faced
+* epub (pushed to stage 2)
+* Page change effect was not what we wanted (solved by downgrading the pdfviewer to 1.6.0)
+* Scrolling direction issues (solved by reloading the pdfviewer every time the "Change scroll direction" option is selected)
+* Grid layout items displayed per row 
+(solved by making a function to calculate screen width and dividing by cardview size to determine number of items per row)
+* Importing files to "Assets" folder of the app (solved by getting and storing the uri of the file instead)
+
 ## Week 3:
 ### Planning of activities to be added into the book reader
 * Library of books
@@ -59,3 +68,5 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Created 2 different methods to scroll when reading book, horizontal and vertical
 * Created a page for settings and a new custom app bar
 * Made grid view display number of items in a row depending on the width of the device
+* Edit feature to edit title of book
+* Deleting feature to delete book from the recyclerview
