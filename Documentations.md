@@ -6,12 +6,20 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 # Stage 1
 ## All implementation problem faced
 * epub (pushed to stage 2)
-* Error with getting file path (since ming wei and arrick's file path is /document/5 and ryan's is different so ming wei and arrick was unable to load the pdf file successfully)
+* Error with getting file path (since ming wei and arrick's file path is /document/5 and ryan's is real path so ming wei and arrick was unable to load the pdf file successfully)
 * Page change effect was not what we wanted (solved by downgrading the pdfviewer to 1.6.0)
 * Scrolling direction issues (solved by reloading the pdfviewer every time the "Change scroll direction" option is selected)
 * Grid layout items displayed per row 
 (solved by making a function to calculate screen width and dividing by cardview size to determine number of items per row)
-* Importing files to "Assets" folder of the app (solved by getting and storing the uri of the file instead)
+* Impossible to import files to "Assets" folder of the app (solved by getting and storing the uri of the file instead)
+* Scrolling direction was not being saved properly i.e. exiting the app and re entering and loading up a pdf would not use the saved scrolling direction (solved)
+* Last page read was loading incorrectly on change of the scrolling direction (solved)
+* Certain intents did not put the extra string before sending to another activity
+* Could not get bitmap of first page for thumbnail (solved by using pdfiumcore)
+* App bar cannot hide and show on touch or click
+* Delete book alert dialog would show edit book dialog (solved)
+* Uri was not persistent throughout sessions, closing the app and reopening meant books could not be opened again (solved by making Uri persistent throughout reboots of phone)
+* Could not delete entry from recycler view and database if app found that file no longer exists and cannot open to read it (due to the file path differences between Ryan and Ming Wei's and Arrick's)
 
 ## Week 3:
 ### Planning of activities to be added into the book reader
