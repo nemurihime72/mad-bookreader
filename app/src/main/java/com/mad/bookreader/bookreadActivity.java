@@ -22,6 +22,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class bookreadActivity extends AppCompatActivity {
@@ -51,7 +52,7 @@ public class bookreadActivity extends AppCompatActivity {
         //Get listBooks from MainActivity
 
 
-        Intent listBooks = getIntent();
+       /* Intent listBooks = getIntent();
         if(listBooks.hasExtra("BUNDLE ")){
             Bundle importedBookList = listBooks.getBundleExtra("BUNDLE");
             List<importedBooks> bookList = (List<importedBooks>) importedBookList.getSerializable("ARRAYLIST");
@@ -59,7 +60,10 @@ public class bookreadActivity extends AppCompatActivity {
                 importedBooks book = bookList.get(i);
                 loadPDF(book.getTitle(), book.getPdfUri());
             }
-        }
+        }*/
+        //List<List<String>> storedbooks =  new ArrayList<>();
+       //storedbooks = dbHandler.startBooks(storedbooks);
+       //for (int i, )
 
 
         //Get the pdf name from previous page
@@ -95,6 +99,7 @@ public class bookreadActivity extends AppCompatActivity {
     }
 
     public void loadPDF(String pdfName, String pdfURI){
+        final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
@@ -104,7 +109,7 @@ public class bookreadActivity extends AppCompatActivity {
                 pageLastRead = pdfview.getCurrentPage();
                 Log.v(TAG,"Page changed to: "+pageLastRead);
                 if (pageLastRead+1==pdfview.getPageCount()){
-                    pageLastRead = 0;
+                    pageLastRead = 0;//dbHandler.lastPage();
                     Log.v(TAG,"Finished reading, page returned to the start");
                 }
             }

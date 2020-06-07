@@ -124,20 +124,22 @@ public class MainActivity extends AppCompatActivity {
         List<List<String>> storedBooks = new ArrayList<>();
         importedBooks book;
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
-        db.deleteallBooks();
-        Log.v(TAG, "Loading booking in DB");
+        //db.deleteallBooks();
+        Log.v(TAG, "Loading books in DB");
         storedBooks = db.startBooks(storedBooks);
+        Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
             Uri uri = Uri.parse(storedBooks.get(1).get(i));
             Bitmap image =  getCover(uri);
-            book = new importedBooks(storedBooks.get(1).get(i), image, storedBooks.get(2).get(i));
+            book = new importedBooks(storedBooks.get(0).get(i), image, storedBooks.get(1).get(i));
             bookList.add(book);
             Log.v(TAG, "Book added: " + book.getTitle());
         }
         recyclerFunction(bookList);
         /*Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
         Bundle importBookList = new Bundle();
-        importBookList.putSerializable("ARRAYLIST", (Serializable) bookList);
+        importBookList.putSerializable("PDFNAMELIST", (Serializable) storedBooks.get(0));
+        importBookList.putSerializable("PDFURI");
         intent.putExtra("BUNDLE", importBookList);
         startActivity(intent);*/
     }
