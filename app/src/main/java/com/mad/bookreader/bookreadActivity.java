@@ -101,7 +101,7 @@ public class bookreadActivity extends AppCompatActivity {
 
     public void loadPDF(final String pdfName, final String pdfURI){
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName);
+        pageLastRead = dbHandler.lastPage(pdfName) + 1;
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
