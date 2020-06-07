@@ -1,7 +1,7 @@
 # Team members and roles
 ## MAD class T02, group 5
 ### Leader: 
-* Ryan lee rui yuan (S10195732)
+* Ryan Lee Rui Yuan (S10195732)
 ### Member: 
 * Kwong Ming Wei (S10195172)
 * Arrick Tee Ren Yi (S10198673)
