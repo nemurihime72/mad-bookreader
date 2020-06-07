@@ -6,6 +6,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 # Stage 1
 ## All implementation problem faced
 * epub (pushed to stage 2)
+* Error with getting file path (since ming wei and arrick's file path is /document/5 and ryan's is different so ming wei and arrick was unable to load the pdf file successfully)
 * Page change effect was not what we wanted (solved by downgrading the pdfviewer to 1.6.0)
 * Scrolling direction issues (solved by reloading the pdfviewer every time the "Change scroll direction" option is selected)
 * Grid layout items displayed per row 
