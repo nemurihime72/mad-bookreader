@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -46,7 +48,7 @@ public class bookreadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
-
+        LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
 
 
         //Get listBooks from MainActivity
@@ -79,6 +81,7 @@ public class bookreadActivity extends AppCompatActivity {
             //Setting custom toolbar
             Toolbar toolbar = findViewById(R.id.bookreadbar);
             setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle(pdfName);
             Log.v(TAG, "Top toolbar set");
 
             //Find the PDFView and load the pdf from previous page to the view
@@ -179,10 +182,10 @@ public class bookreadActivity extends AppCompatActivity {
     }
 
     private void setTapCountdown() {
+        getSupportActionBar().show();
         tapCountdown = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                getSupportActionBar().show();
                 Log.v(TAG, "Countdown for app bar: " + millisUntilFinished/1000);
             }
 
