@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -39,15 +40,14 @@ public class bookreadActivity extends AppCompatActivity {
 
     //DB for this part
     public static int pageLastRead=0;
-    public static int pageSwipeDirection=0 ;
+    public static int pageSwipeDirection; ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
 
-        //Create database handler
-        BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+
 
         //Get listBooks from MainActivity
 
@@ -85,6 +85,11 @@ public class bookreadActivity extends AppCompatActivity {
             loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
         }
+
+        //Create database handler
+        BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+        importedBooks book= dbHandler.findBookName(pdfName);
+
 
 
 
