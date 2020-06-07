@@ -112,6 +112,7 @@ public class bookreadActivity extends AppCompatActivity {
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
+        pageSwipeDirection = dbHandler.pageSwipe(pdfName);
         if (pageSwipeDirection == 0) {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
@@ -127,8 +128,8 @@ public class bookreadActivity extends AppCompatActivity {
             }).load();
         }
         //Change from horizontal to vertical scrolling
-        if (pageSwipeDirection==1){
-            pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 2).onPageChange(new OnPageChangeListener() {
+        if (pageSwipeDirection == 1){
+            pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
                     pageLastRead = pdfview.getCurrentPage();
@@ -153,6 +154,7 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+        pageLastRead = dbHandler.lastPage(pdfName);
         switch (item.getItemId()) {
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
