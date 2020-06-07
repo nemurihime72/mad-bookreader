@@ -203,6 +203,13 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.execSQL(UPDATE_LAST_PAGE);
     }
 
+    public void updatePageSwipe(String pdfName,int direction){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction + "\"" +  " WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        Log.v(TAG, UPDATE_SWIPE);
+        db.execSQL(UPDATE_SWIPE);
+    }
+
     //Finds number of books(rows) in the database
     public @Nullable int noOfRows(){
         int rows = 0;
