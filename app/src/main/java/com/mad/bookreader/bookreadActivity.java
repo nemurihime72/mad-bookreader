@@ -107,7 +107,7 @@ public class bookreadActivity extends AppCompatActivity {
 
     public void loadPDF(final String pdfName, final String pdfURI,int pageSwipeDirection) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName) + 1;
+        pageLastRead = dbHandler.lastPage(pdfName);
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
@@ -122,12 +122,13 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
+                    dbHandler.updateLastPage(pdfName,pageLastRead);
                 }
             }).load();
         }
         //Change from horizontal to vertical scrolling
-        else if (pageSwipeDirection==1){
-            pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
+        if (pageSwipeDirection==1){
+            pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 2).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
                     pageLastRead = pdfview.getCurrentPage();
@@ -136,6 +137,7 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
+                    dbHandler.updateLastPage(pdfName,pageLastRead);
                 }
             }).load();
         }
@@ -150,7 +152,7 @@ public class bookreadActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+        final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         switch (item.getItemId()) {
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
@@ -167,6 +169,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
+                            dbHandler.updateLastPage(pdfName,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
@@ -185,6 +188,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
+                            dbHandler.updateLastPage(pdfName,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
