@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.deleteallbooks:
                 Log.v(TAG,"Delete all books");
                 db.deleteallBooks();
+                listBooks.clear();
+                displayBooks(listBooks);
                 return true;
 
 

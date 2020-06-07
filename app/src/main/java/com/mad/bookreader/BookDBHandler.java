@@ -152,7 +152,12 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
     //deletes all books from the database
     public boolean deleteallBooks() {
-        boolean result = false;
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete(TABLE_BOOKS,null,null);
+        db.close();
+        return true;
+
+        /*boolean result = false;
         String query = "SELECT * FROM " + TABLE_BOOKS;
         SQLiteDatabase db = this.getWritableDatabase();
         int rows = noOfRows();
@@ -167,7 +172,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             }
         }
         db.close();
-        return result;
+        return result; */
     }
 
     //Finds page number last read with pdfName
