@@ -121,6 +121,7 @@ public class bookreadActivity extends AppCompatActivity {
                 Log.v(TAG,"Page changed to: "+pageLastRead);
                 if (pageLastRead+1==pdfview.getPageCount()){
                     pageLastRead = 0;//dbHandler.lastPage();
+                    dbHandler.updateLastPage(pdfName, pageLastRead);
                     Log.v(TAG,"Finished reading, page returned to the start");
                 }
             }
@@ -133,17 +134,17 @@ public class bookreadActivity extends AppCompatActivity {
         inflater.inflate(R.menu.bookreadmenu,menu);
         return super.onCreateOptionsMenu(menu);
     }
-    /*sharedPreferences = getSharedPreferences(GLOBAL_PREFS, MODE_PRIVATE);
-    SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(pageSwipeDirection, )*/
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         switch (item.getItemId()) {
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
+                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -161,6 +162,7 @@ public class bookreadActivity extends AppCompatActivity {
                 //Change from horizontal to vertical scrolling
                 else{
                     pageSwipeDirection=1;
+                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {

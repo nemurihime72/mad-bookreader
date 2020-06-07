@@ -210,6 +210,24 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.execSQL(UPDATE_SWIPE);
     }
 
+    public int pageSwipe(String pdfName) {
+        int pageSwipe = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + pdfName + "\"";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            Log.v(TAG, "Getting swipe direction from database");
+            pageSwipe = Integer.parseInt(cursor.getString(4));
+            Log.v(TAG, "Page swipe direction int is " + pageSwipe);
+            cursor.close();
+            db.close();
+        } else {
+            Log.v(TAG, "cursor did not move to first in pageswipe");
+        }
+        return pageSwipe;
+    }
+
     //Finds number of books(rows) in the database
     public @Nullable int noOfRows(){
         int rows = 0;
