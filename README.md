@@ -49,6 +49,10 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ### Set title
 ![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_11_04-PM.png)
 
+## Editing and Deleting
+### Edit or delete existing book title
+![Import button](https://www.picturepaste.ca/images/2020/06/07/Android-Emulator---Pixel_3_XL_API_28_5554-6_8_2020-4_53_39-AM.png)
+
 # Future plans
 * Implement an EPUB reader (hopefully)
 * Implement a search bar
