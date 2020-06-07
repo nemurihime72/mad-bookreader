@@ -98,8 +98,9 @@ public class bookreadActivity extends AppCompatActivity {
         });*/
     }
 
-    public void loadPDF(String pdfName, String pdfURI){
+    public void loadPDF(final String pdfName, final String pdfURI){
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+        pageLastRead = dbHandler.lastPage(pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
@@ -107,6 +108,7 @@ public class bookreadActivity extends AppCompatActivity {
             @Override
             public void onPageChanged(int page, int pageCount) {
                 pageLastRead = pdfview.getCurrentPage();
+                dbHandler.updateLastPage(pdfURI, pdfview.getCurrentPage());
                 Log.v(TAG,"Page changed to: "+pageLastRead);
                 if (pageLastRead+1==pdfview.getPageCount()){
                     pageLastRead = 0;//dbHandler.lastPage();
