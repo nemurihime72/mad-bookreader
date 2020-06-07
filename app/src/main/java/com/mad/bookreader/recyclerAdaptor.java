@@ -46,7 +46,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri fileUri = Uri.parse(uri);
+                /*Uri fileUri = Uri.parse(uri);
                 File file = new File(fileUri.getPath());
                 Log.v(TAG, file.toString());
                 String[] split = file.getPath().split(":");
@@ -67,7 +67,12 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                     data.remove(holder.getAdapterPosition());
                     notifyItemRemoved(holder.getAdapterPosition());
                     notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
-                }
+                }*/
+                Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                intent.putExtra("PdfUri", uri);
+                intent.putExtra("PdfName", p);
+                Log.v(TAG,"PDF put inside intent, going to the book read activity now");
+                v.getContext().startActivity(intent);
             }
         });
         holder.imgButton.setOnClickListener(new View.OnClickListener() {
@@ -145,4 +150,5 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
     public int getItemCount(){
         return data.size();
     }
+
 }
