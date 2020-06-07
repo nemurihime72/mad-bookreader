@@ -99,7 +99,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final BookDBHandler db = new BookDBHandler(this,null, null, 1);
         switch (item.getItemId()) {
+            case R.id.deleteallbooks:
+                Log.v(TAG,"Delete all books");
+                db.deleteallBooks();
+                listBooks.clear();
+                displayBooks(listBooks);
+                return true;
+
 
             case R.id.action_settings:
                 Log.v(TAG,"Settings selected");
@@ -115,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
-
-
 
             default:
                 return super.onOptionsItemSelected(item);

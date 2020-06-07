@@ -11,4 +11,10 @@
     android:title="@string/settings_name"
     app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/deleteallbooks"
+        android:title="@string/deletallbook"
+        app:showAsAction="never"/>
+
+
 </menu>

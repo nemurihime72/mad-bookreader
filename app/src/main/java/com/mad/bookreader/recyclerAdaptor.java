@@ -52,6 +52,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         holder.imgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                final BookDBHandler db = new BookDBHandler(v.getContext(),null, null, 1);
                 PopupMenu popup = new PopupMenu(v.getContext(), holder.imgButton);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.edit_delete, popup.getMenu());
@@ -61,7 +62,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.deleteBook:
-                                final BookDBHandler db = new BookDBHandler(v.getContext(),null, null, 1);
                                 Log.v(TAG,"Delete book");
                                 AlertDialog.Builder delAlert=new AlertDialog.Builder(v.getContext());
                                 delAlert.setMessage("Would you like to delete this book?");
@@ -95,9 +95,11 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
                                 editAlert.setView(editView).setTitle("Edit title of book").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        String oldTitle=data.get(position).getTitle();
                                         String newTitle=titleEdit.getText().toString();
                                         data.get(position).setTitle(newTitle);
                                         holder.txt.setText(newTitle);
+                                        db.editTitleBook(oldTitle,newTitle);
                                         Log.v(TAG,"New title set");
                                     }
                                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
