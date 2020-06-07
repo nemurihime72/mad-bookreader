@@ -114,6 +114,24 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return bookDetails;
     }*/
 
+    public boolean editTitleBook(String bookTitle,String newBookTitle){
+        boolean result= false;
+        String query="SELECT * FROM "+ TABLE_BOOKS+" WHERE "+COLUMN_NAME+" = \""+bookTitle+"\"";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            int id = Integer.parseInt(cursor.getString(0));
+            String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_NAME+" =\""+bookTitle+"\"");
+            db.execSQL(query2);
+            cursor.close();
+            result = true;
+        }
+        db.close();
+        return result;
+
+    }
+
     //Deletes book from database using title of book by finding its ID
     public boolean deleteBook(String bookTitle) {
         boolean result = false;
@@ -121,7 +139,6 @@ public class BookDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.rawQuery(query, null);
-        importedBooks book = new importedBooks();
 
         if (cursor.moveToFirst()) {
             int id = Integer.parseInt(cursor.getString(0));
