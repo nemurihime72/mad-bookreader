@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -109,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
                 //intent to import only pdf
-                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
@@ -155,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             String fileName;
             //get Uri from data passed from intent
             final Uri selectedFile = data.getData();
+            getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //convert Uri to string for use when adding as object to list
             final String selectedFileString = selectedFile.toString();
             Log.v(TAG,selectedFileString);
