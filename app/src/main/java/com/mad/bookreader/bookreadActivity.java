@@ -188,6 +188,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
+                            dbHandler.updateLastPage(pdfName,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
