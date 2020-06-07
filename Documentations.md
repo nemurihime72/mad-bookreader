@@ -10,6 +10,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Scrolling direction issues (solved by reloading the pdfviewer every time the "Change scroll direction" option is selected)
 * Grid layout items displayed per row 
 (solved by making a function to calculate screen width and dividing by cardview size to determine number of items per row)
+* Importing files to "Assets" folder of the app (solved by getting and storing the uri of the file instead)
 
 ## Week 3:
 ### Planning of activities to be added into the book reader
