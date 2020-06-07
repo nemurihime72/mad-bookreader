@@ -197,7 +197,8 @@ public class BookDBHandler extends SQLiteOpenHelper {
     public void updateLastPage (String pdfName, int lastPageRead) {
         SQLiteDatabase db = this.getWritableDatabase();
         String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
-        Log.v(TAG, "Updating last page read for " + pdfName);
+        Log.v(TAG, UPDATE_LAST_PAGE);
+        Log.v(TAG, "Updating last page read for " + pdfName + " to " + lastPageRead);
         db.execSQL(UPDATE_LAST_PAGE);
     }
 

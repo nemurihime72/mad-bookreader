@@ -38,13 +38,15 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         final String s = data.get(position).getTitle();
         holder.txt.setText(s);
         holder.img.setImageBitmap(data.get(position).getImage());
-        final String p = data.get(position).getPdfName();
+        final String p = data.get(position).getTitle();
+        Log.v(TAG, "string p = " + p);
         final String uri = data.get(position).getPdfUri();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(v.getContext(),bookreadActivity.class);
                 intent.putExtra("PdfUri", uri);
+                intent.putExtra("PdfName", p);
                 Log.v(TAG,"PDF put inside intent, going to the book read activity now");
                 v.getContext().startActivity(intent);
             }
