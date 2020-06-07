@@ -88,7 +88,6 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        importedBooks book= dbHandler.findBookName(pdfName);
 
 
 

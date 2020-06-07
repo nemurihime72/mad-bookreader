@@ -91,36 +91,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         Log.v(TAG, "returning book: " + bookDetails.get(0));
         return bookDetails;
     }
-    public importedBooks findBookName(String name){
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + name + "\"";
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
-        importedBooks bookDetails=new importedBooks();
-        String title;
-        String uri;
-        int columnid;
-        int prevpage;
-        int swipe;
-
-        if (cursor.moveToFirst()) {
-            columnid=cursor.getInt(0);
-            title=cursor.getString(1);
-            uri=cursor.getString(2);
-            prevpage=cursor.getInt(3);
-            swipe=cursor.getInt(4);
-            cursor.close();
-        } else {
-            return null;
-        }
-        db.close();
-        bookDetails.setTitle(title);
-        bookDetails.setPdfUri(uri);
-        bookDetails.setColumnid(columnid);
-        bookDetails.setPrevpage(prevpage);
-        bookDetails.setSwipedirection(swipe);
-        return bookDetails;
-    }
 
     /*public ArrayList<String> findBookName(int id) {
         String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + id + "\"";
