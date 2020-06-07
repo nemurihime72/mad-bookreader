@@ -121,6 +121,7 @@ public class bookreadActivity extends AppCompatActivity {
                 Log.v(TAG,"Page changed to: "+pageLastRead);
                 if (pageLastRead+1==pdfview.getPageCount()){
                     pageLastRead = 0;//dbHandler.lastPage();
+                    dbHandler.updateLastPage(pdfName, pageLastRead);
                     Log.v(TAG,"Finished reading, page returned to the start");
                 }
             }
