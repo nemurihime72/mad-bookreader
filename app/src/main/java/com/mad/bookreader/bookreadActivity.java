@@ -113,7 +113,14 @@ public class bookreadActivity extends AppCompatActivity {
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
-        pdfview.fromUri(uri).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
+        boolean horizontal;
+        Log.v(TAG, "pdf swipe direction: " + dbHandler.pageSwipe(pdfName));
+        if (dbHandler.pageSwipe(pdfName) == 0) {
+            horizontal = true;
+        } else {
+            horizontal = false;
+        }
+        pdfview.fromUri(uri).swipeVertical(horizontal).defaultPage(pageLastRead).onPageChange(new OnPageChangeListener() {
             @Override
             public void onPageChanged(int page, int pageCount) {
                 pageLastRead = pdfview.getCurrentPage();
@@ -138,6 +145,7 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
+        pageSwipeDirection = dbHandler.pageSwipe(pdfName);
         switch (item.getItemId()) {
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
@@ -145,7 +153,7 @@ public class bookreadActivity extends AppCompatActivity {
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
                     dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
-                    pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                    pdfview.fromUri(uri).swipeVertical(false).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
                             pageLastRead=pdfview.getCurrentPage();
