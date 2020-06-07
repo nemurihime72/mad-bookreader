@@ -205,7 +205,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
     public void updatePageSwipe(String pdfName,int direction){
         SQLiteDatabase db = this.getWritableDatabase();
-        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction + "\"" +  " WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
         Log.v(TAG, UPDATE_SWIPE);
         db.execSQL(UPDATE_SWIPE);
     }
