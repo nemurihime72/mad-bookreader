@@ -2,6 +2,7 @@ package com.mad.bookreader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Call the recyclerView function
         Log.v(TAG,"Displaying recyclerview of book items");
-        recyclerFunction(listBooks);
+        //recyclerFunction(listBooks);
 
         Log.v(TAG, "Displaying previously imported books");
         displayBooks(listBooks);
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
+                
                 //intent to import only pdf
                 Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     public void displayBooks(List<importedBooks> bookList){
         List<List<String>> storedBooks = new ArrayList<>();

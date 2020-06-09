@@ -28,13 +28,13 @@
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
-            android:layout_height="33dp"
+            android:layout_height="40dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/nameOfBook"
                 android:layout_width="106dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="Book Title"
                 tools:layout_conversion_absoluteHeight="40dp"
@@ -45,7 +45,7 @@
             <ImageButton
                 android:id="@+id/editdeletebutton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/pluswhite"
                 android:src="@drawable/ic_baseline_more_vert_24"
                 tools:layout_conversion_absoluteHeight="40dp"
