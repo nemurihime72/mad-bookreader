@@ -25,5 +25,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/pageNumber"
         android:text="Page"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:paddingBottom="10dp"/>
 </LinearLayout>
