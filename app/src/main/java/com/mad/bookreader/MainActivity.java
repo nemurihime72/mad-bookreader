@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
-                
+
                 //intent to import only pdf
                 Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);

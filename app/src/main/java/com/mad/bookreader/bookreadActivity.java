@@ -37,17 +37,20 @@ public class bookreadActivity extends AppCompatActivity {
     String pdfUri;
     CountDownTimer tapCountdown;
     Uri uri;
+    TextView pageNo;
     private final static String TAG= "bookreadActivity.java";
 
     //DB for this part
     public static int pageLastRead=0;
     public static int pageSwipeDirection;
     public static String pdfName;
+    public static int noOfPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bookreadlayout);
+        pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
@@ -90,6 +93,7 @@ public class bookreadActivity extends AppCompatActivity {
             //Find the PDFView and load the pdf from previous page to the view
             loadPDF(pdfName, pdfUri,pageSwipeDirection);
             Log.v(TAG, "PDF loaded");
+
         }
 
 
@@ -117,8 +121,11 @@ public class bookreadActivity extends AppCompatActivity {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
+                    noOfPages=pdfview.getPageCount();
+                    Log.v(TAG,"Pages total: "+noOfPages);
                     pageLastRead = pdfview.getCurrentPage();
                     Log.v(TAG, "Page changed to: " + pageLastRead);
+                    pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
                     if (pageLastRead + 1 == pdfview.getPageCount()) {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
@@ -132,8 +139,11 @@ public class bookreadActivity extends AppCompatActivity {
             pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
+                    noOfPages=pdfview.getPageCount();
+                    Log.v(TAG,"Pages total: "+noOfPages);
                     pageLastRead = pdfview.getCurrentPage();
                     Log.v(TAG, "Page changed to: " + pageLastRead);
+                    pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
                     if (pageLastRead + 1 == pdfview.getPageCount()) {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
@@ -167,6 +177,7 @@ public class bookreadActivity extends AppCompatActivity {
                         public void onPageChanged(int page, int pageCount) {
                             pageLastRead=pdfview.getCurrentPage();
                             Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
                             if (pageLastRead+1==pdfview.getPageCount()){
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
@@ -186,6 +197,7 @@ public class bookreadActivity extends AppCompatActivity {
                         public void onPageChanged(int page, int pageCount) {
                             pageLastRead=pdfview.getCurrentPage();
                             Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
                             if (pageLastRead+1==pdfview.getPageCount()){
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
