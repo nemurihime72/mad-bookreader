@@ -12,7 +12,7 @@
         layout="@layout/bookread_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="12" />
+        android:layout_weight="10" />
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
