@@ -52,6 +52,8 @@ public class bookreadActivity extends AppCompatActivity {
         setContentView(R.layout.bookreadlayout);
         pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
+
+
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         pageSwipeDirection=dbHandler.pageSwipe(pdfName);
@@ -88,6 +90,14 @@ public class bookreadActivity extends AppCompatActivity {
             Toolbar toolbar = findViewById(R.id.bookreadbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(pdfName);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(v.getContext(),MainActivity.class);
+                    v.getContext().startActivity(intent);
+                }
+            });
             Log.v(TAG, "Top toolbar set");
 
             //Find the PDFView and load the pdf from previous page to the view

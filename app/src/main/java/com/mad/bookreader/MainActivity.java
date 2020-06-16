@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Call the recyclerView function
         Log.v(TAG,"Displaying recyclerview of book items");
-        //recyclerFunction(listBooks);
+        recyclerFunction(listBooks);
 
         Log.v(TAG, "Displaying previously imported books");
         displayBooks(listBooks);

@@ -1,7 +1,9 @@
 package com.mad.bookreader;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,11 +30,14 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
 
     private List<importedBooks> data;
 
+    private Context context;
+
     public recyclerAdaptor(List<importedBooks> input){
         data=input;
     }
     public recyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View item= LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerlayout,parent,false);
+        context=parent.getContext();
+        View item= LayoutInflater.from(context).inflate(R.layout.recyclerlayout,parent,false);
         Log.v(TAG,"View inflated with recyclerlayout set as the layout");
         return new recyclerViewHolder(item);
     }
@@ -40,6 +45,13 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> {
         Log.v(TAG, "Setting up holder");
         final String s = data.get(position).getTitle();
         holder.txt.setText(s);
+        //holder.txt.setBackgroundColor(Color.parseColor("#000000"));
+        BookDBHandler dbHandler = new BookDBHandler(context, null, null, 1);
+        int lastread=dbHandler.lastPage(s);
+        if (lastread != 0){
+            holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
+            holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
+        }
         holder.img.setImageBitmap(data.get(position).getImage());
         final String p = data.get(position).getTitle();
         Log.v(TAG, "string p = " + p);
