@@ -91,3 +91,5 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 ## Week 9
 ### Implementations done:
 * RecyclerView Title background color change when currently being read
+* Online pdf reader implemented
+* App icon
