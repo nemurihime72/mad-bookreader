@@ -106,6 +106,8 @@ public class bookreadActivity extends AppCompatActivity {
 
         }
 
+        
+
 
 
         //pdfview.fromUri(pdfUri);

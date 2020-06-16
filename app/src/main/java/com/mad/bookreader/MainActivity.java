@@ -102,6 +102,32 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler db = new BookDBHandler(this,null, null, 1);
         switch (item.getItemId()) {
+            case R.id.importOnline:
+                android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
+                View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
+                final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
+                onlineUrl.setHint("Enter URL here");
+                builder.setView(view).setTitle("Read online pdf")
+                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String url=onlineUrl.getText().toString();
+                                Log.v(TAG,"url is "+url);
+                                if (url.equals("") || url.equals(null)) {
+                                    Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
+                                    intent.putExtra("urllink",url);
+                                    Log.v(TAG,"Going to online pdf page now");
+                                    startActivity(intent);
+                                }
+                            }
+                        });
+                AlertDialog alerts=builder.create();
+                Log.v(TAG,"Alert dialog successfully created");
+                alerts.show();
+                return true;
+
             case R.id.deleteallbooks:
                 if (listBooks.size()==0){
                     Log.v(TAG,"No books to delete");
@@ -134,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
                     alert.show();
                 }
                 return true;
-
 
             case R.id.action_settings:
                 Log.v(TAG,"Settings selected");

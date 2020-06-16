@@ -52,8 +52,16 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:+'
     implementation 'androidx.constraintlayout:constraintlayout:+'
 }
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
 
+dependencies {
+    implementation 'com.github.kk121:File-Loader:1.2'
+}
 dependencies {
     implementation 'androidx.appcompat:appcompat:+'
     implementation 'androidx.constraintlayout:constraintlayout:+'
+    implementation 'com.karumi:dexter:5.0.0'
 }
