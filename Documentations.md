@@ -79,3 +79,15 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Edit feature to edit title of book
 * Deleting feature to delete book from the recyclerview
 * Delete all books
+
+## Week 8:
+### Implemetations done:
+
+# Stage 2
+## All implementation problem faced
+* -
+
+
+## Week 9
+### Implementations done:
+* RecyclerView Title background color change when currently being read
