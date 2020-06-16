@@ -24,6 +24,8 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Edit title of book after import
 * Delete book
 * Color change to green at recyclerview when book is currently being read
+* Online pdf reader
+* App icon
 
 ## Ryan Lee:
 * Import function with alertdialog to manually enter title
