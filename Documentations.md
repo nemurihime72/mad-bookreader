@@ -85,7 +85,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
 # Stage 2
 ## All implementation problem faced
-* -
+* 
 
 
 ## Week 9
