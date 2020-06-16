@@ -44,17 +44,17 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 ## Importing a book
 ### Click on the import button
-![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_22-PM_LI.jpg)
+![Import button](https://i.imgur.com/dAQ1rRh.jpg)
 
 ### Select the pdf file
 ![Import button](https://i.imgur.com/JS9yrRk.jpg)
 
 ### Set title
-![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_11_04-PM.png)
+![Import button](https://i.imgur.com/aN2KtBH.jpg)
 
 ## Editing and Deleting
 ### Edit or delete existing book title
-![Import button](https://imgur.com/uUbSw8N)
+![Import button](https://i.imgur.com/WOUft9m.jpg)
 ### Delete all books
 ![Import button](https://www.picturepaste.ca/images/2020/06/07/Android-Emulator---Pixel_3_XL_API_28_5554-6_8_2020-4_53_54-AM_LI.jpg)
 
