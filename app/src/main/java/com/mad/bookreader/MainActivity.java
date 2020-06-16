@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 File file = new File(selectedFile.getPath());
                 final String[] split = file.getPath().split(":");
                 Log.v(TAG,file.getPath());
-                String filePath = split[1];
+                String filePath = split[1];eh
                 File pdfFile = new File(filePath);
                 fileName = pdfFile.getName();
                 Log.v(TAG, "File name: " + fileName);

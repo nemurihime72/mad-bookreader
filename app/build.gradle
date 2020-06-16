@@ -44,6 +44,14 @@ repositories {
 }
 
 dependencies {
+    implementation('nl.siegmann.epublib:epublib-core:3.1') {
+        exclude group: 'org.slf4j'
+        exclude group: 'xmlpull'
+    }
+    implementation 'org.slf4j:slf4j-android:1.7.25'
+}
+
+dependencies {
     implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
     implementation 'com.github.barteksc:pdfium-android:1.9.0'
 }
