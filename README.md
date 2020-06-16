@@ -47,7 +47,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_22-PM_LI.jpg)
 
 ### Select the pdf file
-![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_10_46-PM.png)
+![Import button](https://imgur.com/JS9yrRk)
 
 ### Set title
 ![Import button](https://www.picturepaste.ca/images/2020/06/04/Android-Emulator---Pixel_3_XL_API_28_5554-6_4_2020-7_11_04-PM.png)
