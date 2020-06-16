@@ -23,6 +23,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Grid layout, number of items per row depends on screen width
 * Edit title of book after import
 * Delete book
+* Color change to green at recyclerview when book is currently being read
 
 ## Ryan Lee:
 * Import function with alertdialog to manually enter title
