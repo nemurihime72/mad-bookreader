@@ -4,22 +4,28 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
@@ -178,6 +184,46 @@ public class bookreadActivity extends AppCompatActivity {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         pageLastRead = dbHandler.lastPage(pdfName);
         switch (item.getItemId()) {
+            case R.id.goToPage:
+                android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
+                View view= LayoutInflater.from(this).inflate(R.layout.dialogue,null);
+                final EditText goToPage = (EditText) view.findViewById(R.id.fileTitle);
+                goToPage.setHint("Page no");
+                pagebuilder.setView(view).setTitle("Go To Page")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String pageNo1=goToPage.getText().toString();
+                                if (pageNo1.equals("") || pageNo1.equals(null)) {
+                                    Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    int pageNumber=Integer.parseInt(pageNo1);
+                                    pdfview.fromUri(uri).defaultPage(pageNumber+1).onPageChange(new OnPageChangeListener() {
+                                        @Override
+                                        public void onPageChanged(int page, int pageCount) {
+                                            pageLastRead=pdfview.getCurrentPage();
+                                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
+                                            if (pageLastRead+1==pdfview.getPageCount()){
+                                                pageLastRead=0;
+                                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                                            }
+                                            dbHandler.updateLastPage(pdfName,pageLastRead);
+                                        }
+                                    }).load();
+                                }
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.v(TAG,"Cancel \"Go to Page \" feature");
+                    }
+                });
+                AlertDialog pagealert=pagebuilder.create();
+                Log.v(TAG,"Alert dialog for \"Go to page\" successfully created");
+                pagealert.show();
+                return true;
+
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
                 //Change from vertical to horizontal
