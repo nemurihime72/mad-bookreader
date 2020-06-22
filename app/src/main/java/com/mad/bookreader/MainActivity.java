@@ -3,6 +3,7 @@ package com.mad.bookreader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "MainActivity.java";
 
     List<importedBooks> listBooks = new ArrayList<>();
+    private recyclerAdaptor rAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private void recyclerFunction(List<importedBooks> bList) {
         //function to display recyclerview
         RecyclerView rView = (RecyclerView) findViewById(R.id.bookCycler);
-        recyclerAdaptor rAdaptor = new recyclerAdaptor(bList);
+        rAdaptor = new recyclerAdaptor(bList);
         int spanCount=pxToDp(getScreenWidth())/130;
         GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
         rView.setLayoutManager(gLayoutManager);
@@ -95,6 +97,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        MenuItem searchItem=menu.findItem(R.id.action_search);
+        SearchView searchView=(SearchView)searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                rAdaptor.getFilter().filter(newText);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

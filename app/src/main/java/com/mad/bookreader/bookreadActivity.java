@@ -198,7 +198,7 @@ public class bookreadActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                                 } else {
                                     int pageNumber=Integer.parseInt(pageNo1);
-                                    pdfview.fromUri(uri).defaultPage(pageNumber+1).onPageChange(new OnPageChangeListener() {
+                                    pdfview.fromUri(uri).defaultPage(pageNumber).onPageChange(new OnPageChangeListener() {
                                         @Override
                                         public void onPageChanged(int page, int pageCount) {
                                             pageLastRead=pdfview.getCurrentPage();
