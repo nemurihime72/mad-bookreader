@@ -64,11 +64,16 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ![Import button]()
 
 # Future plans
+## Main Activity
 * Implement an EPUB reader (hopefully)
 * Implement a search bar
-* Screen rotation
 * Settings option
 * Edit the cover image of book in recyclerview
 * Sorting of books by name,date added, last read
+
+## Bookread activity
+* Screen rotation
 * Allows user to jump to a page they want
+
+## Settings activity
 * Light/Dark mode
