@@ -12,8 +12,4 @@
         android:title="@string/scroll_dir"
         app:showAsAction="never"/>
 
-    <item
-        android:title="@string/DLtheme"
-        app:showAsAction="never"/>
-
 </menu>

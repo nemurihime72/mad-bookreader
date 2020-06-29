@@ -8,16 +8,17 @@
     tools:context=".MainActivity">
 
 
-        <include
-            android:id="@+id/app_bar"
-            layout="@layout/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="251dp"
-            android:layout_weight="12" />
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="251dp"
+        android:layout_weight="12" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:background="@color/bgcolor">
 
 
         <androidx.recyclerview.widget.RecyclerView

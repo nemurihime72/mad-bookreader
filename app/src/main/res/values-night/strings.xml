@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MAD Book Reader</string>
+    <string name="settings_name">Settings</string>
+    <string name="go_to_page">Go to page</string>
+    <string name="DLtheme">Change to Dark/Light theme</string>
+    <string name="scroll_dir">Change scroll direction</string>
+    <string name="editbook">Edit</string>
+    <string name="deletebook">Delete</string>
+    <string name="deletallbook">Delete All Books</string>
+</resources>

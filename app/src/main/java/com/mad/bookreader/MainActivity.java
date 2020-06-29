@@ -2,6 +2,7 @@ package com.mad.bookreader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -11,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -54,11 +57,14 @@ public class MainActivity extends AppCompatActivity {
 
     List<importedBooks> listBooks = new ArrayList<>();
     private recyclerAdaptor rAdaptor;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences=getSharedPreferences("nightModePrefs", Context.MODE_PRIVATE);
+        checkNightModeSwitch();
         /*To add my own toolbar instead of the default*/
         Toolbar toolbar = findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -72,6 +78,13 @@ public class MainActivity extends AppCompatActivity {
         displayBooks(listBooks);
     }
 
+    public void checkNightModeSwitch() {
+        if (sharedPreferences.getBoolean("isNightMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
     // To convert from px measurement to dp
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
