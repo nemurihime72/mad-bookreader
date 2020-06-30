@@ -115,6 +115,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                                         data.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
                                         notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
+                                        datalist2=new ArrayList<>(data);
                                     }
                                 });
                                 delAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {

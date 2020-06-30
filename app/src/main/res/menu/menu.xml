@@ -12,7 +12,7 @@
     <item
         android:id="@+id/action_import"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="importAction"
+        android:title="Import PDF"
         app:showAsAction="ifRoom"/>
 
     <item
