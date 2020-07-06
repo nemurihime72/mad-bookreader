@@ -7,24 +7,33 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.Button;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import nl.siegmann.epublib.browsersupport.Navigator;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.epub.EpubReader;
 
 public class epubReadActivity extends AppCompatActivity {
-
+    WebView webView;
+    Navigator mNavigator;
+    Button nextCh;
+    int i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_read);
-        AssetManager assetManager = getAssets();
-
+        final AssetManager assetManager = getAssets();
+        webView = findViewById(R.id.epubWebView);
+        nextCh = findViewById(R.id.nextCh);
         try {
+            i = 0;
             //find InputStream for book
             InputStream epubInputStream = assetManager.open("books/testbook.epub");
 
@@ -43,10 +52,73 @@ public class epubReadActivity extends AppCompatActivity {
 
             //log the table of contents
             logTableOfContents(book.getTableOfContents().getTocReferences(), 0);
+
+            String asdf = book.getContents().toString();
+            final String baseUrl = "file://mnt/sdcard/Download/";
+            final String data = new String(book.getContents().get(i).getData());
+            webView.loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
+            Log.i("epublib", asdf);
+            try {
+                nextCh.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        i += 1;
+                        InputStream epubInputStream = null;
+                        try {
+                            epubInputStream = assetManager.open("books/testbook.epub");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        //load book from inputStream
+                        Book book = null;
+                        try {
+                            book = (new EpubReader()).readEpub(epubInputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        //log the book's authors
+                        Log.i("epublib", "author(s): " + book.getMetadata().getAuthors());
+
+                        //log the book's title
+                        Log.i("epublib", "title: " + book.getTitle());
+
+                        //log the book's coverimage property
+                        Bitmap coverImage = null;
+                        try {
+                            coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
+
+                        //log the table of contents
+                        logTableOfContents(book.getTableOfContents().getTocReferences(), 0);
+
+                        String asdf = book.getContents().toString();
+                        String baseUrl = "file://mnt/sdcard/Download/";
+                        String data = null;
+                        try {
+                            data = new String(book.getContents().get(i).getData());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        webView.loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
+
+                    }
+                });
+            } catch (Exception e) {
+                Log.i("epublib", e.getMessage());
+            }
+
+
         } catch (IOException e) {
             Log.e("epublib", e.getMessage());
         }
+
     }
+
 
     private void logTableOfContents(List<TOCReference> tocReferences, int depth) {
         if (tocReferences == null) {
