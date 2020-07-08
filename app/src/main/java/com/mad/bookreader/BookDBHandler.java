@@ -201,6 +201,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         Log.v(TAG, UPDATE_LAST_PAGE);
         Log.v(TAG, "Updating last page read for " + pdfName + " to " + lastPageRead);
         db.execSQL(UPDATE_LAST_PAGE);
+        db.close();
     }
 
     public void updatePageSwipe(String pdfName,int direction){
@@ -208,6 +209,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
         Log.v(TAG, UPDATE_SWIPE);
         db.execSQL(UPDATE_SWIPE);
+        db.close();
     }
 
     public int pageSwipe(String pdfName) {
@@ -243,7 +245,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             Log.v(TAG, "Number of rows:" + rows);
             cursor.close();
         }
-
+        db.close();
         return rows;
     }
 
