@@ -2,9 +2,11 @@ package com.mad.bookreader;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,20 +35,26 @@ public class epubReadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_read);
         webView = findViewById(R.id.webView);
-        i = 0;
-        loadChapter(i);
-        webView.setOnTouchListener(new OnSwipeTouchListener(epubReadActivity.this){
-            public void onSwipeRight() {
-                i -= 1;
-                Toast.makeText(epubReadActivity.this, "going to prev chapter", Toast.LENGTH_SHORT).show();
-                loadChapter(i);
-            }
-            public void onSwipeLeft() {
-                i += 1;
-                Toast.makeText(epubReadActivity.this, "going to next chapter", Toast.LENGTH_SHORT).show();
-                loadChapter(i);
-            }
-        });
+
+        Intent epubBook = getIntent();
+        if (epubBook.hasExtra("BookName") | epubBook.hasExtra("BookUri")) {
+            i = 0;
+            final String bookUri = epubBook.getStringExtra("BookUri");
+            loadChapter(i, bookUri);
+            webView.setOnTouchListener(new OnSwipeTouchListener(epubReadActivity.this){
+                public void onSwipeRight() {
+                    i -= 1;
+                    Toast.makeText(epubReadActivity.this, "going to prev chapter", Toast.LENGTH_SHORT).show();
+                    loadChapter(i, bookUri);
+                }
+                public void onSwipeLeft() {
+                    i += 1;
+                    Toast.makeText(epubReadActivity.this, "going to next chapter", Toast.LENGTH_SHORT).show();
+                    loadChapter(i, bookUri);
+                }
+            });
+        }
+
 
     }
 
@@ -66,16 +74,28 @@ public class epubReadActivity extends AppCompatActivity {
         }
     }
 
-    private void loadChapter(int j) {
+    private void loadChapter(int j, String uri) {
         AssetManager assetManager = getAssets();
         webView = findViewById(R.id.webView);
         try {
             //find InputStream for book
             //InputStream epubInputStream = assetManager.open("books/testbook.epub");
-            //Uri uri = Uri.parse("content://com.android.providers.downloads.documents/documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ftestepub.epub");
-            File file = new File("/storage/emulated/0/Download/Kagerou Daze - LN 01.epub");
-            InputStream epubInputStream = new FileInputStream(file);
+            Uri fileUri = Uri.parse(uri);
 
+            Log.v("epublib", fileUri.getPath().toString());
+            File file = new File(fileUri.getPath());
+            String[] split = file.getPath().split(":");
+            String filePath = split[1];
+            File epubFile = new File(filePath);
+
+            if (epubFile.exists()) {
+                Log.v("epublib", "file exists! loading epub");
+            } else {
+                Log.v("epublib", "file does not exist");
+            }
+            //InputStream epubInputStream = new FileInputStream(epubFile);
+            String fileName = epubFile.getName();
+            InputStream epubInputStream = assetManager.open("books/testbook.epub");
             //load book from inputStream
             Book book = (new EpubReader()).readEpub(epubInputStream);
 

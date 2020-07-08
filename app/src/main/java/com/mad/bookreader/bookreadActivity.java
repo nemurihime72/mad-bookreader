@@ -112,10 +112,6 @@ public class bookreadActivity extends AppCompatActivity {
 
         }
 
-        
-
-
-
         //pdfview.fromUri(pdfUri);
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -184,6 +180,9 @@ public class bookreadActivity extends AppCompatActivity {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         pageLastRead = dbHandler.lastPage(pdfName);
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
                 View view= LayoutInflater.from(this).inflate(R.layout.dialogue,null);
