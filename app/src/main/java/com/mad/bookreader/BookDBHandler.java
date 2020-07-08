@@ -24,6 +24,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_PDFURI = "bookpdfuri";
     public static final String COLUMN_PREVPAGE = "booklastpage";
     public static final String COLUMN_SWIPE = "bookswipepage";
+    public static final String COLUMN_FILETYPE = "bookfiletype";
 
     public BookDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, BOOKDATABASE, factory, DATABASE_VERSION);
@@ -34,16 +35,17 @@ public class BookDBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER" + ")";
+                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_FILETYPE + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER" + ")";
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
     //Adds book to database
-    public void addBook(String pdfName, String pdfURI) {
+    public void addBook(String pdfName, String pdfURI, String fileType) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, noOfRows());
         values.put(COLUMN_NAME, pdfName);
         values.put(COLUMN_PDFURI, pdfURI);
+        values.put(COLUMN_FILETYPE, fileType);
         values.put(COLUMN_PREVPAGE, 0);
         values.put(COLUMN_SWIPE, 0);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -55,19 +57,23 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Fill a list up with books from database
-    public List<List<String>> startBooks(List<List<String>> pdfList) {
+    public List<List<String>> startBooks(List<List<String>> bookList) {
         int rows = noOfRows();
-        List<String> pdfNameList = new ArrayList<>();
-        List<String> pdfURIList = new ArrayList<>();
+        List<String> nameList = new ArrayList<>();
+        List<String> uriList = new ArrayList<>();
+        List<String> fileTypeList = new ArrayList<>();
         for(int i = 0; i < rows ; i++){
             ArrayList<String> bookDetails = findBookID(i);
-            pdfNameList.add(bookDetails.get(0));
-            pdfURIList.add(bookDetails.get(1));
-            Log.v(TAG, "Name: " + pdfNameList.get(0));
+            nameList.add(bookDetails.get(0));
+            uriList.add(bookDetails.get(1));
+            fileTypeList.add(bookDetails.get(2));
+            //fileTypeList.add(bookDetails.get(3));
+            Log.v(TAG, "Name: " + nameList.get(0));
+            //Log.v(TAG, bookDetails.get(3));
         }
-        pdfList.add(pdfNameList);
-        pdfList.add(pdfURIList);
-        return pdfList;
+        bookList.add(nameList);
+        bookList.add(uriList);
+        return bookList;
     }
 
     //Finds books based on their id
@@ -83,6 +89,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             bookDetails.add(cursor.getString(1));
             Log.v(TAG, "Found: " + cursor.getString(1));
             bookDetails.add(cursor.getString(2));
+            Log.v(TAG, "Found filetype: " + cursor.getString(3));
             cursor.close();
         } else {
             bookDetails = null;
@@ -185,7 +192,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()) {
             Log.v(TAG, "Getting previously left page from database");
-            pdfPage = Integer.parseInt(cursor.getString(3));
+            pdfPage = Integer.parseInt(cursor.getString(4));
             Log.v(TAG, "Last page is " + pdfPage);
             cursor.close();
             db.close();

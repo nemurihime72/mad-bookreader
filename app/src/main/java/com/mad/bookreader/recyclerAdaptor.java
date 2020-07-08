@@ -58,7 +58,8 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         holder.img.setImageBitmap(data.get(position).getImage());
         final String p = data.get(position).getTitle();
         Log.v(TAG, "string p = " + p);
-        final String uri = data.get(position).getPdfUri();
+        final String uri = data.get(position).getBookUri();
+        final String fileType = data.get(position).getFileType();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,11 +85,20 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     notifyItemRemoved(holder.getAdapterPosition());
                     notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
                 }*/
-                Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                intent.putExtra("PdfUri", uri);
-                intent.putExtra("PdfName", p);
-                Log.v(TAG,"PDF put inside intent, going to the book read activity now");
-                v.getContext().startActivity(intent);
+                if (fileType == "pdf") {
+                    Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                    intent.putExtra("PdfUri", uri);
+                    intent.putExtra("PdfName", p);
+                    Log.v(TAG,"PDF put inside intent, going to the book read activity now");
+                    v.getContext().startActivity(intent);
+                }
+                else if (fileType == "epub") {
+                    Intent intent = new Intent(v.getContext(), epubReadActivity.class);
+                    intent.putExtra("BookUri", uri);
+                    intent.putExtra("BookName", p);
+                    Log.v(TAG, "Epub put inside intent, going to epub read activity now");
+                    v.getContext().startActivity(intent);
+                }
             }
         });
         holder.imgButton.setOnClickListener(new View.OnClickListener() {

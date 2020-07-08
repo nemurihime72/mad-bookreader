@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -29,13 +32,49 @@ public class epubReadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_read);
-        final AssetManager assetManager = getAssets();
-        webView = findViewById(R.id.epubWebView);
-        nextCh = findViewById(R.id.nextCh);
+        webView = findViewById(R.id.webView);
+        i = 0;
+        loadChapter(i);
+        webView.setOnTouchListener(new OnSwipeTouchListener(epubReadActivity.this){
+            public void onSwipeRight() {
+                i -= 1;
+                Toast.makeText(epubReadActivity.this, "going to prev chapter", Toast.LENGTH_SHORT).show();
+                loadChapter(i);
+            }
+            public void onSwipeLeft() {
+                i += 1;
+                Toast.makeText(epubReadActivity.this, "going to next chapter", Toast.LENGTH_SHORT).show();
+                loadChapter(i);
+            }
+        });
+
+    }
+
+    private void logTableOfContents(List<TOCReference> tocReferences, int depth) {
+        if (tocReferences == null) {
+            return;
+        }
+        for (TOCReference tocReference : tocReferences) {
+            StringBuilder tocString = new StringBuilder();
+            for (int i = 0; i < depth; i++) {
+                tocString.append("\t");
+            }
+            tocString.append(tocReference.getTitle());
+            Log.i("epublib", tocString.toString());
+
+            logTableOfContents(tocReference.getChildren(), depth + 1);
+        }
+    }
+
+    private void loadChapter(int j) {
+        AssetManager assetManager = getAssets();
+        webView = findViewById(R.id.webView);
         try {
-            i = 0;
             //find InputStream for book
-            InputStream epubInputStream = assetManager.open("books/testbook.epub");
+            //InputStream epubInputStream = assetManager.open("books/testbook.epub");
+            //Uri uri = Uri.parse("content://com.android.providers.downloads.documents/documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ftestepub.epub");
+            File file = new File("/storage/emulated/0/Download/Kagerou Daze - LN 01.epub");
+            InputStream epubInputStream = new FileInputStream(file);
 
             //load book from inputStream
             Book book = (new EpubReader()).readEpub(epubInputStream);
@@ -54,85 +93,13 @@ public class epubReadActivity extends AppCompatActivity {
             logTableOfContents(book.getTableOfContents().getTocReferences(), 0);
 
             String asdf = book.getContents().toString();
-            final String baseUrl = "file://mnt/sdcard/Download/";
-            final String data = new String(book.getContents().get(i).getData());
+            String baseUrl = "file://mnt/sdcard/Download/";
+            String data = new String(book.getContents().get(j).getData());
             webView.loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
-            Log.i("epublib", asdf);
-            try {
-                nextCh.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        i += 1;
-                        InputStream epubInputStream = null;
-                        try {
-                            epubInputStream = assetManager.open("books/testbook.epub");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        //load book from inputStream
-                        Book book = null;
-                        try {
-                            book = (new EpubReader()).readEpub(epubInputStream);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        //log the book's authors
-                        Log.i("epublib", "author(s): " + book.getMetadata().getAuthors());
-
-                        //log the book's title
-                        Log.i("epublib", "title: " + book.getTitle());
-
-                        //log the book's coverimage property
-                        Bitmap coverImage = null;
-                        try {
-                            coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
-
-                        //log the table of contents
-                        logTableOfContents(book.getTableOfContents().getTocReferences(), 0);
-
-                        String asdf = book.getContents().toString();
-                        String baseUrl = "file://mnt/sdcard/Download/";
-                        String data = null;
-                        try {
-                            data = new String(book.getContents().get(i).getData());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        webView.loadDataWithBaseURL(baseUrl, data, "text/html", "UTF-8", null);
-
-                    }
-                });
-            } catch (Exception e) {
-                Log.i("epublib", e.getMessage());
-            }
-
-
-        } catch (IOException e) {
+            Log.i("epublib", "loading chapter: " + j);
+        }
+        catch (IOException e) {
             Log.e("epublib", e.getMessage());
-        }
-
-    }
-
-
-    private void logTableOfContents(List<TOCReference> tocReferences, int depth) {
-        if (tocReferences == null) {
-            return;
-        }
-        for (TOCReference tocReference : tocReferences) {
-            StringBuilder tocString = new StringBuilder();
-            for (int i = 0; i < depth; i++) {
-                tocString.append("\t");
-            }
-            tocString.append(tocReference.getTitle());
-            Log.i("epublib", tocString.toString());
-
-            logTableOfContents(tocReference.getChildren(), depth + 1);
         }
     }
 }

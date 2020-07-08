@@ -11,35 +11,39 @@ import java.io.File;
 public class importedBooks {
     private String Title;
     private Bitmap Image;
-    private String PdfName;
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public void setFileName(String fileName) {
+        FileName = fileName;
+    }
+
+    private String FileName;
     private File pdfFile;
 
 
-    public String getPdfUri() {
-        return PdfUri;
+    public String getFileType() {
+        return FileType;
     }
 
-    public void setPdfUri(String pdfUri) {
-        PdfUri = pdfUri;
+    public void setFileType(String fileType) {
+        this.FileType = fileType;
     }
 
-    private String PdfUri;
+    private String FileType;
 
-   /* public Uri getPdfUri() {
-        return PdfUri;
+
+    public String getBookUri() {
+        return BookUri;
     }
 
-    public void setPdfUri(Uri pdfUri) {
-        PdfUri = pdfUri;
-    }*/
-
-    public String getPdfName() {
-        return PdfName;
+    public void setBookUri(String bookUri) {
+        BookUri = bookUri;
     }
 
-    public void setPdfName(String pdfName) {
-        PdfName = pdfName;
-    }
+    private String BookUri;
 
 
     public String getTitle() {
@@ -62,15 +66,11 @@ public class importedBooks {
     }
 
 
-   /* public importedBooks(String title,int image,String pdf) {
-        Title = title;
-        Image = image;
-        PdfName = pdf;
-    }*/
-    public importedBooks(String title, Bitmap img, String uri) {
+    public importedBooks(String title, Bitmap img, String uri, String fileType) {
         Title = title;
         Image = img;
-        PdfUri = uri;
+        BookUri = uri;
+        FileType = fileType;
     }
 
 }

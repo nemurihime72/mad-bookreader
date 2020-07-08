@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -201,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG,"Import files selected");
 
                 //intent to import only pdf
-                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
@@ -223,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
             Uri uri = Uri.parse(storedBooks.get(1).get(i));
-            Bitmap image =  getCover(uri);
-            book = new importedBooks(storedBooks.get(0).get(i), image, storedBooks.get(1).get(i));
+            Bitmap image =  getPdfCover(uri);
+            book = new importedBooks(storedBooks.get(0).get(i), image, storedBooks.get(1).get(i), storedBooks.get(2).get(i));
             bookList.add(book);
             Log.v(TAG, "Book added: " + book.getTitle());
         }
@@ -244,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
-            String fileName;
+            final String fileName;
             //get Uri from data passed from intent
             final Uri selectedFile = data.getData();
             getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -264,6 +265,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG, "File name: " + fileName);
             }*/
             fileName = getFileName(selectedFile);
+            final String fileType = getFileType(selectedFile);
+            final Bitmap thumbnail = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
             Log.v(TAG,fileName);
 
             final BookDBHandler db = new BookDBHandler(this, null, null, 1);
@@ -283,9 +286,15 @@ public class MainActivity extends AppCompatActivity {
                             if (titleName.equals("") || titleName.equals(null)) {
                                 Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                             } else {
-                                Bitmap thumbnail = getCover(selectedFile);
-                                importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
-                                db.addBook(titleName, selectedFileString);
+                                if (fileType == "pdf") {
+                                    Bitmap thumbnail = getPdfCover(selectedFile);
+                                }
+                                else if (fileType == "epub") {
+                                    Bitmap thumbnail = getEpubCover(selectedFile);
+                                }
+                                
+                                importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
+                                db.addBook(titleName, selectedFileString, fileType);
                                 listBooks.add(book);
                                 recyclerFunction(listBooks);
                             }
@@ -299,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap getCover(Uri uri) {
+    public Bitmap getPdfCover(Uri uri) {
         PdfiumCore pdfiumCore = new PdfiumCore(getApplicationContext()); //use PdfiumCore to render bitmap
         int pageNum = 0; //use first page of pdf
         try {
@@ -332,6 +341,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    public Bitmap getEpubCover(Uri uri) {
+        Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+        return noImage;
+    }
 
     public String getFileName(Uri uri) {
         String result = null;
@@ -357,5 +370,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    public String getFileType(Uri uri) {
+        String fileName = getFileName(uri);
+        return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
     }
 }
