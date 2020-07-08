@@ -85,19 +85,23 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     notifyItemRemoved(holder.getAdapterPosition());
                     notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
                 }*/
-                if (fileType == "pdf") {
+                Log.v(TAG, "filetype is " + fileType);
+                if (fileType.equals("pdf")) {
                     Intent intent=new Intent(v.getContext(),bookreadActivity.class);
                     intent.putExtra("PdfUri", uri);
                     intent.putExtra("PdfName", p);
                     Log.v(TAG,"PDF put inside intent, going to the book read activity now");
                     v.getContext().startActivity(intent);
                 }
-                else if (fileType == "epub") {
+                else if (fileType.equals("epub")) {
                     Intent intent = new Intent(v.getContext(), epubReadActivity.class);
                     intent.putExtra("BookUri", uri);
                     intent.putExtra("BookName", p);
                     Log.v(TAG, "Epub put inside intent, going to epub read activity now");
                     v.getContext().startActivity(intent);
+                }
+                else {
+                    Toast.makeText(context, "Failed to load file!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
