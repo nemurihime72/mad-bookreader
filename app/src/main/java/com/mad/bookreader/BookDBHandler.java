@@ -73,6 +73,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         }
         bookList.add(nameList);
         bookList.add(uriList);
+        bookList.add(fileTypeList);
         return bookList;
     }
 
@@ -89,6 +90,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             bookDetails.add(cursor.getString(1));
             Log.v(TAG, "Found: " + cursor.getString(1));
             bookDetails.add(cursor.getString(2));
+            bookDetails.add(cursor.getString(3));
             Log.v(TAG, "Found filetype: " + cursor.getString(3));
             cursor.close();
         } else {
@@ -208,6 +210,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         Log.v(TAG, UPDATE_LAST_PAGE);
         Log.v(TAG, "Updating last page read for " + pdfName + " to " + lastPageRead);
         db.execSQL(UPDATE_LAST_PAGE);
+        db.close();
     }
 
     public void updatePageSwipe(String pdfName,int direction){
@@ -215,6 +218,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
         Log.v(TAG, UPDATE_SWIPE);
         db.execSQL(UPDATE_SWIPE);
+        db.close();
     }
 
     public int pageSwipe(String pdfName) {
@@ -232,6 +236,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         } else {
             Log.v(TAG, "cursor did not move to first in pageswipe");
         }
+        db.close();
         return pageSwipe;
     }
 
@@ -250,7 +255,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             Log.v(TAG, "Number of rows:" + rows);
             cursor.close();
         }
-
+        db.close();
         return rows;
     }
 
