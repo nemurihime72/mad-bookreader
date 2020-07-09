@@ -39,10 +39,15 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
+    public int getId(){
+        int id=noOfRows();
+        return(id);
+    }
+
     //Adds book to database
     public void addBook(String pdfName, String pdfURI, String fileType) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, noOfRows());
+        values.put(COLUMN_ID, getId());
         values.put(COLUMN_NAME, pdfName);
         values.put(COLUMN_PDFURI, pdfURI);
         values.put(COLUMN_FILETYPE, fileType);
@@ -59,18 +64,21 @@ public class BookDBHandler extends SQLiteOpenHelper {
     //Fill a list up with books from database
     public List<List<String>> startBooks(List<List<String>> bookList) {
         int rows = noOfRows();
+        List<String> idList = new ArrayList<>();
         List<String> nameList = new ArrayList<>();
         List<String> uriList = new ArrayList<>();
         List<String> fileTypeList = new ArrayList<>();
         for(int i = 0; i < rows ; i++){
             ArrayList<String> bookDetails = findBookID(i);
-            nameList.add(bookDetails.get(0));
-            uriList.add(bookDetails.get(1));
-            fileTypeList.add(bookDetails.get(2));
+            idList.add(bookDetails.get(0));
+            nameList.add(bookDetails.get(1));
+            uriList.add(bookDetails.get(2));
+            fileTypeList.add(bookDetails.get(3));
             //fileTypeList.add(bookDetails.get(3));
             Log.v(TAG, "Name: " + nameList.get(0));
             //Log.v(TAG, bookDetails.get(3));
         }
+        bookList.add(idList);
         bookList.add(nameList);
         bookList.add(uriList);
         bookList.add(fileTypeList);
@@ -86,6 +94,8 @@ public class BookDBHandler extends SQLiteOpenHelper {
         ArrayList<String> bookDetails= new ArrayList<>();
 
         if (cursor.moveToFirst()) {
+            bookDetails.add(cursor.getString(0));
+            Log.v(TAG, "Found id: " + cursor.getString(0));
             Log.v(TAG, "Adds pdf name, type and uri to list");
             bookDetails.add(cursor.getString(1));
             Log.v(TAG, "Found name: " + cursor.getString(1));

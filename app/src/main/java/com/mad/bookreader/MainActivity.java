@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity {
         storedBooks = db.startBooks(storedBooks);
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
-            Uri uri = Uri.parse(storedBooks.get(1).get(i));
+            Uri uri = Uri.parse(storedBooks.get(2).get(i));
             Bitmap image =  getPdfCover(uri);
-            book = new importedBooks(storedBooks.get(0).get(i), image, storedBooks.get(1).get(i), storedBooks.get(2).get(i));
+            book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
             bookList.add(book);
             Log.v(TAG, "Book added: " + book.getTitle());
         }
@@ -270,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             Log.v(TAG,fileName);
 
             final BookDBHandler db = new BookDBHandler(this, null, null, 1);
+            final int id=db.getId();
 
             Log.v(TAG,"Alert dialog to prompt for book title creating");
             //alert dialog to prompt to edit name if wanted
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 if (fileType.equals("pdf")){
                                     Bitmap thumbnail = getPdfCover(selectedFile);
-                                    importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
+                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
                                     db.addBook(titleName, selectedFileString, fileType);
                                     listBooks.add(book);
                                     recyclerFunction(listBooks);
@@ -314,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.v(TAG, e.getMessage());
                                     }
                                     Bitmap thumbnail = getEpubCover(selectedFile);
-                                    importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
+                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
                                     db.addBook(titleName, selectedFileString, fileType);
                                     listBooks.add(book);
                                     recyclerFunction(listBooks);

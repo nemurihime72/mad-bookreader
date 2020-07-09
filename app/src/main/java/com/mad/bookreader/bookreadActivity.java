@@ -51,6 +51,7 @@ public class bookreadActivity extends AppCompatActivity {
     public static int pageSwipeDirection;
     public static String pdfName;
     public static int noOfPages;
+    public static int columnID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,7 @@ public class bookreadActivity extends AppCompatActivity {
 
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageSwipeDirection=dbHandler.pageSwipe(pdfName);
-        Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
+
 
         //Get listBooks from MainActivity
 
@@ -87,6 +87,7 @@ public class bookreadActivity extends AppCompatActivity {
         if (pdfPage.hasExtra("PdfName") | pdfPage.hasExtra("PdfUri")) {
 
             //Setting variable pdfName as the name of the pdf file
+            columnID=Integer.parseInt(pdfPage.getStringExtra("id"));
             Log.v(TAG, "Getting information from intent");
             pdfName = pdfPage.getStringExtra("PdfName");
             Log.v(TAG, "PDF Name is: " + pdfName);
@@ -106,6 +107,8 @@ public class bookreadActivity extends AppCompatActivity {
             });
             Log.v(TAG, "Top toolbar set");
 
+            pageSwipeDirection=dbHandler.pageSwipe(columnID);
+            Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
             //Find the PDFView and load the pdf from previous page to the view
             loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
@@ -125,8 +128,8 @@ public class bookreadActivity extends AppCompatActivity {
 
     public void loadPDF(final String pdfName, final String pdfURI) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName);
-        pageSwipeDirection= dbHandler.pageSwipe(pdfName);
+        pageLastRead = dbHandler.lastPage(columnID);
+        pageSwipeDirection= dbHandler.pageSwipe(columnID);
         Log.v(TAG,"(Load)PAGE SWIPE DIRECTION="+pageSwipeDirection);
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
@@ -145,7 +148,7 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
-                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                    dbHandler.updateLastPage(columnID,pageLastRead);
                 }
             }).load();
         }
@@ -163,7 +166,7 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
-                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                    dbHandler.updateLastPage(columnID,pageLastRead);
                 }
             }).load();
         }
@@ -179,8 +182,8 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName);
-        pageSwipeDirection=dbHandler.pageSwipe(pdfName);
+        pageLastRead = dbHandler.lastPage(columnID);
+        pageSwipeDirection=dbHandler.pageSwipe(columnID);
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -201,7 +204,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 } else {
                                     int pageNumber=Integer.parseInt(pageNo1)-1;
                                     pageLastRead=pageNumber;
-                                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                                    dbHandler.updateLastPage(columnID,pageLastRead);
                                     loadPDF(pdfName, pdfUri);
                                 }
                             }
@@ -222,7 +225,7 @@ public class bookreadActivity extends AppCompatActivity {
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
-                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -233,7 +236,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
-                            dbHandler.updateLastPage(pdfName,pageLastRead);
+                            dbHandler.updateLastPage(columnID,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
@@ -242,8 +245,8 @@ public class bookreadActivity extends AppCompatActivity {
                 //Change from horizontal to vertical scrolling
                 else if (pageSwipeDirection==0){
                     pageSwipeDirection=1;
-                    Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(pdfName));
-                    dbHandler.updateLastPage(pdfName,pageSwipeDirection);
+                    Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(columnID));
+                    dbHandler.updateLastPage(columnID,pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -254,7 +257,7 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
-                            dbHandler.updateLastPage(pdfName,pageLastRead);
+                            dbHandler.updateLastPage(columnID,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");

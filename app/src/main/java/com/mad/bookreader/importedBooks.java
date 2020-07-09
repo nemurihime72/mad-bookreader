@@ -12,6 +12,16 @@ public class importedBooks {
     private String Title;
     private Bitmap Image;
 
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    private int Id;
+
     public String getFileName() {
         return FileName;
     }
@@ -66,7 +76,8 @@ public class importedBooks {
     }
 
 
-    public importedBooks(String title, Bitmap img, String uri, String fileType) {
+    public importedBooks(int id,String title, Bitmap img, String uri, String fileType) {
+        Id=id;
         Title = title;
         Image = img;
         BookUri = uri;
