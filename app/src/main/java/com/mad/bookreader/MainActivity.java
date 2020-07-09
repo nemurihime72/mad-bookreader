@@ -300,9 +300,15 @@ public class MainActivity extends AppCompatActivity {
                                         String[] split = file.getPath().split(":");
                                         String filePath = split[1];
                                         File epubFile = new File(filePath);
-
+                                        File copyFile = new File(getExternalFilesDir(null), fileName);
+                                        copy(epubFile, copyFile);
+                                        if (copyFile.exists()) {
+                                            Log.v(TAG, "file exists, location is " + copyFile.getAbsolutePath());
+                                        } else {
+                                            Log.v(TAG, "file does not exist");
+                                        }
                                         Bitmap thumbnail = getEpubCover(selectedFile);
-                                        importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
+                                        importedBooks book = new importedBooks(id,titleName, thumbnail, copyFile.getAbsolutePath(), fileType);
                                         db.addBook(titleName, selectedFileString, fileType);
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
