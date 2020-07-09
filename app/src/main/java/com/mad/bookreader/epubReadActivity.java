@@ -95,7 +95,7 @@ public class epubReadActivity extends AppCompatActivity {
             }
             //InputStream epubInputStream = new FileInputStream(epubFile);
             String fileName = epubFile.getName();
-            InputStream epubInputStream = assetManager.open("books/testbook.epub");
+            InputStream epubInputStream = new FileInputStream(epubFile);
             //load book from inputStream
             Book book = (new EpubReader()).readEpub(epubInputStream);
 

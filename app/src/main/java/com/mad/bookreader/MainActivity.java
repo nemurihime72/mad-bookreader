@@ -41,6 +41,7 @@ import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -293,11 +294,25 @@ public class MainActivity extends AppCompatActivity {
                                     recyclerFunction(listBooks);
                                 }
                                 else if(fileType.equals("epub")) {
-                                    File file = new File(selectedFile.getPath());
-                                    String[] split = file.getPath().split(":");
-                                    String filePath = split[1];
-                                    File epubFile = new File(filePath);
+                                    try {
+                                        File file = new File(selectedFile.getPath());
+                                        String[] split = file.getPath().split(":");
+                                        String filePath = split[1];
+                                        File epubFile = new File(filePath);
+                                        try {
+                                            //File epubFileInput = new File(getExternalFilesDir())
+                                            try (OutputStream output = new FileOutputStream(epubFile)) {
+                                                byte[] buffer = new byte[4 * 1024];
+                                                int read;
 
+                                            }
+                                        } catch (Exception e) {
+                                            Log.v(TAG, e.getMessage());
+                                        }
+
+                                    } catch (Exception e) {
+                                        Log.v(TAG, e.getMessage());
+                                    }
                                     Bitmap thumbnail = getEpubCover(selectedFile);
                                     importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
                                     db.addBook(titleName, selectedFileString, fileType);
@@ -384,5 +399,18 @@ public class MainActivity extends AppCompatActivity {
     public String getFileType(Uri uri) {
         String fileName = getFileName(uri);
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+    }
+
+    public static void copy(File src, File dst) throws IOException {
+        try (InputStream in = new FileInputStream(src)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+        }
     }
 }
