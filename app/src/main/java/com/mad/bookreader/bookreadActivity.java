@@ -107,7 +107,7 @@ public class bookreadActivity extends AppCompatActivity {
             Log.v(TAG, "Top toolbar set");
 
             //Find the PDFView and load the pdf from previous page to the view
-            loadPDF(pdfName, pdfUri,pageSwipeDirection);
+            loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
 
         }
@@ -123,14 +123,15 @@ public class bookreadActivity extends AppCompatActivity {
         });*/
     }
 
-    public void loadPDF(final String pdfName, final String pdfURI,int pageSwipeDirection) {
+    public void loadPDF(final String pdfName, final String pdfURI) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         pageLastRead = dbHandler.lastPage(pdfName);
+        pageSwipeDirection= dbHandler.pageSwipe(pdfName);
+        Log.v(TAG,"(Load)PAGE SWIPE DIRECTION="+pageSwipeDirection);
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
-        pageSwipeDirection = dbHandler.pageSwipe(pdfName);
         if (pageSwipeDirection == 0) {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
@@ -149,7 +150,7 @@ public class bookreadActivity extends AppCompatActivity {
             }).load();
         }
         //Change from horizontal to vertical scrolling
-        if (pageSwipeDirection == 1){
+        else if (pageSwipeDirection == 1){
             pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
@@ -179,6 +180,7 @@ public class bookreadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
         pageLastRead = dbHandler.lastPage(pdfName);
+        pageSwipeDirection=dbHandler.pageSwipe(pdfName);
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -200,7 +202,7 @@ public class bookreadActivity extends AppCompatActivity {
                                     int pageNumber=Integer.parseInt(pageNo1)-1;
                                     pageLastRead=pageNumber;
                                     dbHandler.updateLastPage(pdfName,pageLastRead);
-                                    loadPDF(pdfName, pdfUri,pageSwipeDirection);
+                                    loadPDF(pdfName, pdfUri);
                                 }
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -216,6 +218,7 @@ public class bookreadActivity extends AppCompatActivity {
 
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
+                Log.v(TAG,"(CASE)PAGE SWIPE DIRECTION="+pageSwipeDirection);
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
@@ -234,12 +237,13 @@ public class bookreadActivity extends AppCompatActivity {
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
+                    return true;
                 }
                 //Change from horizontal to vertical scrolling
-                else{
+                else if (pageSwipeDirection==0){
                     pageSwipeDirection=1;
                     Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(pdfName));
-                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
+                    dbHandler.updateLastPage(pdfName,pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -254,8 +258,9 @@ public class bookreadActivity extends AppCompatActivity {
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
+                    return true;
                 }
-                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
