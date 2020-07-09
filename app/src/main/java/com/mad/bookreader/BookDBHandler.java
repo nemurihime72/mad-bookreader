@@ -125,15 +125,16 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return bookDetails;
     }*/
 
-    public boolean editTitleBook(String bookTitle,String newBookTitle){
+    public boolean editTitleBook(int colId,String newBookTitle){
         boolean result= false;
-        String query="SELECT * FROM "+ TABLE_BOOKS+" WHERE "+COLUMN_NAME+" = \""+bookTitle+"\"";
+        String query="SELECT * FROM "+ TABLE_BOOKS+" WHERE "+COLUMN_ID+" = \""+colId+"\"";
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int id = Integer.parseInt(cursor.getString(0));
-            String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_NAME+" =\""+bookTitle+"\"");
+            //int id = Integer.parseInt(cursor.getString(0));
+            //String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_ID+" =\""+id+"\"");
+            String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_ID+" =\""+colId+"\"");
             db.execSQL(query2);
             cursor.close();
             result = true;
@@ -144,16 +145,17 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Deletes book from database using title of book by finding its ID
-    public boolean deleteBook(String bookTitle) {
+    public boolean deleteBook(int colId) {
         boolean result = false;
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + bookTitle + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int id = Integer.parseInt(cursor.getString(0));
-            db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+            //int id = Integer.parseInt(cursor.getString(0));
+            //db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+            db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(colId)});
             cursor.close();
             result = true;
         }
@@ -187,9 +189,9 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Finds page number last read with pdfName
-    public int lastPage(String pdfName){
+    public int lastPage(int colId){
         int pdfPage = 0;
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + pdfName + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
@@ -205,27 +207,27 @@ public class BookDBHandler extends SQLiteOpenHelper {
         }
         return pdfPage;
     }
-    public void updateLastPage (String pdfName, int lastPageRead) {
+    public void updateLastPage (int colId, int lastPageRead) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
         Log.v(TAG, UPDATE_LAST_PAGE);
-        Log.v(TAG, "Updating last page read for " + pdfName + " to " + lastPageRead);
+        Log.v(TAG, "Updating last page read for Column ID: " + colId + " to " + lastPageRead);
         db.execSQL(UPDATE_LAST_PAGE);
         db.close();
     }
 
-    public void updatePageSwipe(String pdfName,int direction){
+    public void updatePageSwipe(int colId,int direction){
         SQLiteDatabase db = this.getWritableDatabase();
-        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_ID + "=\"" + colId + "\"";
         Log.v(TAG, UPDATE_SWIPE);
         db.execSQL(UPDATE_SWIPE);
         db.close();
     }
 
-    public int pageSwipe(String pdfName) {
+    public int pageSwipe(int colId) {
         int pageSwipe = 0;
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + pdfName + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         Cursor cursor = db.rawQuery(query, null);
 
         if(cursor.moveToFirst()) {
