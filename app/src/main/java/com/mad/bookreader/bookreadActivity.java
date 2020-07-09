@@ -193,23 +193,14 @@ public class bookreadActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String pageNo1=goToPage.getText().toString();
+
                                 if (pageNo1.equals("") || pageNo1.equals(null)) {
                                     Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    int pageNumber=Integer.parseInt(pageNo1);
-                                    pdfview.fromUri(uri).defaultPage(pageNumber).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            pageLastRead=pdfview.getCurrentPage();
-                                            Log.v(TAG,"Page changed to: "+pageLastRead);
-                                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
-                                            if (pageLastRead+1==pdfview.getPageCount()){
-                                                pageLastRead=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(pdfName,pageLastRead);
-                                        }
-                                    }).load();
+                                    int pageNumber=Integer.parseInt(pageNo1)-1;
+                                    pageLastRead=pageNumber;
+                                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                                    loadPDF(pdfName, pdfUri,pageSwipeDirection);
                                 }
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

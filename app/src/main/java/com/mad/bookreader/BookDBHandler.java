@@ -86,10 +86,11 @@ public class BookDBHandler extends SQLiteOpenHelper {
         ArrayList<String> bookDetails= new ArrayList<>();
 
         if (cursor.moveToFirst()) {
-            Log.v(TAG, "Adds pdf name and uri to list");
+            Log.v(TAG, "Adds pdf name, type and uri to list");
             bookDetails.add(cursor.getString(1));
-            Log.v(TAG, "Found: " + cursor.getString(1));
+            Log.v(TAG, "Found name: " + cursor.getString(1));
             bookDetails.add(cursor.getString(2));
+            Log.v(TAG, "Found URI: " + cursor.getString(2));
             bookDetails.add(cursor.getString(3));
             Log.v(TAG, "Found filetype: " + cursor.getString(3));
             cursor.close();
@@ -97,7 +98,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             bookDetails = null;
         }
         db.close();
-        Log.v(TAG, "returning book: " + bookDetails.get(0));
+        Log.v(TAG, "returning book with id of: " + bookDetails.get(0));
         return bookDetails;
     }
 
@@ -229,7 +230,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()) {
             Log.v(TAG, "Getting swipe direction from database");
-            pageSwipe = Integer.parseInt(cursor.getString(4));
+            pageSwipe = Integer.parseInt(cursor.getString(5));
             Log.v(TAG, "Page swipe direction int is " + pageSwipe);
             cursor.close();
             db.close();
