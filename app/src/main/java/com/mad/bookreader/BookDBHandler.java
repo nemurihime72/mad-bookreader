@@ -75,8 +75,14 @@ public class BookDBHandler extends SQLiteOpenHelper {
             //Log.v(TAG, bookDetails.get(3));
         }*/
         ArrayList<Integer> bookIDList = bookIdList();
+        for (Integer i: bookIDList
+             ) {
+            Log.v(TAG, String.valueOf(bookIDList));
+
+        }
         for (int i = 0; i < bookIDList.size(); i++) {
             ArrayList<String> bookDetails = findBookID(bookIDList.get(i));
+            Log.v(TAG, "IDs : " + bookIDList.get(0));
             idList.add(String.valueOf(bookIDList.get(i)));
             nameList.add(bookDetails.get(1));
             uriList.add(bookDetails.get(2));
@@ -100,6 +106,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         ArrayList<Integer> idList = new ArrayList<Integer>();
         if (cursor.moveToFirst()) {
             idList.add(cursor.getInt(0));
+            Log.v(TAG, String.valueOf(idList));
             cursor.close();
         }
         db.close();
@@ -187,6 +194,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             //int id = Integer.parseInt(cursor.getString(0));
             //db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
             db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(colId)});
+            Log.v(TAG, "Deleting book with id of " + colId);
             cursor.close();
             result = true;
         }
