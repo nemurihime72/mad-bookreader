@@ -11,6 +11,9 @@ import java.io.File;
 public class importedBooks {
     private String Title;
     private Bitmap Image;
+    private String BookUri;
+    private int Id;
+    private String FileType;
 
     public int getId() {
         return Id;
@@ -20,20 +23,6 @@ public class importedBooks {
         Id = id;
     }
 
-    private int Id;
-
-    public String getFileName() {
-        return FileName;
-    }
-
-    public void setFileName(String fileName) {
-        FileName = fileName;
-    }
-
-    private String FileName;
-    private File pdfFile;
-
-
     public String getFileType() {
         return FileType;
     }
@@ -42,9 +31,6 @@ public class importedBooks {
         this.FileType = fileType;
     }
 
-    private String FileType;
-
-
     public String getBookUri() {
         return BookUri;
     }
@@ -52,8 +38,6 @@ public class importedBooks {
     public void setBookUri(String bookUri) {
         BookUri = bookUri;
     }
-
-    private String BookUri;
 
 
     public String getTitle() {

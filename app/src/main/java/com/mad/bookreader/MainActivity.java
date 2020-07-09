@@ -300,25 +300,17 @@ public class MainActivity extends AppCompatActivity {
                                         String[] split = file.getPath().split(":");
                                         String filePath = split[1];
                                         File epubFile = new File(filePath);
-                                        try {
-                                            //File epubFileInput = new File(getExternalFilesDir())
-                                            try (OutputStream output = new FileOutputStream(epubFile)) {
-                                                byte[] buffer = new byte[4 * 1024];
-                                                int read;
 
-                                            }
-                                        } catch (Exception e) {
-                                            Log.v(TAG, e.getMessage());
-                                        }
+                                        Bitmap thumbnail = getEpubCover(selectedFile);
+                                        importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
+                                        db.addBook(titleName, selectedFileString, fileType);
+                                        listBooks.add(book);
+                                        recyclerFunction(listBooks);
 
                                     } catch (Exception e) {
                                         Log.v(TAG, e.getMessage());
                                     }
-                                    Bitmap thumbnail = getEpubCover(selectedFile);
-                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
-                                    db.addBook(titleName, selectedFileString, fileType);
-                                    listBooks.add(book);
-                                    recyclerFunction(listBooks);
+
                                 }
                                 
 
