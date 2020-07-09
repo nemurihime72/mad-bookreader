@@ -104,14 +104,26 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(query, null);
         ArrayList<Integer> idList = new ArrayList<Integer>();
-        if (cursor.moveToFirst()) {
+        if (cursor != null){
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                idList.add(cursor.getInt(0));
+                cursor.moveToNext();
+                }
+
+                //move to the next row
+                cursor.moveToNext();
+            }
+        cursor.close();
+        return idList;
+        }
+        /*if (cursor.moveToFirst()) {
             idList.add(cursor.getInt(0));
             Log.v(TAG, String.valueOf(idList));
             cursor.close();
         }
         db.close();
-        return idList;
-    }
+        return idList;*/
 
     //Finds books based on their id
     public ArrayList<String> findBookID(int id){

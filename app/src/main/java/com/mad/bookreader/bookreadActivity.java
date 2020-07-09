@@ -246,7 +246,7 @@ public class bookreadActivity extends AppCompatActivity {
                 else if (pageSwipeDirection==0){
                     pageSwipeDirection=1;
                     Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(columnID));
-                    dbHandler.updateLastPage(columnID,pageSwipeDirection);
+                    dbHandler.updatePageSwipe(columnID,pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
