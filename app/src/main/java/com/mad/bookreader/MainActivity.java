@@ -268,9 +268,8 @@ public class MainActivity extends AppCompatActivity {
             fileName = getFileName(selectedFile);
             final String fileType = getFileType(selectedFile);
             Log.v(TAG,fileName);
-
+            //final int id = 0;
             final BookDBHandler db = new BookDBHandler(this, null, null, 1);
-            final int id=db.getId();
 
             Log.v(TAG,"Alert dialog to prompt for book title creating");
             //alert dialog to prompt to edit name if wanted
@@ -288,9 +287,16 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                             } else {
                                 if (fileType.equals("pdf")){
+                                    int id = 0;
+                                    if (db.noOfRows() == 0) {
+                                        id = 0;
+                                    } else {
+                                        id = db.lastRowId() + 1;
+                                    }
+
                                     Bitmap thumbnail = getPdfCover(selectedFile);
                                     importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
-                                    db.addBook(titleName, selectedFileString, fileType);
+                                    db.addBook(id, titleName, selectedFileString, fileType);
                                     listBooks.add(book);
                                     recyclerFunction(listBooks);
                                 }
@@ -307,9 +313,15 @@ public class MainActivity extends AppCompatActivity {
                                         } else {
                                             Log.v(TAG, "file does not exist");
                                         }
+                                        int id = 0;
+                                        if (db.noOfRows() == 0) {
+                                            id = 0;
+                                        } else {
+                                            id = db.lastRowId() + 1;
+                                        }
                                         Bitmap thumbnail = getEpubCover(selectedFile);
                                         importedBooks book = new importedBooks(id,titleName, thumbnail, copyFile.getAbsolutePath(), fileType);
-                                        db.addBook(titleName, selectedFileString, fileType);
+                                        db.addBook(id, titleName, selectedFileString, fileType);
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
 

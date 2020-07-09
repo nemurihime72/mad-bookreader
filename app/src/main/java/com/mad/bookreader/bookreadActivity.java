@@ -283,4 +283,30 @@ public class bookreadActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    protected void onStart(){
+        super.onStart();
+        Log.v(TAG, "Starting GUI!");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v(TAG, "Resuming...");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v(TAG, "Pausing...");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v(TAG, "Stopping!");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.v(TAG, "Destroying!");
+    }
+
 }

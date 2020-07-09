@@ -34,20 +34,16 @@ public class BookDBHandler extends SQLiteOpenHelper {
     //Creates database
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+        String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY, "
                 + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_FILETYPE + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER" + ")";
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
-    public int getId(){
-        int id=noOfRows();
-        return(id);
-    }
 
     //Adds book to database
-    public void addBook(String pdfName, String pdfURI, String fileType) {
+    public void addBook(int id, String pdfName, String pdfURI, String fileType) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, getId());
+        values.put(COLUMN_ID, id);
         values.put(COLUMN_NAME, pdfName);
         values.put(COLUMN_PDFURI, pdfURI);
         values.put(COLUMN_FILETYPE, fileType);
@@ -68,9 +64,20 @@ public class BookDBHandler extends SQLiteOpenHelper {
         List<String> nameList = new ArrayList<>();
         List<String> uriList = new ArrayList<>();
         List<String> fileTypeList = new ArrayList<>();
-        for(int i = 0; i < rows ; i++){
+        /*for(int i = 0; i < rows ; i++){
             ArrayList<String> bookDetails = findBookID(i);
             idList.add(bookDetails.get(0));
+            nameList.add(bookDetails.get(1));
+            uriList.add(bookDetails.get(2));
+            fileTypeList.add(bookDetails.get(3));
+            //fileTypeList.add(bookDetails.get(3));
+            Log.v(TAG, "Name: " + nameList.get(0));
+            //Log.v(TAG, bookDetails.get(3));
+        }*/
+        ArrayList<Integer> bookIDList = bookIdList();
+        for (int i = 0; i < bookIDList.size(); i++) {
+            ArrayList<String> bookDetails = findBookID(bookIDList.get(i));
+            idList.add(String.valueOf(bookIDList.get(i)));
             nameList.add(bookDetails.get(1));
             uriList.add(bookDetails.get(2));
             fileTypeList.add(bookDetails.get(3));
@@ -83,6 +90,20 @@ public class BookDBHandler extends SQLiteOpenHelper {
         bookList.add(uriList);
         bookList.add(fileTypeList);
         return bookList;
+    }
+
+    public ArrayList<Integer> bookIdList() {
+        String query = "SELECT " + COLUMN_ID + " FROM " + TABLE_BOOKS + " ORDER BY " + COLUMN_ID + " ASC";
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        if (cursor.moveToFirst()) {
+            idList.add(cursor.getInt(0));
+            cursor.close();
+        }
+        db.close();
+        return idList;
     }
 
     //Finds books based on their id
@@ -272,6 +293,19 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return rows;
     }
 
+    public int lastRowId() {
+        int id = 0;
+        String query = "SELECT MAX(" + COLUMN_ID + ") FROM " + TABLE_BOOKS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(0);
+            Log.v(TAG, "Last ID = " + id);
+            cursor.close();
+        }
+        db.close();
+        return id;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
