@@ -286,17 +286,22 @@ public class MainActivity extends AppCompatActivity {
                             if (titleName.equals("") || titleName.equals(null)) {
                                 Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                             } else {
-                                if (fileType == "pdf") {
+                                if (fileType.equals("pdf")){
                                     Bitmap thumbnail = getPdfCover(selectedFile);
+                                    importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
+                                    db.addBook(titleName, selectedFileString, fileType);
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
                                 }
-                                else if (fileType == "epub") {
+                                else if(fileType.equals("epub")) {
                                     Bitmap thumbnail = getEpubCover(selectedFile);
+                                    importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
+                                    db.addBook(titleName, selectedFileString, fileType);
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
                                 }
                                 
-                                importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
-                                db.addBook(titleName, selectedFileString, fileType);
-                                listBooks.add(book);
-                                recyclerFunction(listBooks);
+
                             }
                         }
                     });
