@@ -266,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
             }*/
             fileName = getFileName(selectedFile);
             final String fileType = getFileType(selectedFile);
-            final Bitmap thumbnail = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
             Log.v(TAG,fileName);
 
             final BookDBHandler db = new BookDBHandler(this, null, null, 1);
@@ -294,6 +293,11 @@ public class MainActivity extends AppCompatActivity {
                                     recyclerFunction(listBooks);
                                 }
                                 else if(fileType.equals("epub")) {
+                                    File file = new File(selectedFile.getPath());
+                                    String[] split = file.getPath().split(":");
+                                    String filePath = split[1];
+                                    File epubFile = new File(filePath);
+
                                     Bitmap thumbnail = getEpubCover(selectedFile);
                                     importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString, fileType);
                                     db.addBook(titleName, selectedFileString, fileType);
