@@ -317,9 +317,13 @@ public class MainActivity extends AppCompatActivity {
                                         File file = new File(selectedFile.getPath());
                                         String[] split = file.getPath().split(":");
                                         String filePath = split[1];
+                                        Log.v(TAG, "filepath: " + filePath);
                                         File epubFile = new File(filePath);
                                         File copyFile = new File(getExternalFilesDir(null), fileName);
+                                        Log.v(TAG, "copyfile: " + copyFile.getPath());
                                         copy(epubFile, copyFile);
+                                        Log.v(TAG, "og file dir: " + epubFile.getPath());
+                                        Log.v(TAG, "copied file dir: " + copyFile.getAbsolutePath());
                                         if (copyFile.exists()) {
                                             Log.v(TAG, "file exists, location is " + copyFile.getAbsolutePath());
                                         } else {
@@ -337,8 +341,9 @@ public class MainActivity extends AppCompatActivity {
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
 
-                                    } catch (Exception e) {
-                                        Log.v(TAG, e.getMessage());
+                                    } catch (IOException e) {
+                                        Log.e(TAG, e.getMessage());
+                                        e.printStackTrace();
                                     }
 
                                 }
