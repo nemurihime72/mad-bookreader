@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         id = db.lastRowId() + 1;
                                     }
-                                    Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.PDFicon);
+                                    Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
                                     importedBooks book=new importedBooks(id,url,thumbnail,url,"online");
                                     db.addBook(id,url,url,"online");
                                     listBooks.add(book);
