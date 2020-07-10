@@ -237,10 +237,20 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
             Uri uri = Uri.parse(storedBooks.get(2).get(i));
-            Bitmap image =  getPdfCover(uri);
-            book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
-            bookList.add(book);
-            Log.v(TAG, "Book added: " + book.getTitle());
+            if (storedBooks.get(3).get(i).equals("online")){
+                Bitmap image=BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            }
+            else{
+                Bitmap image =  getPdfCover(uri);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            }
+
+
         }
         recyclerFunction(bookList);
         /*Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
