@@ -86,8 +86,7 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
 # Stage 2
 ## All implementation problem faced
-* Online pdf reader unable to get first page of the pdf as bitmap to display when import
-* Online pdf import back button not working ( decided to remove importing of online pdf, made it into a 1 time reading of pdf )
+* Online pdf reader unable to get first page of the pdf as bitmap to display when import ( Decided to use a default image for all online pdf import)
 
 
 ## Week 9
@@ -103,8 +102,9 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 
 ## Week 11
 ### Implementations done:
-* Fixed database error
+* Fixed small database error
 
 ## Week 12
 ### Implementations done:
-* Completed online pdf reader with "go to page" and "page swipe direction" function
+* Completed online pdf reader with "go to page" and "page swipe direction" function with use of database
+* Redid database functions
