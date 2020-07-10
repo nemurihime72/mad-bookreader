@@ -113,6 +113,13 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     Log.v(TAG, "Epub put inside intent, going to epub read activity now");
                     v.getContext().startActivity(intent);
                 }
+                else if(fileType.equals("online")){
+                    Intent intent=new Intent(v.getContext(),onlinereadActivity.class);
+                    intent.putExtra("id",String.valueOf(id));
+                    intent.putExtra("urllink",uri);
+                    v.getContext().startActivity(intent);
+                }
+
                 else {
                     Toast.makeText(context, "Failed to load file!", Toast.LENGTH_SHORT).show();
                 }

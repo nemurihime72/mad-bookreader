@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
                 final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
                 onlineUrl.setHint("Enter URL here");
-                builder.setView(view).setTitle("Read online pdf")
+                builder.setView(view).setTitle("Import online pdf")
                         .setPositiveButton("Go", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -148,10 +148,22 @@ public class MainActivity extends AppCompatActivity {
                                 if (url.equals("") || url.equals(null)) {
                                     Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
-                                    intent.putExtra("urllink",url);
-                                    Log.v(TAG,"Going to online pdf page now");
-                                    startActivity(intent);
+                                    int id = 0;
+                                    if (db.noOfRows() == 0) {
+                                        id = 0;
+                                    } else {
+                                        id = db.lastRowId() + 1;
+                                    }
+                                    Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.PDFicon);
+                                    importedBooks book=new importedBooks(id,url,thumbnail,url,"online");
+                                    db.addBook(id,url,url,"online");
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
+
+                                    //Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
+                                    //intent.putExtra("urllink",url);
+                                    //Log.v(TAG,"Going to online pdf page now");
+                                    //startActivity(intent);
                                 }
                             }
                         });
