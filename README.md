@@ -24,10 +24,11 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Edit title of book after import
 * Delete book
 * Color change to green at recyclerview when book is currently being read
-* Online pdf reader
+* Online pdf reader with import
 * App icon
 * Search option with search bar
 * Go to page option
+* Dark/Light mode
 
 ## Ryan Lee:
 * Import function with alertdialog to manually enter title
@@ -66,14 +67,14 @@ A book reader that imports pdf file of books and allows user to import and gathe
 # Future plans
 ## Main Activity
 * Implement an EPUB reader (hopefully)
-* Implement a search bar
-* Settings option
+* Implement a search bar ( done )
+* Settings option 
 * Edit the cover image of book in recyclerview
 * Sorting of books by name,date added, last read
 
 ## Bookread activity
 * Screen rotation
-* Allows user to jump to a page they want
+* Allows user to jump to a page they want( done )
 
 ## Settings activity
-* Light/Dark mode
+* Light/Dark mode ( done )
