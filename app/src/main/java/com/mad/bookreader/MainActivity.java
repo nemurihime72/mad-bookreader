@@ -360,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
                                         File copyFile = new File(getExternalFilesDir(null), fileName);
                                         Log.v(TAG, "copyfile: " + copyFile.getPath());
                                         copy(epubFile, copyFile);
+                                        String copyFileStr = copyFile.getAbsolutePath();
                                         Log.v(TAG, "og file dir: " + epubFile.getPath());
                                         Log.v(TAG, "copied file dir: " + copyFile.getAbsolutePath());
                                         if (copyFile.exists()) {
@@ -375,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                         Bitmap thumbnail = getEpubCover(selectedFile);
                                         importedBooks book = new importedBooks(id,titleName, thumbnail, copyFile.getAbsolutePath(), fileType);
-                                        db.addBook(id, titleName, selectedFileString, fileType);
+                                        db.addBook(id, titleName, copyFileStr, fileType);
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
 

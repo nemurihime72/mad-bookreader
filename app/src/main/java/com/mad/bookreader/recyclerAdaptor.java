@@ -96,19 +96,18 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     v.getContext().startActivity(intent);
                 }
                 else if (fileType.equals("epub")) {
-                    File file = new File(Uri.parse(uri).getPath());
-                    String[] split = file.getPath().split(":");
-                    String filePath = split[1];
-                    File epubFile = new File(filePath);
-                    if (epubFile.exists()) {
+                    //File file = new File(Uri.parse(uri).getPath());
+
+                    //File epubFile = new File(filePath);
+                    /*if (file.exists()) {
                         Log.v(TAG, "file exists: filepath: " + filePath);
                     } else {
                         Log.v(TAG, filePath);
                         Log.v(TAG, "file does not exist");
-                    }
+                    }*/
                     Intent intent = new Intent(v.getContext(), epubReadActivity.class);
                     intent.putExtra("id",String.valueOf(id));
-                    intent.putExtra("BookUri", uri);
+                    intent.putExtra("Bookpath", uri);
                     intent.putExtra("BookName", p);
                     Log.v(TAG, "Epub put inside intent, going to epub read activity now");
                     v.getContext().startActivity(intent);
