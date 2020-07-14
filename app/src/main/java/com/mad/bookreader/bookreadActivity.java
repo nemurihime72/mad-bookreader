@@ -272,7 +272,7 @@ public class bookreadActivity extends AppCompatActivity {
                 return true;
 
             //To change the scroll direction between vertical and horizontal
-            case R.id.scrolldirection:
+            /*case R.id.scrolldirection:
                 Log.v(TAG,"(CASE)PAGE SWIPE DIRECTION="+pageSwipeDirection);
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
@@ -314,7 +314,7 @@ public class bookreadActivity extends AppCompatActivity {
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
                     return true;
-                }
+                }*/
 
             default:
                 return super.onOptionsItemSelected(item);
