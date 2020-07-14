@@ -20,12 +20,6 @@
             android:src="@drawable/ic_toc"/>
 
         <ImageView
-            android:id="@+id/read_aloud"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_read"/>
-        <ImageView
             android:id="@+id/change_theme"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -40,12 +34,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:background="#424242">
-        <ImageView
-            android:id="@+id/select_read"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_read"/>
+
         <ImageView
             android:id="@+id/select_highlight"
             android:layout_width="48dp"
