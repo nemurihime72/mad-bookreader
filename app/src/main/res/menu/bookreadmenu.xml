@@ -13,10 +13,9 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/myswitch"
-        android:title=""
+        android:id="@+id/vertical"
+        android:checkable="true"
         app:showAsAction="never"
-        app:actionLayout="@layout/switch_layout"
-        />
+        android:title="Vertical scrolling" />
 
 </menu>

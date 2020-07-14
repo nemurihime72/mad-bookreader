@@ -62,7 +62,7 @@ public class bookreadActivity extends AppCompatActivity {
         setContentView(R.layout.bookreadlayout);
         pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
-        isChecked = false;
+
 
 
         //Create database handler
@@ -113,6 +113,13 @@ public class bookreadActivity extends AppCompatActivity {
 
             pageSwipeDirection=dbHandler.pageSwipe(columnID);
             Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
+            if (pageSwipeDirection==0){
+                isChecked = false;
+            }
+            else if (pageSwipeDirection==1){
+                isChecked = true;
+            }
+
             //Find the PDFView and load the pdf from previous page to the view
             loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
@@ -180,6 +187,8 @@ public class bookreadActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.bookreadmenu,menu);
+        MenuItem checkable = menu.findItem(R.id.vertical);
+        checkable.setChecked(isChecked);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -189,9 +198,42 @@ public class bookreadActivity extends AppCompatActivity {
         pageLastRead = dbHandler.lastPage(columnID);
         pageSwipeDirection=dbHandler.pageSwipe(columnID);
         switch (item.getItemId()) {
-            case R.id.myswitch:
-                Switch aSwitch=findViewById(R.id.switchAB);
-                isChecked = aSwitch.isChecked();
+            case R.id.vertical:
+                isChecked = !item.isChecked();
+                if (isChecked==true){
+                    pageSwipeDirection=1;
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
+                    pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                            dbHandler.updateLastPage(columnID,pageLastRead);
+                        }
+                    }).load();
+                }
+                else if(isChecked==false){
+                    pageSwipeDirection=0;
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
+                    pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                            dbHandler.updateLastPage(columnID,pageLastRead);
+                        }
+                    }).load();
+                }
                 item.setChecked(isChecked);
                 return true;
 
