@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,8 @@ public class bookreadActivity extends AppCompatActivity {
     public static String pdfName;
     public static int noOfPages;
     public static int columnID;
+    public static boolean isChecked;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class bookreadActivity extends AppCompatActivity {
         setContentView(R.layout.bookreadlayout);
         pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
+        isChecked = false;
 
 
         //Create database handler
@@ -185,6 +189,12 @@ public class bookreadActivity extends AppCompatActivity {
         pageLastRead = dbHandler.lastPage(columnID);
         pageSwipeDirection=dbHandler.pageSwipe(columnID);
         switch (item.getItemId()) {
+            case R.id.myswitch:
+                Switch aSwitch=findViewById(R.id.switchAB);
+                isChecked = aSwitch.isChecked();
+                item.setChecked(isChecked);
+                return true;
+
             case android.R.id.home:
                 finish();
                 return true;
