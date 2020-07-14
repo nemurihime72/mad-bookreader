@@ -51,7 +51,8 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         holder.txt.setText(s);
         //holder.txt.setBackgroundColor(Color.parseColor("#000000"));
         BookDBHandler dbHandler = new BookDBHandler(context, null, null, 1);
-        int lastread=dbHandler.lastPage(id);
+        final int lastread=dbHandler.lastPage(id);
+        final int swipedirection=dbHandler.pageSwipe(id);
         if (lastread != 0){
             holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
             holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
@@ -116,6 +117,8 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     Intent intent=new Intent(v.getContext(),onlinereadActivity.class);
                     intent.putExtra("id",String.valueOf(id));
                     intent.putExtra("urllink",uri);
+                    intent.putExtra("lastread",String.valueOf(lastread));
+                    intent.putExtra("swipe",String.valueOf(swipedirection));
                     v.getContext().startActivity(intent);
                 }
 

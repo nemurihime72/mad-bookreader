@@ -7,10 +7,7 @@
         android:title="@string/go_to_page"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/scrolldirection"
-        android:title="@string/scroll_dir"
-        app:showAsAction="never"/>
+
 
     <item
         android:id="@+id/vertical"
