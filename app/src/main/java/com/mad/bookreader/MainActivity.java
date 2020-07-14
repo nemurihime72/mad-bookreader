@@ -375,8 +375,8 @@ public class MainActivity extends AppCompatActivity {
                                             id = db.lastRowId() + 1;
                                         }
                                         Bitmap thumbnail = getEpubCover(selectedFile);
-                                        importedBooks book = new importedBooks(id,titleName, thumbnail, copyFile.getAbsolutePath(), fileType);
-                                        db.addBook(id, titleName, copyFileStr, fileType);
+                                        importedBooks book = new importedBooks(id,titleName, thumbnail, filePath, fileType);
+                                        db.addBook(id, titleName, filePath, fileType);
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
 
