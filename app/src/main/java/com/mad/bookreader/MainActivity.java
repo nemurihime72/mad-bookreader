@@ -26,6 +26,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -54,6 +55,9 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.epub.EpubReader;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -271,8 +275,13 @@ public class MainActivity extends AppCompatActivity {
                 bookList.add(book);
                 Log.v(TAG, "Book added: " + book.getTitle());
             }
-            else{
+            else if (storedBooks.get(3).get(i).equals("pdf")){
                 Bitmap image =  getPdfCover(uri);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            } else if (storedBooks.get(3).get(i).equals("epub")) {
+                Bitmap image = getEpubCover(uri);
                 book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
                 bookList.add(book);
                 Log.v(TAG, "Book added: " + book.getTitle());
@@ -374,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                                         } else {
                                             id = db.lastRowId() + 1;
                                         }
-                                        Bitmap thumbnail = getEpubCover(selectedFile);
+                                        Bitmap thumbnail = initGetEpubCover(selectedFile);
                                         importedBooks book = new importedBooks(id,titleName, thumbnail, filePath, fileType);
                                         db.addBook(id, titleName, filePath, fileType);
                                         listBooks.add(book);
@@ -432,9 +441,70 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    public Bitmap initGetEpubCover(Uri uri) {
+        File file = new File(uri.getPath());
+        String[] split = file.getPath().split(":");
+        String filePath = split[1];
+        try {
+            //find InputStream for book
+            Log.v(TAG, filePath);
+            File epubFile = new File(filePath);
+            String fileName = epubFile.getName();
+            //InputStream epubInputStream = new FileInputStream(epubFile);
+            InputStream epubInputStream = new FileInputStream(epubFile);
+            //load book from inputStream
+            Book book = (new EpubReader()).readEpub(epubInputStream);
+            //log the book's coverimage property
+            Bitmap coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
+            Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
+
+ /*           String path = (Environment.getExternalStorageDirectory().toString()) + "/cover_images";
+            Log.v(TAG, path);
+            File bitmapFile = new File(path, fileName + ".jpg");
+            OutputStream fos = new FileOutputStream(bitmapFile);
+            coverImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();*/
+
+            return coverImage;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+
+    }
     public Bitmap getEpubCover(Uri uri) {
-        Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-        return noImage;
+        File file = new File(uri.getPath());
+        String filePath = file.getPath();
+        try {
+            //find InputStream for book
+            Log.v(TAG, filePath);
+            File epubFile = new File(filePath);
+            String fileName = epubFile.getName();
+            //InputStream epubInputStream = new FileInputStream(epubFile);
+            InputStream epubInputStream = new FileInputStream(epubFile);
+            //load book from inputStream
+            Book book = (new EpubReader()).readEpub(epubInputStream);
+            //log the book's coverimage property
+            Bitmap coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
+            Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
+
+ /*           String path = (Environment.getExternalStorageDirectory().toString()) + "/cover_images";
+            Log.v(TAG, path);
+            File bitmapFile = new File(path, fileName + ".jpg");
+            OutputStream fos = new FileOutputStream(bitmapFile);
+            coverImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();*/
+
+            return coverImage;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+
     }
 
     public String getFileName(Uri uri) {
