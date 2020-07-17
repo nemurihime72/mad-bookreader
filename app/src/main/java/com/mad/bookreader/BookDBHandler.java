@@ -115,6 +115,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
         cursor.close();
+        db.close();
         return idList;
         }
         /*if (cursor.moveToFirst()) {

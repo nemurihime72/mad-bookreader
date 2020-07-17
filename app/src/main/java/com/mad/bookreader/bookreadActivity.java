@@ -102,6 +102,7 @@ public class bookreadActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(pdfName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -240,6 +241,7 @@ public class bookreadActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
+
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
                 View view= LayoutInflater.from(this).inflate(R.layout.dialogue,null);
