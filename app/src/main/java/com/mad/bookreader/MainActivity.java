@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
             final Uri selectedFile = data.getData();
             final String fileType = getFileType(selectedFile);
             Log.v(TAG, "file type is " + fileType);
+            //check if filetype is valid or not, if invalid, toast message invalid.
             if (!fileType.equals("epub") && !fileType.equals("pdf")) {
                 Toast.makeText(this, "Please select a pdf or epub file", Toast.LENGTH_SHORT).show();
             } else {
@@ -317,18 +318,6 @@ public class MainActivity extends AppCompatActivity {
                 //convert Uri to string for use when adding as object to list
                 final String selectedFileString = selectedFile.toString();
                 Log.v(TAG, selectedFileString);
-            /*try {
-                File file = new File(selectedFile.getPath());
-                final String[] split = file.getPath().split(":");
-                Log.v(TAG,file.getPath());
-                String filePath = split[1];eh
-                File pdfFile = new File(filePath);
-                fileName = pdfFile.getName();
-                Log.v(TAG, "File name: " + fileName);
-            } catch (Exception e) {
-                fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
-                Log.v(TAG, "File name: " + fileName);
-            }*/
                 fileName = getFileName(selectedFile);
                 Log.v(TAG, fileName);
                 //final int id = 0;
@@ -354,13 +343,18 @@ public class MainActivity extends AppCompatActivity {
                                         if (db.noOfRows() == 0) {
                                             id = 0;
                                         } else {
+                                            //get last id number and adds 1 (increment)
                                             id = db.lastRowId() + 1;
                                         }
-
+                                        //get thumbnail for display
                                         Bitmap thumbnail = getPdfCover(selectedFile);
+                                        //create new book object
                                         importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
+                                        //add book data to db
                                         db.addBook(id, titleName, selectedFileString, fileType);
+                                        //add book to list of books
                                         listBooks.add(book);
+                                        //reload recyclerview with updated list of books
                                         recyclerFunction(listBooks);
                                     } else if (fileType.equals("epub")) {
                                         File file = new File(selectedFile.getPath());
@@ -373,12 +367,18 @@ public class MainActivity extends AppCompatActivity {
                                         if (db.noOfRows() == 0) {
                                             id = 0;
                                         } else {
+                                            //get last id number and adds 1 (increment)
                                             id = db.lastRowId() + 1;
                                         }
+                                        //get thumbnail for display
                                         Bitmap thumbnail = initGetEpubCover(selectedFile);
+                                        //create new book object
                                         importedBooks book = new importedBooks(id, titleName, thumbnail, filePath, fileType);
+                                        //add book data to db
                                         db.addBook(id, titleName, filePath, fileType);
+                                        //add book to list of books
                                         listBooks.add(book);
+                                        //reload recyclerview with updated list of books
                                         recyclerFunction(listBooks);
 
                                     }
@@ -430,69 +430,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public Bitmap initGetEpubCover(Uri uri) {
+        //create file from uri
         File file = new File(uri.getPath());
+        //split filepath string to proper filepath without header
         String[] split = file.getPath().split(":");
+        //selects proper filepath
         String filePath = split[1];
-        try {
-            //find InputStream for book
-            Log.v(TAG, filePath);
-            File epubFile = new File(filePath);
-            String fileName = epubFile.getName();
-            //InputStream epubInputStream = new FileInputStream(epubFile);
-            InputStream epubInputStream = new FileInputStream(epubFile);
-            //load book from inputStream
-            Book book = (new EpubReader()).readEpub(epubInputStream);
-            //log the book's coverimage property
-            Bitmap coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
-            Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
+        //get cover image
+        Bitmap coverImage = loadEpubCover(filePath);
+        return coverImage;
 
- /*           String path = (Environment.getExternalStorageDirectory().toString()) + "/cover_images";
-            Log.v(TAG, path);
-            File bitmapFile = new File(path, fileName + ".jpg");
-            OutputStream fos = new FileOutputStream(bitmapFile);
-            coverImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();*/
-
-            return coverImage;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage;
-        }
 
     }
     public Bitmap getEpubCover(Uri uri) {
+        //create file from uri
         File file = new File(uri.getPath());
+        //get filepath from uri
         String filePath = file.getPath();
+        //get cover image from file
+        Bitmap coverImage = loadEpubCover(filePath);
+        return coverImage;
+
+    }
+    public Bitmap loadEpubCover(String filePath) {
         try {
-            //find InputStream for book
             Log.v(TAG, filePath);
+            //load file from filepath
             File epubFile = new File(filePath);
             String fileName = epubFile.getName();
-            //InputStream epubInputStream = new FileInputStream(epubFile);
+            //load file into inputstream
             InputStream epubInputStream = new FileInputStream(epubFile);
             //load book from inputStream
             Book book = (new EpubReader()).readEpub(epubInputStream);
-            //log the book's coverimage property
+            //get bitmap of cover image
             Bitmap coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
             Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
-
- /*           String path = (Environment.getExternalStorageDirectory().toString()) + "/cover_images";
-            Log.v(TAG, path);
-            File bitmapFile = new File(path, fileName + ".jpg");
-            OutputStream fos = new FileOutputStream(bitmapFile);
-            coverImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();*/
 
             return coverImage;
 
         } catch (Exception e) {
             e.printStackTrace();
+            //if no image found or exception is caught, bitmap returned is no image
             Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
             return noImage;
         }
-
     }
 
     public String getFileName(Uri uri) {
@@ -522,7 +503,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String getFileType(Uri uri) {
+        //get file name of uri
         String fileName = getFileName(uri);
+        //returns substring of filename that contains the file extension type (epub or pdf)
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
     }
 
