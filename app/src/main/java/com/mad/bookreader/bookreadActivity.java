@@ -337,7 +337,7 @@ public class bookreadActivity extends AppCompatActivity {
             }
         }.start();
     }
-
+    @Override
     protected void onStart(){
         super.onStart();
         Log.v(TAG, "Starting GUI!");
