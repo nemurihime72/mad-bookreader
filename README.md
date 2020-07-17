@@ -42,6 +42,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 * Settings page app bar
 * All the sqlite
 * Intent activities and onClickListeners
+* Sorting of books in recycler view
 
 # User guide
 
@@ -68,12 +69,12 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ## Main Activity
 * Implement an EPUB reader (hopefully)
 * Implement a search bar ( done )
-* Settings option 
+* Settings option (done)
 * Edit the cover image of book in recyclerview
-* Sorting of books by name,date added, last read
+* Sorting of books by name, last read
 
 ## Bookread activity
-* Screen rotation
+* Screen rotation (not doing)
 * Allows user to jump to a page they want( done )
 
 ## Settings activity
