@@ -15,13 +15,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
+import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -44,17 +47,34 @@ public class epubReaderActivity extends AppCompatActivity {
     ImageView changeTheme;
     LinearLayout bottomContextualBar;
     Context context;
+
     Toolbar epubBar;
     int epubBarHeight, AnimDuration = 600;
     ValueAnimator mVaActionBar;
+
     SharedPreferences sharedPreferences;
     public static final String MY_PREFS = "epubDarkModePrefs";
     public static final String KEY_ISDARKMODE = "isDarkMode";
+
+    int pageNo;
+    public static int pageLastRead;
+    public static int chapterLastRead;
+    public static int columnID;
+    BookDBHandler dbHandler;
+
     final static String TAG = "epubreader";
+    boolean epubBarShowing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_reader);
+        String epubFilePath = this.getIntent().getStringExtra("Bookpath");
+        String bookName = this.getIntent().getStringExtra("BookName");
+        columnID = Integer.parseInt(this.getIntent().getStringExtra("id"));
+        dbHandler = new BookDBHandler(this, null, null, 1);
+        pageLastRead = dbHandler.lastPage(columnID);
+        chapterLastRead = dbHandler.lastChapter(columnID);
+
 
         sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
 
@@ -62,11 +82,10 @@ public class epubReaderActivity extends AppCompatActivity {
         setSupportActionBar(epubBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         context = this;
-        String epubFilePath = this.getIntent().getStringExtra("Bookpath");
-        String bookName = this.getIntent().getStringExtra("BookName");
+
         getSupportActionBar().setTitle(bookName);
+
         epubReaderView = findViewById(R.id.epub_reader);
         selectCopy = findViewById(R.id.select_copy);
         selectHighlight = findViewById(R.id.select_highlight);
@@ -78,9 +97,11 @@ public class epubReaderActivity extends AppCompatActivity {
         showTOC = findViewById(R.id.show_toc);
         changeTheme = findViewById(R.id.change_theme);
         bottomContextualBar = findViewById(R.id.bottom_contextual_bar);
+
         Log.v(TAG, epubFilePath);
         epubReaderView.OpenEpubFile(epubFilePath);
-        epubReaderView.GotoPosition(0, (float) 0);
+        epubReaderView.GotoPosition(chapterLastRead, (float) 0);
+
         if (sharedPreferences.getBoolean(KEY_ISDARKMODE, true)) {
             epubReaderView.SetTheme(epubReaderView.THEME_DARK);
         } else {
@@ -95,14 +116,25 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnChapterChangeListener(int ChapterNumber) {
                 Log.v(TAG, "Chapter change: " + ChapterNumber + " ");
+                dbHandler.updateLastChapter(columnID, ChapterNumber);
             }
 
             @Override
             public void OnTextSelectionModeChangeListner(Boolean mode) {
                 Log.v(TAG, "Text selection mode: " + mode + " ");
-                if (mode == true) {
+                if (mode) {
+                    getSupportActionBar().hide();
+                    ViewGroup.LayoutParams params = epubReaderView.getLayoutParams();
+                    params.height = dpToPx(750, getApplicationContext());
+                    epubReaderView.setLayoutParams(params);
+                    epubReaderView.requestLayout();
                     bottomContextualBar.setVisibility(View.VISIBLE);
                 } else {
+                    getSupportActionBar().show();
+                    ViewGroup.LayoutParams params = epubReaderView.getLayoutParams();
+                    params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    epubReaderView.setLayoutParams(params);
+                    epubReaderView.requestLayout();
                     bottomContextualBar.setVisibility(View.GONE);
                 }
             }
@@ -125,18 +157,25 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnSingleTap() {
                 Log.v(TAG, "page tapped");
-                /*if (getSupportActionBar().isShowing()) {
+                if (epubBarShowing) {
                     if (epubBar != null) {
+                        /*ViewGroup.LayoutParams params = epubReaderView.getLayoutParams();
+                        params.height = dpToPx(680, getApplicationContext());
+                        epubReaderView.setLayoutParams(params);
+                        epubReaderView.requestLayout();*/
                         epubBar.animate().translationY(-epubBar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-                        getSupportActionBar().hide();
-
+                        epubBarShowing = false;
                     }
                 } else {
                     if (epubBar != null) {
+                        /*ViewGroup.LayoutParams params = epubReaderView.getLayoutParams();
+                        params.height = dpToPx(630, getApplicationContext());
+                        epubReaderView.setLayoutParams(params);
+                        epubReaderView.requestLayout();*/
                         epubBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-                        getSupportActionBar().show();
+                        epubBarShowing = true;
                     }
-                }*/
+                }
             }
         });
         showTOC.setOnClickListener(new View.OnClickListener() {
@@ -407,6 +446,11 @@ public class epubReaderActivity extends AppCompatActivity {
         });
         mVaActionBar.setDuration(AnimDuration);
         mVaActionBar.start();
+    }
+
+    public static int dpToPx(int dp, Context context) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
     }
 
     @Override

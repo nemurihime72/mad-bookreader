@@ -94,15 +94,23 @@
     <in.nashapp.epublibdroid.EpubReaderView
         android:id="@+id/epub_reader"
         android:layout_width="match_parent"
-        android:layout_height="627dp"
+        android:layout_height="match_parent"
         android:layout_above="@id/bottom_bar"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="56dp" />
+        android:layout_marginBottom="0dp" />
 
-    <include
-        android:id="@+id/epub_read_bar"
-        layout="@layout/epub_read_bar"
+    <LinearLayout
+        android:id="@+id/actionBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/epub_read_bar"
+            layout="@layout/epub_read_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alwaysDrawnWithCache="false"
+            android:animateLayoutChanges="true" />
+    </LinearLayout>
+
 </RelativeLayout>
