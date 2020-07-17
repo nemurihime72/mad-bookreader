@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem=menu.findItem(R.id.action_search);
         SearchView searchView=(SearchView)searchItem.getActionView();
+        searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -500,6 +501,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
     }
 
     public String getFileType(Uri uri) {

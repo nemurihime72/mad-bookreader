@@ -23,9 +23,8 @@
             android:name=".settingsMain"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".bookreadActivity"
-            android:noHistory = "true"/>
-        <activity android:name=".MainActivity"
-            android:noHistory = "true">
+            android:noHistory="true"/>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
