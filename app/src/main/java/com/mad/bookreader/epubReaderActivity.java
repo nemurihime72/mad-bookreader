@@ -1,6 +1,7 @@
 package com.mad.bookreader;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,13 +35,20 @@ public class epubReaderActivity extends AppCompatActivity {
     ImageView changeTheme;
     LinearLayout bottomContextualBar;
     Context context;
+    Toolbar epubBar;
     final static String TAG = "epubreader";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_reader);
+        epubBar = findViewById(R.id.epub_read_bar);
+        setSupportActionBar(epubBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         context = this;
         String epubFilePath = this.getIntent().getStringExtra("Bookpath");
+        String bookName = this.getIntent().getStringExtra("BookName");
+        getSupportActionBar().setTitle(bookName);
         epubReaderView = findViewById(R.id.epub_reader);
         selectCopy = findViewById(R.id.select_copy);
         selectHighlight = findViewById(R.id.select_highlight);
@@ -99,6 +108,16 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 epubReaderView.ListChaptersDialog(epubReaderView.GetTheme());
+            }
+        });
+        changeTheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (epubReaderView.GetTheme() == epubReaderView.THEME_LIGHT) {
+                    epubReaderView.SetTheme(epubReaderView.THEME_DARK);
+                } else {
+                    epubReaderView.SetTheme(epubReaderView.THEME_LIGHT);
+                }
             }
         });
         selectHighlight.setOnClickListener(new View.OnClickListener() {
@@ -287,5 +306,15 @@ public class epubReaderActivity extends AppCompatActivity {
                 epubReaderView.ExitSelectionMode();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
