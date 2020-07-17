@@ -308,10 +308,15 @@ public class MainActivity extends AppCompatActivity {
             final String fileName;
             //get Uri from data passed from intent
             final Uri selectedFile = data.getData();
-            getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //convert Uri to string for use when adding as object to list
-            final String selectedFileString = selectedFile.toString();
-            Log.v(TAG,selectedFileString);
+            final String fileType = getFileType(selectedFile);
+            Log.v(TAG, "file type is " + fileType);
+            if (!fileType.equals("epub") && !fileType.equals("pdf")) {
+                Toast.makeText(this, "Please select a pdf or epub file", Toast.LENGTH_SHORT).show();
+            } else {
+                getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                //convert Uri to string for use when adding as object to list
+                final String selectedFileString = selectedFile.toString();
+                Log.v(TAG, selectedFileString);
             /*try {
                 File file = new File(selectedFile.getPath());
                 final String[] split = file.getPath().split(":");
@@ -324,59 +329,46 @@ public class MainActivity extends AppCompatActivity {
                 fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
                 Log.v(TAG, "File name: " + fileName);
             }*/
-            fileName = getFileName(selectedFile);
-            final String fileType = getFileType(selectedFile);
-            Log.v(TAG,fileName);
-            //final int id = 0;
-            final BookDBHandler db = new BookDBHandler(this, null, null, 1);
+                fileName = getFileName(selectedFile);
+                Log.v(TAG, fileName);
+                //final int id = 0;
+                final BookDBHandler db = new BookDBHandler(this, null, null, 1);
 
-            Log.v(TAG,"Alert dialog to prompt for book title creating");
-            //alert dialog to prompt to edit name if wanted
-            android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
-            final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
-            editTextTitle.setHint(fileName);
-            editTextTitle.setText(fileName);
-            builder.setView(view).setTitle("Set title for book")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String titleName=editTextTitle.getText().toString();
-                            if (titleName.equals("") || titleName.equals(null)) {
-                                Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (fileType.equals("pdf")){
-                                    int id = 0;
-                                    if (db.noOfRows() == 0) {
-                                        id = 0;
-                                    } else {
-                                        id = db.lastRowId() + 1;
-                                    }
+                Log.v(TAG, "Alert dialog to prompt for book title creating");
+                //alert dialog to prompt to edit name if wanted
+                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                View view = LayoutInflater.from(this).inflate(R.layout.dialogue, null);
+                final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
+                editTextTitle.setHint(fileName);
+                editTextTitle.setText(fileName);
+                builder.setView(view).setTitle("Set title for book")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String titleName = editTextTitle.getText().toString();
+                                if (titleName.equals("") || titleName.equals(null)) {
+                                    Toast.makeText(getApplicationContext(), "Please enter a title", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (fileType.equals("pdf")) {
+                                        int id = 0;
+                                        if (db.noOfRows() == 0) {
+                                            id = 0;
+                                        } else {
+                                            id = db.lastRowId() + 1;
+                                        }
 
-                                    Bitmap thumbnail = getPdfCover(selectedFile);
-                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
-                                    db.addBook(id, titleName, selectedFileString, fileType);
-                                    listBooks.add(book);
-                                    recyclerFunction(listBooks);
-                                }
-                                else if(fileType.equals("epub")) {
-                                    try {
+                                        Bitmap thumbnail = getPdfCover(selectedFile);
+                                        importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
+                                        db.addBook(id, titleName, selectedFileString, fileType);
+                                        listBooks.add(book);
+                                        recyclerFunction(listBooks);
+                                    } else if (fileType.equals("epub")) {
                                         File file = new File(selectedFile.getPath());
                                         String[] split = file.getPath().split(":");
                                         String filePath = split[1];
                                         Log.v(TAG, "filepath: " + filePath);
                                         File epubFile = new File(filePath);
-                                        File copyFile = new File(getExternalFilesDir(null), fileName);
-                                        Log.v(TAG, "copyfile: " + copyFile.getPath());
-                                        copy(epubFile, copyFile);
-                                        String copyFileStr = copyFile.getAbsolutePath();
-                                        Log.v(TAG, "og file dir: " + epubFile.getPath());
-                                        Log.v(TAG, "copied file dir: " + copyFile.getAbsolutePath());
-                                        if (copyFile.exists()) {
-                                            Log.v(TAG, "file exists, location is " + copyFile.getAbsolutePath());
-                                        } else {
-                                            Log.v(TAG, "file does not exist");
-                                        }
+
                                         int id = 0;
                                         if (db.noOfRows() == 0) {
                                             id = 0;
@@ -384,27 +376,23 @@ public class MainActivity extends AppCompatActivity {
                                             id = db.lastRowId() + 1;
                                         }
                                         Bitmap thumbnail = initGetEpubCover(selectedFile);
-                                        importedBooks book = new importedBooks(id,titleName, thumbnail, filePath, fileType);
+                                        importedBooks book = new importedBooks(id, titleName, thumbnail, filePath, fileType);
                                         db.addBook(id, titleName, filePath, fileType);
                                         listBooks.add(book);
                                         recyclerFunction(listBooks);
 
-                                    } catch (IOException e) {
-                                        Log.e(TAG, e.getMessage());
-                                        e.printStackTrace();
                                     }
 
-                                }
-                                
 
+                                }
                             }
-                        }
-                    });
-            AlertDialog alert=builder.create();
-            Log.v(TAG,"Alert dialog successfully created");
-            alert.show();
-            //toast to show import was successful
-            Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
+                        });
+                AlertDialog alert = builder.create();
+                Log.v(TAG, "Alert dialog successfully created");
+                alert.show();
+                //toast to show import was successful
+                Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
