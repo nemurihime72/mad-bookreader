@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,9 @@ public class bookreadActivity extends AppCompatActivity {
     public static int pageSwipeDirection;
     public static String pdfName;
     public static int noOfPages;
+    public static int columnID;
+    public static boolean isChecked;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +62,12 @@ public class bookreadActivity extends AppCompatActivity {
         setContentView(R.layout.bookreadlayout);
         pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
+        isChecked = false;
 
 
         //Create database handler
         BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageSwipeDirection=dbHandler.pageSwipe(pdfName);
-        Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
+
 
         //Get listBooks from MainActivity
 
@@ -87,6 +91,7 @@ public class bookreadActivity extends AppCompatActivity {
         if (pdfPage.hasExtra("PdfName") | pdfPage.hasExtra("PdfUri")) {
 
             //Setting variable pdfName as the name of the pdf file
+            columnID=Integer.parseInt(pdfPage.getStringExtra("id"));
             Log.v(TAG, "Getting information from intent");
             pdfName = pdfPage.getStringExtra("PdfName");
             Log.v(TAG, "PDF Name is: " + pdfName);
@@ -106,15 +111,13 @@ public class bookreadActivity extends AppCompatActivity {
             });
             Log.v(TAG, "Top toolbar set");
 
+            pageSwipeDirection=dbHandler.pageSwipe(columnID);
+            Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
             //Find the PDFView and load the pdf from previous page to the view
-            loadPDF(pdfName, pdfUri,pageSwipeDirection);
+            loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
 
         }
-
-        
-
-
 
         //pdfview.fromUri(pdfUri);
         /*pdfview.setOnTouchListener(new View.OnTouchListener() {
@@ -127,14 +130,15 @@ public class bookreadActivity extends AppCompatActivity {
         });*/
     }
 
-    public void loadPDF(final String pdfName, final String pdfURI,int pageSwipeDirection) {
+    public void loadPDF(final String pdfName, final String pdfURI) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName);
+        pageLastRead = dbHandler.lastPage(columnID);
+        pageSwipeDirection= dbHandler.pageSwipe(columnID);
+        Log.v(TAG,"(Load)PAGE SWIPE DIRECTION="+pageSwipeDirection);
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
         pdfview = findViewById(R.id.pdfView);
-        pageSwipeDirection = dbHandler.pageSwipe(pdfName);
         if (pageSwipeDirection == 0) {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
@@ -148,12 +152,12 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
-                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                    dbHandler.updateLastPage(columnID,pageLastRead);
                 }
             }).load();
         }
         //Change from horizontal to vertical scrolling
-        if (pageSwipeDirection == 1){
+        else if (pageSwipeDirection == 1){
             pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
                 @Override
                 public void onPageChanged(int page, int pageCount) {
@@ -166,7 +170,7 @@ public class bookreadActivity extends AppCompatActivity {
                         pageLastRead = 0;
                         Log.v(TAG, "Finished reading, page last read returned to the start");
                     }
-                    dbHandler.updateLastPage(pdfName,pageLastRead);
+                    dbHandler.updateLastPage(columnID,pageLastRead);
                 }
             }).load();
         }
@@ -182,8 +186,18 @@ public class bookreadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(pdfName);
+        pageLastRead = dbHandler.lastPage(columnID);
+        pageSwipeDirection=dbHandler.pageSwipe(columnID);
         switch (item.getItemId()) {
+            case R.id.myswitch:
+                Switch aSwitch=findViewById(R.id.switchAB);
+                isChecked = aSwitch.isChecked();
+                item.setChecked(isChecked);
+                return true;
+
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
                 View view= LayoutInflater.from(this).inflate(R.layout.dialogue,null);
@@ -194,23 +208,14 @@ public class bookreadActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String pageNo1=goToPage.getText().toString();
+
                                 if (pageNo1.equals("") || pageNo1.equals(null)) {
                                     Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    int pageNumber=Integer.parseInt(pageNo1);
-                                    pdfview.fromUri(uri).defaultPage(pageNumber).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            pageLastRead=pdfview.getCurrentPage();
-                                            Log.v(TAG,"Page changed to: "+pageLastRead);
-                                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
-                                            if (pageLastRead+1==pdfview.getPageCount()){
-                                                pageLastRead=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(pdfName,pageLastRead);
-                                        }
-                                    }).load();
+                                    int pageNumber=Integer.parseInt(pageNo1)-1;
+                                    pageLastRead=pageNumber;
+                                    dbHandler.updateLastPage(columnID,pageLastRead);
+                                    loadPDF(pdfName, pdfUri);
                                 }
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -226,10 +231,11 @@ public class bookreadActivity extends AppCompatActivity {
 
             //To change the scroll direction between vertical and horizontal
             case R.id.scrolldirection:
+                Log.v(TAG,"(CASE)PAGE SWIPE DIRECTION="+pageSwipeDirection);
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
                     pageSwipeDirection=0;
-                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -240,16 +246,17 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
-                            dbHandler.updateLastPage(pdfName,pageLastRead);
+                            dbHandler.updateLastPage(columnID,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling to horizontal");
+                    return true;
                 }
                 //Change from horizontal to vertical scrolling
-                else{
+                else if (pageSwipeDirection==0){
                     pageSwipeDirection=1;
-                    Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(pdfName));
-                    dbHandler.updatePageSwipe(pdfName, pageSwipeDirection);
+                    Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(columnID));
+                    dbHandler.updatePageSwipe(columnID,pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
                         @Override
                         public void onPageChanged(int page, int pageCount) {
@@ -260,12 +267,13 @@ public class bookreadActivity extends AppCompatActivity {
                                 pageLastRead=0;
                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                             }
-                            dbHandler.updateLastPage(pdfName,pageLastRead);
+                            dbHandler.updateLastPage(columnID,pageLastRead);
                         }
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
+                    return true;
                 }
-                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -285,4 +293,30 @@ public class bookreadActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    protected void onStart(){
+        super.onStart();
+        Log.v(TAG, "Starting GUI!");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v(TAG, "Resuming...");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v(TAG, "Pausing...");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v(TAG, "Stopping!");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.v(TAG, "Destroying!");
+    }
+
 }

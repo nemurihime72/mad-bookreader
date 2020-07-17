@@ -6,16 +6,19 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -31,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -40,6 +44,7 @@ import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         sharedPreferences=getSharedPreferences("nightModePrefs", Context.MODE_PRIVATE);
         checkNightModeSwitch();
         /*To add my own toolbar instead of the default*/
@@ -76,6 +82,30 @@ public class MainActivity extends AppCompatActivity {
 
         Log.v(TAG, "Displaying previously imported books");
         displayBooks(listBooks);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     public void checkNightModeSwitch() {
@@ -137,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
                 final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
                 onlineUrl.setHint("Enter URL here");
-                builder.setView(view).setTitle("Read online pdf")
+                builder.setView(view).setTitle("Import online pdf")
                         .setPositiveButton("Go", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -146,10 +176,22 @@ public class MainActivity extends AppCompatActivity {
                                 if (url.equals("") || url.equals(null)) {
                                     Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
-                                    intent.putExtra("urllink",url);
-                                    Log.v(TAG,"Going to online pdf page now");
-                                    startActivity(intent);
+                                    int id = 0;
+                                    if (db.noOfRows() == 0) {
+                                        id = 0;
+                                    } else {
+                                        id = db.lastRowId() + 1;
+                                    }
+                                    Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
+                                    importedBooks book=new importedBooks(id,url,thumbnail,url,"online");
+                                    db.addBook(id,url,url,"online");
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
+
+                                    //Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
+                                    //intent.putExtra("urllink",url);
+                                    //Log.v(TAG,"Going to online pdf page now");
+                                    //startActivity(intent);
                                 }
                             }
                         });
@@ -201,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG,"Import files selected");
 
                 //intent to import only pdf
-                Intent intent = new Intent().setType("application/pdf").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
@@ -222,11 +264,21 @@ public class MainActivity extends AppCompatActivity {
         storedBooks = db.startBooks(storedBooks);
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
-            Uri uri = Uri.parse(storedBooks.get(1).get(i));
-            Bitmap image =  getCover(uri);
-            book = new importedBooks(storedBooks.get(0).get(i), image, storedBooks.get(1).get(i));
-            bookList.add(book);
-            Log.v(TAG, "Book added: " + book.getTitle());
+            Uri uri = Uri.parse(storedBooks.get(2).get(i));
+            if (storedBooks.get(3).get(i).equals("online")){
+                Bitmap image=BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            }
+            else{
+                Bitmap image =  getPdfCover(uri);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            }
+
+
         }
         recyclerFunction(bookList);
         /*Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
@@ -244,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         //checks if requestCode and resultCode matches from above intent
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
-            String fileName;
+            final String fileName;
             //get Uri from data passed from intent
             final Uri selectedFile = data.getData();
             getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -264,8 +316,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG, "File name: " + fileName);
             }*/
             fileName = getFileName(selectedFile);
+            final String fileType = getFileType(selectedFile);
             Log.v(TAG,fileName);
-
+            //final int id = 0;
             final BookDBHandler db = new BookDBHandler(this, null, null, 1);
 
             Log.v(TAG,"Alert dialog to prompt for book title creating");
@@ -283,11 +336,58 @@ public class MainActivity extends AppCompatActivity {
                             if (titleName.equals("") || titleName.equals(null)) {
                                 Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
                             } else {
-                                Bitmap thumbnail = getCover(selectedFile);
-                                importedBooks book = new importedBooks(titleName, thumbnail, selectedFileString);
-                                db.addBook(titleName, selectedFileString);
-                                listBooks.add(book);
-                                recyclerFunction(listBooks);
+                                if (fileType.equals("pdf")){
+                                    int id = 0;
+                                    if (db.noOfRows() == 0) {
+                                        id = 0;
+                                    } else {
+                                        id = db.lastRowId() + 1;
+                                    }
+
+                                    Bitmap thumbnail = getPdfCover(selectedFile);
+                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
+                                    db.addBook(id, titleName, selectedFileString, fileType);
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
+                                }
+                                else if(fileType.equals("epub")) {
+                                    try {
+                                        File file = new File(selectedFile.getPath());
+                                        String[] split = file.getPath().split(":");
+                                        String filePath = split[1];
+                                        Log.v(TAG, "filepath: " + filePath);
+                                        File epubFile = new File(filePath);
+                                        File copyFile = new File(getExternalFilesDir(null), fileName);
+                                        Log.v(TAG, "copyfile: " + copyFile.getPath());
+                                        copy(epubFile, copyFile);
+                                        String copyFileStr = copyFile.getAbsolutePath();
+                                        Log.v(TAG, "og file dir: " + epubFile.getPath());
+                                        Log.v(TAG, "copied file dir: " + copyFile.getAbsolutePath());
+                                        if (copyFile.exists()) {
+                                            Log.v(TAG, "file exists, location is " + copyFile.getAbsolutePath());
+                                        } else {
+                                            Log.v(TAG, "file does not exist");
+                                        }
+                                        int id = 0;
+                                        if (db.noOfRows() == 0) {
+                                            id = 0;
+                                        } else {
+                                            id = db.lastRowId() + 1;
+                                        }
+                                        Bitmap thumbnail = getEpubCover(selectedFile);
+                                        importedBooks book = new importedBooks(id,titleName, thumbnail, filePath, fileType);
+                                        db.addBook(id, titleName, filePath, fileType);
+                                        listBooks.add(book);
+                                        recyclerFunction(listBooks);
+
+                                    } catch (IOException e) {
+                                        Log.e(TAG, e.getMessage());
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                                
+
                             }
                         }
                     });
@@ -299,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap getCover(Uri uri) {
+    public Bitmap getPdfCover(Uri uri) {
         PdfiumCore pdfiumCore = new PdfiumCore(getApplicationContext()); //use PdfiumCore to render bitmap
         int pageNum = 0; //use first page of pdf
         try {
@@ -332,6 +432,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    public Bitmap getEpubCover(Uri uri) {
+        Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+        return noImage;
+    }
 
     public String getFileName(Uri uri) {
         String result = null;
@@ -357,5 +461,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    public String getFileType(Uri uri) {
+        String fileName = getFileName(uri);
+        return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+    }
+
+    public static void copy(File src, File dst) throws IOException {
+        try (InputStream in = new FileInputStream(src)) {
+            try (OutputStream out = new FileOutputStream(dst)) {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+        }
     }
 }

@@ -47,10 +47,11 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
         Log.v(TAG, "Setting up holder");
         final String s = data.get(position).getTitle();
+        final int id=data.get(position).getId();
         holder.txt.setText(s);
         //holder.txt.setBackgroundColor(Color.parseColor("#000000"));
         BookDBHandler dbHandler = new BookDBHandler(context, null, null, 1);
-        int lastread=dbHandler.lastPage(s);
+        int lastread=dbHandler.lastPage(id);
         if (lastread != 0){
             holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
             holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
@@ -58,7 +59,8 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         holder.img.setImageBitmap(data.get(position).getImage());
         final String p = data.get(position).getTitle();
         Log.v(TAG, "string p = " + p);
-        final String uri = data.get(position).getPdfUri();
+        final String uri = data.get(position).getBookUri();
+        final String fileType = data.get(position).getFileType();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,11 +86,42 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     notifyItemRemoved(holder.getAdapterPosition());
                     notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
                 }*/
-                Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                intent.putExtra("PdfUri", uri);
-                intent.putExtra("PdfName", p);
-                Log.v(TAG,"PDF put inside intent, going to the book read activity now");
-                v.getContext().startActivity(intent);
+                Log.v(TAG, "filetype is " + fileType);
+                if (fileType.equals("pdf")) {
+                    Intent intent=new Intent(v.getContext(),bookreadActivity.class);
+                    intent.putExtra("id",String.valueOf(id));
+                    intent.putExtra("PdfUri", uri);
+                    intent.putExtra("PdfName", p);
+                    Log.v(TAG,"PDF put inside intent, going to the book read activity now");
+                    v.getContext().startActivity(intent);
+                }
+                else if (fileType.equals("epub")) {
+                    //File file = new File(Uri.parse(uri).getPath());
+
+                    //File epubFile = new File(filePath);
+                    /*if (file.exists()) {
+                        Log.v(TAG, "file exists: filepath: " + filePath);
+                    } else {
+                        Log.v(TAG, filePath);
+                        Log.v(TAG, "file does not exist");
+                    }*/
+                    Intent intent = new Intent(v.getContext(), epubReaderActivity.class);
+                    intent.putExtra("id",String.valueOf(id));
+                    intent.putExtra("Bookpath", uri);
+                    intent.putExtra("BookName", p);
+                    Log.v(TAG, "Epub put inside intent, going to epub read activity now");
+                    v.getContext().startActivity(intent);
+                }
+                else if(fileType.equals("online")){
+                    Intent intent=new Intent(v.getContext(),onlinereadActivity.class);
+                    intent.putExtra("id",String.valueOf(id));
+                    intent.putExtra("urllink",uri);
+                    v.getContext().startActivity(intent);
+                }
+
+                else {
+                    Toast.makeText(context, "Failed to load file!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         holder.imgButton.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +144,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                                 delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.v(TAG,"Deleting book");
-                                        db.deleteBook(s);
+                                        db.deleteBook(id);
                                         data.remove(holder.getAdapterPosition());
                                         notifyItemRemoved(holder.getAdapterPosition());
                                         notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
@@ -142,7 +175,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                                         String newTitle=titleEdit.getText().toString();
                                         data.get(position).setTitle(newTitle);
                                         holder.txt.setText(newTitle);
-                                        db.editTitleBook(oldTitle,newTitle);
+                                        db.editTitleBook(id,newTitle);
                                         Log.v(TAG,"New title set");
                                     }
                                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -12,4 +12,11 @@
         android:title="@string/scroll_dir"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/myswitch"
+        android:title=""
+        app:showAsAction="never"
+        app:actionLayout="@layout/switch_layout"
+        />
+
 </menu>

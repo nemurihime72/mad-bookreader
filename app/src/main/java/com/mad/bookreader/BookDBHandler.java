@@ -24,6 +24,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_PDFURI = "bookpdfuri";
     public static final String COLUMN_PREVPAGE = "booklastpage";
     public static final String COLUMN_SWIPE = "bookswipepage";
+    public static final String COLUMN_FILETYPE = "bookfiletype";
 
     public BookDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, BOOKDATABASE, factory, DATABASE_VERSION);
@@ -33,17 +34,19 @@ public class BookDBHandler extends SQLiteOpenHelper {
     //Creates database
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER" + ")";
+        String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_FILETYPE + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER" + ")";
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
+
     //Adds book to database
-    public void addBook(String pdfName, String pdfURI) {
+    public void addBook(int id, String pdfName, String pdfURI, String fileType) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, noOfRows());
+        values.put(COLUMN_ID, id);
         values.put(COLUMN_NAME, pdfName);
         values.put(COLUMN_PDFURI, pdfURI);
+        values.put(COLUMN_FILETYPE, fileType);
         values.put(COLUMN_PREVPAGE, 0);
         values.put(COLUMN_SWIPE, 0);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -55,20 +58,72 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Fill a list up with books from database
-    public List<List<String>> startBooks(List<List<String>> pdfList) {
+    public List<List<String>> startBooks(List<List<String>> bookList) {
         int rows = noOfRows();
-        List<String> pdfNameList = new ArrayList<>();
-        List<String> pdfURIList = new ArrayList<>();
-        for(int i = 0; i < rows ; i++){
+        List<String> idList = new ArrayList<>();
+        List<String> nameList = new ArrayList<>();
+        List<String> uriList = new ArrayList<>();
+        List<String> fileTypeList = new ArrayList<>();
+        /*for(int i = 0; i < rows ; i++){
             ArrayList<String> bookDetails = findBookID(i);
-            pdfNameList.add(bookDetails.get(0));
-            pdfURIList.add(bookDetails.get(1));
-            Log.v(TAG, "Name: " + pdfNameList.get(0));
+            idList.add(bookDetails.get(0));
+            nameList.add(bookDetails.get(1));
+            uriList.add(bookDetails.get(2));
+            fileTypeList.add(bookDetails.get(3));
+            //fileTypeList.add(bookDetails.get(3));
+            Log.v(TAG, "Name: " + nameList.get(0));
+            //Log.v(TAG, bookDetails.get(3));
+        }*/
+        ArrayList<Integer> bookIDList = bookIdList();
+        for (Integer i: bookIDList
+             ) {
+            Log.v(TAG, String.valueOf(bookIDList));
+
         }
-        pdfList.add(pdfNameList);
-        pdfList.add(pdfURIList);
-        return pdfList;
+        for (int i = 0; i < bookIDList.size(); i++) {
+            ArrayList<String> bookDetails = findBookID(bookIDList.get(i));
+            Log.v(TAG, "IDs : " + bookIDList.get(0));
+            idList.add(String.valueOf(bookIDList.get(i)));
+            nameList.add(bookDetails.get(1));
+            uriList.add(bookDetails.get(2));
+            fileTypeList.add(bookDetails.get(3));
+            //fileTypeList.add(bookDetails.get(3));
+            Log.v(TAG, "Name: " + nameList.get(0));
+            //Log.v(TAG, bookDetails.get(3));
+        }
+        bookList.add(idList);
+        bookList.add(nameList);
+        bookList.add(uriList);
+        bookList.add(fileTypeList);
+        return bookList;
     }
+
+    public ArrayList<Integer> bookIdList() {
+        String query = "SELECT " + COLUMN_ID + " FROM " + TABLE_BOOKS + " ORDER BY " + COLUMN_ID + " ASC";
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        if (cursor != null){
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                idList.add(cursor.getInt(0));
+                cursor.moveToNext();
+                }
+
+                //move to the next row
+                cursor.moveToNext();
+            }
+        cursor.close();
+        return idList;
+        }
+        /*if (cursor.moveToFirst()) {
+            idList.add(cursor.getInt(0));
+            Log.v(TAG, String.valueOf(idList));
+            cursor.close();
+        }
+        db.close();
+        return idList;*/
 
     //Finds books based on their id
     public ArrayList<String> findBookID(int id){
@@ -79,16 +134,21 @@ public class BookDBHandler extends SQLiteOpenHelper {
         ArrayList<String> bookDetails= new ArrayList<>();
 
         if (cursor.moveToFirst()) {
-            Log.v(TAG, "Adds pdf name and uri to list");
+            bookDetails.add(cursor.getString(0));
+            Log.v(TAG, "Found id: " + cursor.getString(0));
+            Log.v(TAG, "Adds pdf name, type and uri to list");
             bookDetails.add(cursor.getString(1));
-            Log.v(TAG, "Found: " + cursor.getString(1));
+            Log.v(TAG, "Found name: " + cursor.getString(1));
             bookDetails.add(cursor.getString(2));
+            Log.v(TAG, "Found URI: " + cursor.getString(2));
+            bookDetails.add(cursor.getString(3));
+            Log.v(TAG, "Found filetype: " + cursor.getString(3));
             cursor.close();
         } else {
             bookDetails = null;
         }
         db.close();
-        Log.v(TAG, "returning book: " + bookDetails.get(0));
+        Log.v(TAG, "returning book with id of: " + bookDetails.get(0));
         return bookDetails;
     }
 
@@ -115,15 +175,16 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return bookDetails;
     }*/
 
-    public boolean editTitleBook(String bookTitle,String newBookTitle){
+    public boolean editTitleBook(int colId,String newBookTitle){
         boolean result= false;
-        String query="SELECT * FROM "+ TABLE_BOOKS+" WHERE "+COLUMN_NAME+" = \""+bookTitle+"\"";
+        String query="SELECT * FROM "+ TABLE_BOOKS+" WHERE "+COLUMN_ID+" = \""+colId+"\"";
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int id = Integer.parseInt(cursor.getString(0));
-            String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_NAME+" =\""+bookTitle+"\"");
+            //int id = Integer.parseInt(cursor.getString(0));
+            //String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_ID+" =\""+id+"\"");
+            String query2=("UPDATE "+TABLE_BOOKS+" SET "+COLUMN_NAME+" = +\""+ newBookTitle+"\"" + " WHERE "+COLUMN_ID+" =\""+colId+"\"");
             db.execSQL(query2);
             cursor.close();
             result = true;
@@ -134,16 +195,18 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Deletes book from database using title of book by finding its ID
-    public boolean deleteBook(String bookTitle) {
+    public boolean deleteBook(int colId) {
         boolean result = false;
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + bookTitle + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int id = Integer.parseInt(cursor.getString(0));
-            db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+            //int id = Integer.parseInt(cursor.getString(0));
+            //db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+            db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(colId)});
+            Log.v(TAG, "Deleting book with id of " + colId);
             cursor.close();
             result = true;
         }
@@ -177,15 +240,15 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     //Finds page number last read with pdfName
-    public int lastPage(String pdfName){
+    public int lastPage(int colId){
         int pdfPage = 0;
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + pdfName + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         if(cursor.moveToFirst()) {
             Log.v(TAG, "Getting previously left page from database");
-            pdfPage = Integer.parseInt(cursor.getString(3));
+            pdfPage = Integer.parseInt(cursor.getString(4));
             Log.v(TAG, "Last page is " + pdfPage);
             cursor.close();
             db.close();
@@ -195,38 +258,39 @@ public class BookDBHandler extends SQLiteOpenHelper {
         }
         return pdfPage;
     }
-    public void updateLastPage (String pdfName, int lastPageRead) {
+    public void updateLastPage (int colId, int lastPageRead) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
         Log.v(TAG, UPDATE_LAST_PAGE);
-        Log.v(TAG, "Updating last page read for " + pdfName + " to " + lastPageRead);
+        Log.v(TAG, "Updating last page read for Column ID: " + colId + " to " + lastPageRead);
         db.execSQL(UPDATE_LAST_PAGE);
         db.close();
     }
 
-    public void updatePageSwipe(String pdfName,int direction){
+    public void updatePageSwipe(int colId,int direction){
         SQLiteDatabase db = this.getWritableDatabase();
-        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_NAME + "=\"" + pdfName + "\"";
+        String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_ID + "=\"" + colId + "\"";
         Log.v(TAG, UPDATE_SWIPE);
         db.execSQL(UPDATE_SWIPE);
         db.close();
     }
 
-    public int pageSwipe(String pdfName) {
+    public int pageSwipe(int colId) {
         int pageSwipe = 0;
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_NAME + " = \"" + pdfName + "\"";
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         Cursor cursor = db.rawQuery(query, null);
 
         if(cursor.moveToFirst()) {
             Log.v(TAG, "Getting swipe direction from database");
-            pageSwipe = Integer.parseInt(cursor.getString(4));
+            pageSwipe = Integer.parseInt(cursor.getString(5));
             Log.v(TAG, "Page swipe direction int is " + pageSwipe);
             cursor.close();
             db.close();
         } else {
             Log.v(TAG, "cursor did not move to first in pageswipe");
         }
+        db.close();
         return pageSwipe;
     }
 
@@ -249,9 +313,24 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return rows;
     }
 
+    public int lastRowId() {
+        int id = 0;
+        String query = "SELECT MAX(" + COLUMN_ID + ") FROM " + TABLE_BOOKS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(0);
+            Log.v(TAG, "Last ID = " + id);
+            cursor.close();
+        }
+        db.close();
+        return id;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
+        onCreate(db);
 
     }
 }
