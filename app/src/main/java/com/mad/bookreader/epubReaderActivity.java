@@ -9,6 +9,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,11 +47,17 @@ public class epubReaderActivity extends AppCompatActivity {
     Toolbar epubBar;
     int epubBarHeight, AnimDuration = 600;
     ValueAnimator mVaActionBar;
+    SharedPreferences sharedPreferences;
+    public static final String MY_PREFS = "epubDarkModePrefs";
+    public static final String KEY_ISDARKMODE = "isDarkMode";
     final static String TAG = "epubreader";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_reader);
+
+        sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+
         epubBar = (Toolbar) findViewById(R.id.epub_read_bar);
         setSupportActionBar(epubBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,6 +81,11 @@ public class epubReaderActivity extends AppCompatActivity {
         Log.v(TAG, epubFilePath);
         epubReaderView.OpenEpubFile(epubFilePath);
         epubReaderView.GotoPosition(0, (float) 0);
+        if (sharedPreferences.getBoolean(KEY_ISDARKMODE, true)) {
+            epubReaderView.SetTheme(epubReaderView.THEME_DARK);
+        } else {
+            epubReaderView.SetTheme(epubReaderView.THEME_LIGHT);
+        }
         epubReaderView.setEpubReaderListener(new EpubReaderView.EpubReaderListener() {
             @Override
             public void OnPageChangeListener(int ChapterNumber, int PageNumber, float ProgressStart, float ProgressEnd) {
@@ -113,16 +125,18 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnSingleTap() {
                 Log.v(TAG, "page tapped");
-                if (getSupportActionBar().isShowing()) {
+                /*if (getSupportActionBar().isShowing()) {
                     if (epubBar != null) {
                         epubBar.animate().translationY(-epubBar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+                        getSupportActionBar().hide();
 
                     }
                 } else {
                     if (epubBar != null) {
                         epubBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+                        getSupportActionBar().show();
                     }
-                }
+                }*/
             }
         });
         showTOC.setOnClickListener(new View.OnClickListener() {
@@ -136,8 +150,14 @@ public class epubReaderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (epubReaderView.GetTheme() == epubReaderView.THEME_LIGHT) {
                     epubReaderView.SetTheme(epubReaderView.THEME_DARK);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(KEY_ISDARKMODE, true);
+                    editor.apply();
                 } else {
                     epubReaderView.SetTheme(epubReaderView.THEME_LIGHT);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(KEY_ISDARKMODE, false);
+                    editor.apply();
                 }
             }
         });

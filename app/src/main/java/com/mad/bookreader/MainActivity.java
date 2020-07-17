@@ -249,6 +249,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //intent to import only pdf
                 Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
                 intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 //starts that intent
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
