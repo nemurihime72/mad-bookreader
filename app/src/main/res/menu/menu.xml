@@ -16,6 +16,12 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_action_name"
+        android:title="Sort"
+        app:showAsAction="ifRoom"/>
+
+    <item
     android:id="@+id/action_settings"
     android:title="@string/settings_name"
     app:showAsAction="never"/>

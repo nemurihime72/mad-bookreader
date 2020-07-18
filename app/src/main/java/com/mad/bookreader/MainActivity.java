@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +38,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -53,6 +55,9 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     List<importedBooks> listBooks = new ArrayList<>();
     private recyclerAdaptor rAdaptor;
     SharedPreferences sharedPreferences;
+    int checkedItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +164,60 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    public Dialog onCreateSortingDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        String [] options = {"Title", "Type"};
+        dialogBuilder.setTitle("Sort by")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch(which) {
+                            case 0:
+                                onCreateOrderDialog().show();
+                            case 1:
+                                Collections.sort(listBooks, importedBooks.bookTypeComparator);
+                        }
+                    }
+                });
+        return dialogBuilder.create();
+    }
+
+    public Dialog onCreateOrderDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Sort by");
+
+        String[] order = {"Ascending", "Descending"};
+        dialogBuilder.setSingleChoiceItems(order, checkedItem, new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG, "Dialog Clicked: " + which);
+                checkedItem = which;
+                Log.v(TAG, "" + checkedItem);
+            }
+        });
+
+
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(checkedItem == 0) {
+                        Collections.sort(listBooks, importedBooks.bookComparator);
+                        Log.v(TAG,"Sorted in ascending order");
+                }
+                else
+                {
+                        Collections.sort(listBooks, importedBooks.bookComparatorReversed);
+                        Log.v(TAG,"Sorted in descending order");
+                }
+                recyclerFunction(listBooks);
+            }
+        });
+
+        dialogBuilder.setNegativeButton("Cancel", null);
+
+
+        return dialogBuilder.create();
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler db = new BookDBHandler(this,null, null, 1);
@@ -249,17 +309,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                 return true;
 
+            case R.id.action_sort:
+                Log.v(TAG,"Sorting selected");
+                onCreateSortingDialog().show();
+                /*Collections.sort(listBooks, importedBooks.bookComparator);
+                recyclerFunction(listBooks);*/
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
     public void displayBooks(List<importedBooks> bookList){
         List<List<String>> storedBooks = new ArrayList<>();
         importedBooks book;
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
-        //db.deleteallBooks();
         Log.v(TAG, "Loading books in DB");
         storedBooks = db.startBooks(storedBooks);
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
@@ -281,12 +343,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
         recyclerFunction(bookList);
-        /*Intent intent = new Intent(MainActivity.this, bookreadActivity.class);
-        Bundle importBookList = new Bundle();
-        importBookList.putSerializable("PDFNAMELIST", (Serializable) storedBooks.get(0));
-        importBookList.putSerializable("PDFURI");
-        intent.putExtra("BUNDLE", importBookList);
-        startActivity(intent);*/
     }
 
 

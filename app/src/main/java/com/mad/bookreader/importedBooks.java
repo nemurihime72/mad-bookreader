@@ -7,6 +7,8 @@ import android.net.Uri;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class importedBooks {
     private String Title;
@@ -67,5 +69,30 @@ public class importedBooks {
         BookUri = uri;
         FileType = fileType;
     }
+
+    public static final Comparator<importedBooks> bookComparator = new Comparator<importedBooks>(){
+
+        public int compare(importedBooks a, importedBooks b) {
+            return a.Title.toLowerCase().compareTo(b.Title.toLowerCase());
+        }
+    };
+
+    public static final Comparator<importedBooks> bookComparatorReversed = new Comparator<importedBooks>(){
+
+        public int compare(importedBooks a, importedBooks b) {
+            int i =  a.Title.toLowerCase().compareTo(b.Title.toLowerCase());
+            if(i != 0){
+                return -i;
+            }
+            return i;
+        }
+    };
+
+    public static final Comparator<importedBooks> bookTypeComparator = new Comparator<importedBooks>(){
+        public int compare(importedBooks a, importedBooks b) {
+            return a.FileType.compareTo(b.FileType);
+        }
+    };
+
 
 }
