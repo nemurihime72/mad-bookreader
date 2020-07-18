@@ -7,6 +7,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    Log.v(TAG, "permission to read storage denied");
                 }
                 return;
             }
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
 
     public void checkNightModeSwitch() {
         if (sharedPreferences.getBoolean("isNightMode", false)) {
@@ -246,15 +249,22 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Storage access is needed to read books", Toast.LENGTH_LONG).show();
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    return false;
 
-                //intent to import only pdf
-                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
-                String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
-                intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                //starts that intent
-                startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
-                return true;
+                } else {
+                    //intent to import only pdf
+                    Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+                    intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    //starts that intent
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
+                    return true;
+                }
+
 
             default:
                 return super.onOptionsItemSelected(item);
