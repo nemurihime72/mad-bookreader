@@ -114,3 +114,4 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 * Epub reader
 * Redid page swipe direction into checkbox
 * Sorting of books in recycler view
+* Fixing of app features
