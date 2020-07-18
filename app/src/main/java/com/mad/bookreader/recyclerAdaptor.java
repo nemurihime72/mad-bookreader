@@ -215,8 +215,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<importedBooks> filteredList = new ArrayList<>();
-
-
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(datalist2);
             } else {
