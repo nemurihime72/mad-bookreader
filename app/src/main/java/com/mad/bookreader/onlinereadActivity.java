@@ -3,10 +3,13 @@ package com.mad.bookreader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,7 +95,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
                                     pageNo.setText("Page: "+(currentPage+1)+"/"+noOfPages);
-                                    if (currentPage==pdfview.getPageCount()){
+                                    if (currentPage==pdfview.getPageCount()-1){
                                         currentPage=0;
                                         Log.v(TAG,"Finished reading, page last read returned to the start");
                                     }
@@ -120,7 +123,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
                                     pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                    if (currentPage == pdfview.getPageCount()) {
+                                    if (currentPage == pdfview.getPageCount()-1) {
                                         currentPage = 0;
                                         Log.v(TAG, "Finished reading, page last read returned to the start");
                                     }
@@ -158,6 +161,8 @@ public class onlinereadActivity extends AppCompatActivity {
                     }
                 });*/
     }
+
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
@@ -189,7 +194,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                             noOfPages = pdfview.getPageCount();
                                             currentPage = pdfview.getCurrentPage();
                                             pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
+                                            if (currentPage==pdfview.getPageCount()-1){
                                                 currentPage=0;
                                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                                             }
@@ -218,7 +223,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                             noOfPages = pdfview.getPageCount();
                                             currentPage = pdfview.getCurrentPage();
                                             pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
+                                            if (currentPage==pdfview.getPageCount()-1){
                                                 currentPage=0;
                                                 Log.v(TAG,"Finished reading, page last read returned to the start");
                                             }
@@ -326,7 +331,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                                                 noOfPages = pdfview.getPageCount();
                                                                 currentPage = pdfview.getCurrentPage();
                                                                 pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                                                if (currentPage==pdfview.getPageCount()){
+                                                                if (currentPage==pdfview.getPageCount()-1){
                                                                     currentPage=0;
                                                                     Log.v(TAG,"Finished reading, page last read returned to the start");
                                                                 }
@@ -354,7 +359,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                                                 noOfPages = pdfview.getPageCount();
                                                                 currentPage = pdfview.getCurrentPage();
                                                                 pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                                                if (currentPage == pdfview.getPageCount()) {
+                                                                if (currentPage == pdfview.getPageCount()-1) {
                                                                     currentPage = 0;
                                                                     Log.v(TAG, "Finished reading, page last read returned to the start");
                                                                 }
