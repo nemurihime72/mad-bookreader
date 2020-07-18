@@ -65,17 +65,18 @@ public class onlinereadActivity extends AppCompatActivity {
 
 
 
-
         pageNo=findViewById(R.id.pageNumbers);
         pdfview = findViewById(R.id.pdfViewOnline);
         Intent geturl=getIntent();
-        currentPage=Integer.parseInt(geturl.getStringExtra("lastread"));
-        Log.v(TAG,"LAST READ:"+currentPage);
+        //currentPage=Integer.parseInt(geturl.getStringExtra("lastread"));
+        //Log.v(TAG,"LAST READ:"+currentPage);
         url=geturl.getStringExtra("urllink");
         id=Integer.parseInt(geturl.getStringExtra("id"));
         Log.v(TAG,"URL IS "+ url);
-
-        pageSwipeDirection=Integer.parseInt(geturl.getStringExtra("swipe"));
+        currentPage=dbHandler.lastPage(id);
+        Log.v(TAG,"LAST READ:"+currentPage);
+        //pageSwipeDirection=Integer.parseInt(geturl.getStringExtra("swipe"));
+        pageSwipeDirection=dbHandler.pageSwipe(id);
         if (pageSwipeDirection==0){
             isChecked = false;
         }
@@ -101,6 +102,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                     }
                                     Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
                                     dbHandler.updateLastPage(id,currentPage);
+                                    Log.v(TAG,"Updated db last page");
                                 }
                             }).load();
                         }
@@ -129,6 +131,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                     }
                                     Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
                                     dbHandler.updateLastPage(id, currentPage);
+                                    Log.v(TAG,"Updated db last page");
                                 }
                             }).load();
                         }
@@ -162,7 +165,7 @@ public class onlinereadActivity extends AppCompatActivity {
                 });*/
     }
 
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
@@ -415,5 +418,36 @@ public class onlinereadActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.v(TAG, "Starting GUI!");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v(TAG, "Resuming...");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v(TAG, "Pausing...");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v(TAG, "Stopping!");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.v(TAG, "Destroying!");
     }
 }
