@@ -108,3 +108,10 @@ implementation 'com.github.barteksc:android-pdf-viewer:1.6.0'
 ### Implementations done:
 * Completed online pdf reader with "go to page" and "page swipe direction" function with use of database
 * Redid database functions
+
+## Week 13
+### Implementations done:
+* Epub reader
+* Redid page swipe direction into checkbox
+* Sorting of books in recycler view
+* Fixing of app features
