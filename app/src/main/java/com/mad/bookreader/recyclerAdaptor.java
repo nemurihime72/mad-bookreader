@@ -59,6 +59,10 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
             holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
             holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
         }
+        else{
+            holder.cardView.setBackgroundResource(R.color.titlebg);
+            holder.imgButton.setBackgroundResource(R.color.titlebg);
+        }
         holder.img.setImageBitmap(data.get(position).getImage());
         final String uri = data.get(position).getBookUri();
         final String fileType = data.get(position).getFileType();
@@ -211,6 +215,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<importedBooks> filteredList = new ArrayList<>();
+
 
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(datalist2);
