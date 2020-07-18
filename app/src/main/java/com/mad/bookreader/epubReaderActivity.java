@@ -57,7 +57,7 @@ public class epubReaderActivity extends AppCompatActivity {
     public static final String KEY_ISDARKMODE = "isDarkMode";
 
     int pageNo;
-    public static int pageLastRead;
+    public static float progressLastRead;
     public static int chapterLastRead;
     public static int columnID;
     BookDBHandler dbHandler;
@@ -72,9 +72,8 @@ public class epubReaderActivity extends AppCompatActivity {
         String bookName = this.getIntent().getStringExtra("BookName");
         columnID = Integer.parseInt(this.getIntent().getStringExtra("id"));
         dbHandler = new BookDBHandler(this, null, null, 1);
-        pageLastRead = dbHandler.lastPage(columnID);
         chapterLastRead = dbHandler.lastChapter(columnID);
-
+        progressLastRead = dbHandler.lastProgress(columnID);
 
         sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
 
@@ -100,7 +99,7 @@ public class epubReaderActivity extends AppCompatActivity {
 
         Log.v(TAG, epubFilePath);
         epubReaderView.OpenEpubFile(epubFilePath);
-        epubReaderView.GotoPosition(chapterLastRead, (float) 0);
+        epubReaderView.GotoPosition(chapterLastRead, progressLastRead);
 
         if (sharedPreferences.getBoolean(KEY_ISDARKMODE, true)) {
             epubReaderView.SetTheme(epubReaderView.THEME_DARK);
@@ -111,6 +110,8 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnPageChangeListener(int ChapterNumber, int PageNumber, float ProgressStart, float ProgressEnd) {
                 Log.v(TAG, "page change: chapter: " + ChapterNumber + " pageno: " + PageNumber);
+                Log.v(TAG, "progress start: " + ProgressStart + " | progress end: " + ProgressEnd);
+                dbHandler.updateLastProgress(columnID, ProgressStart);
             }
 
             @Override
@@ -152,6 +153,9 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnBookEndReached() {
                 Log.v(TAG, "end reached");
+                Toast.makeText(context, "End of book reached", Toast.LENGTH_SHORT).show();
+                dbHandler.updateLastChapter(columnID, 0);
+                dbHandler.updateLastProgress(columnID, 0);
             }
 
             @Override
