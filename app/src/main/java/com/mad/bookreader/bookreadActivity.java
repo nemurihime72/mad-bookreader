@@ -62,7 +62,7 @@ public class bookreadActivity extends AppCompatActivity {
         setContentView(R.layout.bookreadlayout);
         pageNo=findViewById(R.id.pageNumber);
         LinearLayout pdfLayout = findViewById(R.id.pdfLayout);
-        isChecked = false;
+
 
 
         //Create database handler
@@ -102,6 +102,7 @@ public class bookreadActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(pdfName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,6 +114,13 @@ public class bookreadActivity extends AppCompatActivity {
 
             pageSwipeDirection=dbHandler.pageSwipe(columnID);
             Log.v(TAG,"Page swipe direction: "+pageSwipeDirection);
+            if (pageSwipeDirection==0){
+                isChecked = false;
+            }
+            else if (pageSwipeDirection==1){
+                isChecked = true;
+            }
+
             //Find the PDFView and load the pdf from previous page to the view
             loadPDF(pdfName, pdfUri);
             Log.v(TAG, "PDF loaded");
@@ -180,6 +188,8 @@ public class bookreadActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.bookreadmenu,menu);
+        MenuItem checkable = menu.findItem(R.id.vertical);
+        checkable.setChecked(isChecked);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -189,15 +199,49 @@ public class bookreadActivity extends AppCompatActivity {
         pageLastRead = dbHandler.lastPage(columnID);
         pageSwipeDirection=dbHandler.pageSwipe(columnID);
         switch (item.getItemId()) {
-            case R.id.myswitch:
-                Switch aSwitch=findViewById(R.id.switchAB);
-                isChecked = aSwitch.isChecked();
+            case R.id.vertical:
+                isChecked = !item.isChecked();
+                if (isChecked==true){
+                    pageSwipeDirection=1;
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
+                    pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                            dbHandler.updateLastPage(columnID,pageLastRead);
+                        }
+                    }).load();
+                }
+                else if(isChecked==false){
+                    pageSwipeDirection=0;
+                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
+                    pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
+                        @Override
+                        public void onPageChanged(int page, int pageCount) {
+                            pageLastRead=pdfview.getCurrentPage();
+                            Log.v(TAG,"Page changed to: "+pageLastRead);
+                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
+                            if (pageLastRead+1==pdfview.getPageCount()){
+                                pageLastRead=0;
+                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                            }
+                            dbHandler.updateLastPage(columnID,pageLastRead);
+                        }
+                    }).load();
+                }
                 item.setChecked(isChecked);
                 return true;
 
             case android.R.id.home:
                 finish();
                 return true;
+
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
                 View view= LayoutInflater.from(this).inflate(R.layout.dialogue,null);
@@ -230,7 +274,7 @@ public class bookreadActivity extends AppCompatActivity {
                 return true;
 
             //To change the scroll direction between vertical and horizontal
-            case R.id.scrolldirection:
+            /*case R.id.scrolldirection:
                 Log.v(TAG,"(CASE)PAGE SWIPE DIRECTION="+pageSwipeDirection);
                 //Change from vertical to horizontal
                 if (pageSwipeDirection==1){
@@ -272,7 +316,7 @@ public class bookreadActivity extends AppCompatActivity {
                     }).load();
                     Log.v(TAG,"Setting scrolling changed to vertical");
                     return true;
-                }
+                }*/
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -293,7 +337,7 @@ public class bookreadActivity extends AppCompatActivity {
             }
         }.start();
     }
-
+    @Override
     protected void onStart(){
         super.onStart();
         Log.v(TAG, "Starting GUI!");

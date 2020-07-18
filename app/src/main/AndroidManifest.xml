@@ -17,11 +17,13 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".epubReaderActivity"></activity>
         <activity android:name=".epubReadActivity" />
-        <activity android:name=".onlinereadActivity" />
+        <activity android:name=".onlinereadActivity"
+            android:noHistory="true"/>
         <activity
             android:name=".settingsMain"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".bookreadActivity" />
+        <activity android:name=".bookreadActivity"
+            android:noHistory="true"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
