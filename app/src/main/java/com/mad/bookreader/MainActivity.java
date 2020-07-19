@@ -7,6 +7,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.PathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -60,6 +62,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.epub.EpubReader;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
 
+            case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -104,15 +109,16 @@ public class MainActivity extends AppCompatActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    Log.v(TAG, "permission to read storage denied");
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
+
 
     public void checkNightModeSwitch() {
         if (sharedPreferences.getBoolean("isNightMode", false)) {
@@ -136,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
         //function to display recyclerview
         RecyclerView rView = (RecyclerView) findViewById(R.id.bookCycler);
         rAdaptor = new recyclerAdaptor(bList);
-        int spanCount=pxToDp(getScreenWidth())/130;
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
+        int spanCount=pxToDp(getScreenWidth())/120;
+        Log.v(TAG, "span count is " + spanCount);
+        GridLayoutManager gLayoutManager = new GridLayoutManager(this, spanCount);
         rView.setLayoutManager(gLayoutManager);
         rView.setAdapter(rAdaptor);
     }
@@ -149,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem=menu.findItem(R.id.action_search);
         SearchView searchView=(SearchView)searchItem.getActionView();
+        searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -301,13 +309,22 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Storage access is needed to read books", Toast.LENGTH_LONG).show();
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    return false;
 
-                //intent to import only pdf
-                Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
-                intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                //starts that intent
-                startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
-                return true;
+                } else {
+                    //intent to import only pdf
+                    Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+                    intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    //starts that intent
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
+                    return true;
+                }
+
 
             case R.id.action_sort:
                 Log.v(TAG,"Sorting selected");
@@ -333,8 +350,13 @@ public class MainActivity extends AppCompatActivity {
                 bookList.add(book);
                 Log.v(TAG, "Book added: " + book.getTitle());
             }
-            else{
+            else if (storedBooks.get(3).get(i).equals("pdf")){
                 Bitmap image =  getPdfCover(uri);
+                book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
+                bookList.add(book);
+                Log.v(TAG, "Book added: " + book.getTitle());
+            } else if (storedBooks.get(3).get(i).equals("epub")) {
+                Bitmap image = getEpubCover(uri);
                 book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
                 bookList.add(book);
                 Log.v(TAG, "Book added: " + book.getTitle());
@@ -355,103 +377,87 @@ public class MainActivity extends AppCompatActivity {
             final String fileName;
             //get Uri from data passed from intent
             final Uri selectedFile = data.getData();
-            getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //convert Uri to string for use when adding as object to list
-            final String selectedFileString = selectedFile.toString();
-            Log.v(TAG,selectedFileString);
-            /*try {
-                File file = new File(selectedFile.getPath());
-                final String[] split = file.getPath().split(":");
-                Log.v(TAG,file.getPath());
-                String filePath = split[1];eh
-                File pdfFile = new File(filePath);
-                fileName = pdfFile.getName();
-                Log.v(TAG, "File name: " + fileName);
-            } catch (Exception e) {
-                fileName = selectedFileString.substring(selectedFileString.lastIndexOf("%2F")+3);
-                Log.v(TAG, "File name: " + fileName);
-            }*/
-            fileName = getFileName(selectedFile);
             final String fileType = getFileType(selectedFile);
-            Log.v(TAG,fileName);
-            //final int id = 0;
-            final BookDBHandler db = new BookDBHandler(this, null, null, 1);
+            Log.v(TAG, "file type is " + fileType);
+            //check if filetype is valid or not, if invalid, toast message invalid.
+            if (!fileType.equals("epub") && !fileType.equals("pdf")) {
+                Toast.makeText(this, "Please select a pdf or epub file", Toast.LENGTH_SHORT).show();
+            } else {
+                getContentResolver().takePersistableUriPermission(selectedFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                //convert Uri to string for use when adding as object to list
+                final String selectedFileString = selectedFile.toString();
+                Log.v(TAG, selectedFileString);
+                fileName = getFileName(selectedFile);
+                Log.v(TAG, fileName);
+                //final int id = 0;
+                final BookDBHandler db = new BookDBHandler(this, null, null, 1);
 
-            Log.v(TAG,"Alert dialog to prompt for book title creating");
-            //alert dialog to prompt to edit name if wanted
-            android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
-            final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
-            editTextTitle.setHint(fileName);
-            editTextTitle.setText(fileName);
-            builder.setView(view).setTitle("Set title for book")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String titleName=editTextTitle.getText().toString();
-                            if (titleName.equals("") || titleName.equals(null)) {
-                                Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (fileType.equals("pdf")){
-                                    int id = 0;
-                                    if (db.noOfRows() == 0) {
-                                        id = 0;
-                                    } else {
-                                        id = db.lastRowId() + 1;
-                                    }
-
-                                    Bitmap thumbnail = getPdfCover(selectedFile);
-                                    importedBooks book = new importedBooks(id,titleName, thumbnail, selectedFileString, fileType);
-                                    db.addBook(id, titleName, selectedFileString, fileType);
-                                    listBooks.add(book);
-                                    recyclerFunction(listBooks);
-                                }
-                                else if(fileType.equals("epub")) {
-                                    try {
-                                        File file = new File(selectedFile.getPath());
-                                        String[] split = file.getPath().split(":");
-                                        String filePath = split[1];
-                                        Log.v(TAG, "filepath: " + filePath);
-                                        File epubFile = new File(filePath);
-                                        File copyFile = new File(getExternalFilesDir(null), fileName);
-                                        Log.v(TAG, "copyfile: " + copyFile.getPath());
-                                        copy(epubFile, copyFile);
-                                        String copyFileStr = copyFile.getAbsolutePath();
-                                        Log.v(TAG, "og file dir: " + epubFile.getPath());
-                                        Log.v(TAG, "copied file dir: " + copyFile.getAbsolutePath());
-                                        if (copyFile.exists()) {
-                                            Log.v(TAG, "file exists, location is " + copyFile.getAbsolutePath());
-                                        } else {
-                                            Log.v(TAG, "file does not exist");
-                                        }
+                Log.v(TAG, "Alert dialog to prompt for book title creating");
+                //alert dialog to prompt to edit name if wanted
+                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                View view = LayoutInflater.from(this).inflate(R.layout.dialogue, null);
+                final EditText editTextTitle = (EditText) view.findViewById(R.id.fileTitle);
+                editTextTitle.setHint(fileName);
+                editTextTitle.setText(fileName);
+                builder.setView(view).setTitle("Set title for book")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String titleName = editTextTitle.getText().toString();
+                                if (titleName.equals("") || titleName.equals(null)) {
+                                    Toast.makeText(getApplicationContext(), "Please enter a title", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (fileType.equals("pdf")) {
                                         int id = 0;
                                         if (db.noOfRows() == 0) {
                                             id = 0;
                                         } else {
+                                            //get last id number and adds 1 (increment)
                                             id = db.lastRowId() + 1;
                                         }
-                                        Bitmap thumbnail = getEpubCover(selectedFile);
-                                        importedBooks book = new importedBooks(id,titleName, thumbnail, filePath, fileType);
-                                        db.addBook(id, titleName, filePath, fileType);
+                                        Log.v("TESTEST","LAST ROW ID: "+db.lastRowId());
+                                        Log.v("TESTTEST","ID IS "+id);
+                                        //get thumbnail for display
+                                        Bitmap thumbnail = getPdfCover(selectedFile);
+                                        //create new book object
+                                        importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
+                                        //add book data to db
+                                        db.addBook(id, titleName, selectedFileString, fileType);
+                                        //add book to list of books
                                         listBooks.add(book);
+                                        //reload recyclerview with updated list of books
+                                        recyclerFunction(listBooks);
+                                    } else if (fileType.equals("epub")) {
+                                        int id = 0;
+                                        if (db.noOfRows() == 0) {
+                                            id = 0;
+                                        } else {
+                                            //get last id number and adds 1 (increment)
+                                            id = db.lastRowId() + 1;
+                                        }
+                                        //get thumbnail for display
+                                        Bitmap thumbnail = initGetEpubCover(selectedFile);
+                                        //create new book object
+                                        importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
+                                        //add book data to db
+                                        db.addBook(id, titleName, selectedFileString, fileType);
+                                        //add book to list of books
+                                        listBooks.add(book);
+                                        //reload recyclerview with updated list of books
                                         recyclerFunction(listBooks);
 
-                                    } catch (IOException e) {
-                                        Log.e(TAG, e.getMessage());
-                                        e.printStackTrace();
                                     }
 
-                                }
-                                
 
+                                }
                             }
-                        }
-                    });
-            AlertDialog alert=builder.create();
-            Log.v(TAG,"Alert dialog successfully created");
-            alert.show();
-            //toast to show import was successful
-            Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
+                        });
+                AlertDialog alert = builder.create();
+                Log.v(TAG, "Alert dialog successfully created");
+                alert.show();
+                //toast to show import was successful
+                Toast.makeText(getApplicationContext(), "Imported " + fileName + " successfully", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -488,9 +494,90 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public void writeFile(InputStream in, File file) {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Bitmap initGetEpubCover(Uri uri) {
+        String fileName = getFileName(uri);
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
+            writeFile(inputStream, file);
+            String filePath = file.getAbsolutePath();
+            //get cover image
+            Bitmap coverImage = loadEpubCover(filePath);
+            return coverImage;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+    }
+
+
+
+
     public Bitmap getEpubCover(Uri uri) {
-        Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-        return noImage;
+        String fileName = getFileName(uri);
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
+            writeFile(inputStream, file);
+            String filePath = file.getAbsolutePath();
+            //get cover image
+            Bitmap coverImage = loadEpubCover(filePath);
+            return coverImage;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+
+    }
+    public Bitmap loadEpubCover(String filePath) {
+        try {
+            Log.v(TAG, filePath);
+            //load file from filepath
+            File epubFile = new File(filePath);
+            String fileName = epubFile.getName();
+            //load file into inputstream
+            InputStream epubInputStream = new FileInputStream(epubFile);
+            //load book from inputStream
+            Book book = (new EpubReader()).readEpub(epubInputStream);
+            //get bitmap of cover image
+            Bitmap coverImage = BitmapFactory.decodeStream((book.getCoverImage()).getInputStream());
+            Log.i("epublib", "cover image is: " + coverImage.getWidth() + " by " + coverImage.getHeight() + " pixels");
+
+            return coverImage;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //if no image found or exception is caught, bitmap returned is no image
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
     }
 
     public String getFileName(Uri uri) {
@@ -519,21 +606,46 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
+    }
+
     public String getFileType(Uri uri) {
+        //get file name of uri
         String fileName = getFileName(uri);
+        //returns substring of filename that contains the file extension type (epub or pdf)
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
     }
 
-    public static void copy(File src, File dst) throws IOException {
-        try (InputStream in = new FileInputStream(src)) {
-            try (OutputStream out = new FileOutputStream(dst)) {
-                // Transfer bytes from in to out
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-        }
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.v(TAG, "Starting GUI!");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v(TAG, "Resuming...");
+        recyclerFunction(listBooks);
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v(TAG, "Pausing...");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v(TAG, "Stopping!");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.v(TAG, "Destroying!");
     }
 }

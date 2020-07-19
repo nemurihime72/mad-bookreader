@@ -3,12 +3,19 @@ package com.mad.bookreader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +34,8 @@ import com.krishna.fileloader.pojo.FileResponse;
 import com.krishna.fileloader.request.FileLoadRequest;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class onlinereadActivity extends AppCompatActivity {
 
@@ -39,6 +48,7 @@ public class onlinereadActivity extends AppCompatActivity {
     public static int pageSwipeDirection;
     public static int noOfPages;
     public static int currentPage;
+    public static boolean isChecked;
 
 
 
@@ -57,19 +67,58 @@ public class onlinereadActivity extends AppCompatActivity {
                 v.getContext().startActivity(intent);
             }
         });
+
+
+        boolean network=haveNetworkConnection();
+        if (network==false){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Not connected to internet")
+                    .setCancelable(false)
+                    .setPositiveButton("Connect to WIFI", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finish();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+
+        boolean internetavailable=haveNetworkConnection();
+        Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
+        if (internetavailable==false){
+            Toast.makeText(this,"No internet connectivity",Toast.LENGTH_LONG);
+        }
+
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
-        currentPage = dbHandler.lastPage(id);
-        Log.v(TAG,"LAST READ:"+currentPage);
-        pageSwipeDirection=dbHandler.pageSwipe(id);
+
+
 
         pageNo=findViewById(R.id.pageNumbers);
         pdfview = findViewById(R.id.pdfViewOnline);
         Intent geturl=getIntent();
+        //currentPage=Integer.parseInt(geturl.getStringExtra("lastread"));
+        //Log.v(TAG,"LAST READ:"+currentPage);
         url=geturl.getStringExtra("urllink");
         id=Integer.parseInt(geturl.getStringExtra("id"));
         Log.v(TAG,"URL IS "+ url);
+        currentPage=dbHandler.lastPage(id);
+        Log.v(TAG,"LAST READ:"+currentPage);
+        //pageSwipeDirection=Integer.parseInt(geturl.getStringExtra("swipe"));
+        pageSwipeDirection=dbHandler.pageSwipe(id);
+        if (pageSwipeDirection==0){
+            isChecked = false;
+        }
+        else if (pageSwipeDirection==1){
+            isChecked = true;
+        }
 
-        if (pageSwipeDirection==1){
+        if (pageSwipeDirection==0){
             FileLoader.with(getApplicationContext()).load(url)
                     .asFile(new FileRequestListener<File>() {
                         @Override
@@ -81,19 +130,20 @@ public class onlinereadActivity extends AppCompatActivity {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
                                     pageNo.setText("Page: "+(currentPage+1)+"/"+noOfPages);
-                                    if (currentPage==pdfview.getPageCount()){
+                                    if (currentPage==pdfview.getPageCount()-1){
                                         currentPage=0;
                                         Log.v(TAG,"Finished reading, page last read returned to the start");
                                     }
                                     Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
                                     dbHandler.updateLastPage(id,currentPage);
+                                    Log.v(TAG,"Updated db last page");
                                 }
                             }).load();
                         }
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
                         }
                     });
         }
@@ -109,19 +159,20 @@ public class onlinereadActivity extends AppCompatActivity {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
                                     pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                    if (currentPage == pdfview.getPageCount()) {
+                                    if (currentPage == pdfview.getPageCount()-1) {
                                         currentPage = 0;
                                         Log.v(TAG, "Finished reading, page last read returned to the start");
                                     }
                                     Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
                                     dbHandler.updateLastPage(id, currentPage);
+                                    Log.v(TAG,"Updated db last page");
                                 }
                             }).load();
                         }
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
                         }
                     });
         }
@@ -147,10 +198,17 @@ public class onlinereadActivity extends AppCompatActivity {
                     }
                 });*/
     }
+
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.bookreadmenu,menu);
+        MenuItem checkable = menu.findItem(R.id.vertical);
+        checkable.setChecked(isChecked);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -160,10 +218,73 @@ public class onlinereadActivity extends AppCompatActivity {
         currentPage = dbHandler.lastPage(id);
         pageSwipeDirection=dbHandler.pageSwipe(id);
         switch (item.getItemId()) {
+            case R.id.vertical:
+                isChecked = !item.isChecked(); //true means not vert
+                if (isChecked==false){
+                    pageSwipeDirection=0;
+                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
+                    FileLoader.with(getApplicationContext()).load(url)
+                            .asFile(new FileRequestListener<File>() {
+                                @Override
+                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                    File pdfFile = response.getBody();
+                                    pdfview.fromFile(pdfFile).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
+                                        @Override
+                                        public void onPageChanged(int page, int pageCount) {
+                                            noOfPages = pdfview.getPageCount();
+                                            currentPage = pdfview.getCurrentPage();
+                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
+                                            if (currentPage==pdfview.getPageCount()-1){
+                                                currentPage=0;
+                                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                                            }
+                                            dbHandler.updateLastPage(id,currentPage);
+                                        }
+                                    }).load();
+                                }
+
+                                @Override
+                                public void onError(FileLoadRequest request, Throwable t) {
+                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                }
+                else if(isChecked==true){
+                    pageSwipeDirection=1;
+                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
+                    FileLoader.with(getApplicationContext()).load(url)
+                            .asFile(new FileRequestListener<File>() {
+                                @Override
+                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
+                                    File pdfFile = response.getBody();
+                                    pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
+                                        @Override
+                                        public void onPageChanged(int page, int pageCount) {
+                                            noOfPages = pdfview.getPageCount();
+                                            currentPage = pdfview.getCurrentPage();
+                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
+                                            if (currentPage==pdfview.getPageCount()-1){
+                                                currentPage=0;
+                                                Log.v(TAG,"Finished reading, page last read returned to the start");
+                                            }
+                                            dbHandler.updateLastPage(id,currentPage);
+                                        }
+                                    }).load();
+                                }
+
+                                @Override
+                                public void onError(FileLoadRequest request, Throwable t) {
+                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                }
+                            });
+                }
+                item.setChecked(isChecked);
+                return true;
+
             case android.R.id.home:
             finish();
             return true;
-            case R.id.scrolldirection:
+            /*case R.id.scrolldirection:
                 if (pageSwipeDirection==0){
                     pageSwipeDirection=1;
                     dbHandler.updatePageSwipe(id, pageSwipeDirection);
@@ -222,7 +343,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                 }
                             });
                 }
-                return true;
+                return true;*/
 
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
@@ -250,7 +371,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                                                 noOfPages = pdfview.getPageCount();
                                                                 currentPage = pdfview.getCurrentPage();
                                                                 pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                                                if (currentPage==pdfview.getPageCount()){
+                                                                if (currentPage==pdfview.getPageCount()-1){
                                                                     currentPage=0;
                                                                     Log.v(TAG,"Finished reading, page last read returned to the start");
                                                                 }
@@ -262,7 +383,7 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                     }
@@ -278,7 +399,7 @@ public class onlinereadActivity extends AppCompatActivity {
                                                                 noOfPages = pdfview.getPageCount();
                                                                 currentPage = pdfview.getCurrentPage();
                                                                 pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                                                if (currentPage == pdfview.getPageCount()) {
+                                                                if (currentPage == pdfview.getPageCount()-1) {
                                                                     currentPage = 0;
                                                                     Log.v(TAG, "Finished reading, page last read returned to the start");
                                                                 }
@@ -290,7 +411,7 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                     }
@@ -334,5 +455,64 @@ public class onlinereadActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress address = InetAddress.getByName("www.google.com");
+            return !address.equals("");
+        } catch (UnknownHostException e) {
+            Log.v(TAG,"No internet connectivity");
+        }
+        return false;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.v(TAG, "Starting GUI!");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.v(TAG, "Resuming...");
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v(TAG, "Pausing...");
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.v(TAG, "Stopping!");
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.v(TAG, "Destroying!");
     }
 }

@@ -33,7 +33,7 @@
 
     <item
         android:id="@+id/importOnline"
-        android:title="Read online pdf"
+        android:title="Import online pdf"
         app:showAsAction="never"/>
 
 

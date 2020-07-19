@@ -3,7 +3,7 @@
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardid"
-    android:layout_width="120dp"
+    android:layout_width="110dp"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:clickable="true"
@@ -33,15 +33,17 @@
 
             <TextView
                 android:id="@+id/nameOfBook"
-                android:layout_width="106dp"
+                android:layout_width="103dp"
                 android:layout_height="match_parent"
+                android:ellipsize="end"
                 android:gravity="center"
+                android:maxLines="2"
                 android:text="Book Title"
+                android:textColor="@color/textcolor"
                 tools:layout_conversion_absoluteHeight="40dp"
                 tools:layout_conversion_absoluteWidth="96dp"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="150dp"
-                android:textColor="@color/textcolor" />
+                tools:layout_editor_absoluteY="150dp" />
 
             <ImageButton
                 android:id="@+id/editdeletebutton"

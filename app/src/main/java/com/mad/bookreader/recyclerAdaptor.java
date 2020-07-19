@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.siegmann.epublib.epub.Main;
+
 public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> implements Filterable {
 
     final static String TAG="Adapter";
@@ -46,19 +48,24 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
     }
     public void onBindViewHolder(final recyclerViewHolder holder, final int position){
         Log.v(TAG, "Setting up holder");
-        final String s = data.get(position).getTitle();
+        final String title = data.get(position).getTitle();
         final int id=data.get(position).getId();
-        holder.txt.setText(s);
+        holder.txt.setText(title);
         //holder.txt.setBackgroundColor(Color.parseColor("#000000"));
         BookDBHandler dbHandler = new BookDBHandler(context, null, null, 1);
-        int lastread=dbHandler.lastPage(id);
-        if (lastread != 0){
+        final int lastread=dbHandler.lastPage(id);
+        final int swipedirection=dbHandler.pageSwipe(id);
+        final int chapter = dbHandler.lastChapter(id);
+        final float progress = dbHandler.lastProgress(id);
+        if (lastread != 0 || chapter != 0 || progress != 0){
             holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
             holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
         }
+        else{
+            holder.cardView.setBackgroundResource(R.color.titlebg);
+            holder.imgButton.setBackgroundResource(R.color.titlebg);
+        }
         holder.img.setImageBitmap(data.get(position).getImage());
-        final String p = data.get(position).getTitle();
-        Log.v(TAG, "string p = " + p);
         final String uri = data.get(position).getBookUri();
         final String fileType = data.get(position).getFileType();
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +98,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     Intent intent=new Intent(v.getContext(),bookreadActivity.class);
                     intent.putExtra("id",String.valueOf(id));
                     intent.putExtra("PdfUri", uri);
-                    intent.putExtra("PdfName", p);
+                    intent.putExtra("PdfName", title);
                     Log.v(TAG,"PDF put inside intent, going to the book read activity now");
                     v.getContext().startActivity(intent);
                 }
@@ -108,7 +115,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     Intent intent = new Intent(v.getContext(), epubReaderActivity.class);
                     intent.putExtra("id",String.valueOf(id));
                     intent.putExtra("Bookpath", uri);
-                    intent.putExtra("BookName", p);
+                    intent.putExtra("BookName", title);
                     Log.v(TAG, "Epub put inside intent, going to epub read activity now");
                     v.getContext().startActivity(intent);
                 }
@@ -116,6 +123,8 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     Intent intent=new Intent(v.getContext(),onlinereadActivity.class);
                     intent.putExtra("id",String.valueOf(id));
                     intent.putExtra("urllink",uri);
+                    intent.putExtra("lastread",String.valueOf(lastread));
+                    intent.putExtra("swipe",String.valueOf(swipedirection));
                     v.getContext().startActivity(intent);
                 }
 
@@ -143,6 +152,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                                 delAlert.setCancelable(true);
                                 delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(context, "Deleting book" + title + "...", Toast.LENGTH_SHORT).show();
                                         Log.v(TAG,"Deleting book");
                                         db.deleteBook(id);
                                         data.remove(holder.getAdapterPosition());
@@ -207,7 +217,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<importedBooks> filteredList = new ArrayList<>();
-
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(datalist2);
             } else {
