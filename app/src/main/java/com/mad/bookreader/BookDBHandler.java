@@ -59,7 +59,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_BOOKS, null, values); //DO ACTUAL INSERT STATEMENT
         Log.v(TAG, "Adding book " + values.get(COLUMN_NAME) + " into database");
-        findBookID(0);
+        findBookID(id);
         db.close();
     }
 
