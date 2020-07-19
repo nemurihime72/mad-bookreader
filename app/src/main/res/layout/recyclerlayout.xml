@@ -28,14 +28,16 @@
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/nameOfBook"
-                android:layout_width="100dp"
+                android:layout_width="103dp"
                 android:layout_height="match_parent"
+                android:ellipsize="end"
                 android:gravity="center"
+                android:maxLines="2"
                 android:text="Book Title"
                 android:textColor="@color/textcolor"
                 tools:layout_conversion_absoluteHeight="40dp"
