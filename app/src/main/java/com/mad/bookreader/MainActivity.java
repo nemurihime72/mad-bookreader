@@ -136,8 +136,9 @@ public class MainActivity extends AppCompatActivity {
         //function to display recyclerview
         RecyclerView rView = (RecyclerView) findViewById(R.id.bookCycler);
         rAdaptor = new recyclerAdaptor(bList);
-        int spanCount=pxToDp(getScreenWidth())/130;
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
+        int spanCount=pxToDp(getScreenWidth())/120;
+        Log.v(TAG, "span count is " + spanCount);
+        GridLayoutManager gLayoutManager = new GridLayoutManager(this, spanCount);
         rView.setLayoutManager(gLayoutManager);
         rView.setAdapter(rAdaptor);
     }
