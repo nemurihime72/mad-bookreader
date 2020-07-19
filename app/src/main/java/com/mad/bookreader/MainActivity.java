@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
                 onlineUrl.setHint("Enter URL here");
                 builder.setView(view).setTitle("Import online pdf")
-                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String url=onlineUrl.getText().toString();
