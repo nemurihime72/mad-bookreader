@@ -574,6 +574,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Log.v(TAG, "Resuming...");
+        recyclerFunction(listBooks);
     }
     @Override
     protected void onPause(){
