@@ -10,10 +10,13 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.text.ClipboardManager;
 import android.text.Layout;
 import android.util.Log;
@@ -30,6 +33,13 @@ import android.widget.Toast;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import in.nashapp.epublibdroid.EpubReaderView;
 import nl.siegmann.epublib.epub.EpubReader;
@@ -62,13 +72,18 @@ public class epubReaderActivity extends AppCompatActivity {
     BookDBHandler dbHandler;
 
     final static String TAG = "epubreader";
+
+    String epubUri;
+    Uri uri;
+
     boolean epubBarShowing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_epub_reader);
-        String epubFilePath = this.getIntent().getStringExtra("Bookpath");
         String bookName = this.getIntent().getStringExtra("BookName");
+        epubUri = this.getIntent().getStringExtra("Bookpath");
+
         columnID = Integer.parseInt(this.getIntent().getStringExtra("id"));
         dbHandler = new BookDBHandler(this, null, null, 1);
         chapterLastRead = dbHandler.lastChapter(columnID);
@@ -94,9 +109,24 @@ public class epubReaderActivity extends AppCompatActivity {
         changeTheme = findViewById(R.id.change_theme);
         bottomContextualBar = findViewById(R.id.bottom_contextual_bar);
 
-        Log.v(TAG, epubFilePath);
-        epubReaderView.OpenEpubFile(epubFilePath);
-        epubReaderView.GotoPosition(chapterLastRead, progressLastRead);
+        uri = Uri.parse(epubUri);
+        Log.v(TAG, "uri : " + uri);
+        Log.v(TAG, "uri path: " + uri.getPath());
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir().getAbsolutePath() + "/" + bookName);
+            writeFile(inputStream, file);
+            String filePath = file.getAbsolutePath();
+            Log.v(TAG, "filepath is: " + filePath);
+            Log.v(TAG, "chapter list: " + epubReaderView.ChapterList);
+            epubReaderView.OpenEpubFile(filePath);
+            epubReaderView.GotoPosition(chapterLastRead, progressLastRead);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "File not found!", Toast.LENGTH_SHORT).show();
+        }
+
+
 
         sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         Log.v(TAG, "is dark mode?: " + sharedPreferences.getBoolean(KEY_ISDARKMODE, false));
@@ -457,6 +487,29 @@ public class epubReaderActivity extends AppCompatActivity {
         return Math.round((float) dp * density);
     }
 
+    public void writeFile(InputStream in, File file) {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

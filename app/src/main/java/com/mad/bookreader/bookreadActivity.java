@@ -146,6 +146,7 @@ public class bookreadActivity extends AppCompatActivity {
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
+        Log.v(TAG, "pdf uri: " + uri);
         pdfview = findViewById(R.id.pdfView);
         if (pageSwipeDirection == 0) {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
