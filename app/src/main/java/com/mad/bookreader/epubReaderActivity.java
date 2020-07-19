@@ -56,7 +56,6 @@ public class epubReaderActivity extends AppCompatActivity {
     public static final String MY_PREFS = "epubDarkModePrefs";
     public static final String KEY_ISDARKMODE = "isDarkMode";
 
-    int pageNo;
     public static float progressLastRead;
     public static int chapterLastRead;
     public static int columnID;
@@ -75,15 +74,13 @@ public class epubReaderActivity extends AppCompatActivity {
         chapterLastRead = dbHandler.lastChapter(columnID);
         progressLastRead = dbHandler.lastProgress(columnID);
 
-        sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-
         epubBar = (Toolbar) findViewById(R.id.epub_read_bar);
         setSupportActionBar(epubBar);
+        getSupportActionBar().setTitle(bookName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        context = this;
 
-        getSupportActionBar().setTitle(bookName);
+        context = this;
 
         epubReaderView = findViewById(R.id.epub_reader);
         selectCopy = findViewById(R.id.select_copy);
@@ -101,10 +98,13 @@ public class epubReaderActivity extends AppCompatActivity {
         epubReaderView.OpenEpubFile(epubFilePath);
         epubReaderView.GotoPosition(chapterLastRead, progressLastRead);
 
-        if (sharedPreferences.getBoolean(KEY_ISDARKMODE, true)) {
-            epubReaderView.SetTheme(epubReaderView.THEME_DARK);
-        } else {
+        sharedPreferences = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        Log.v(TAG, "is dark mode?: " + sharedPreferences.getBoolean(KEY_ISDARKMODE, false));
+        if (sharedPreferences.getBoolean(KEY_ISDARKMODE, false) == false) {
             epubReaderView.SetTheme(epubReaderView.THEME_LIGHT);
+        } else {
+            epubReaderView.SetTheme(epubReaderView.THEME_DARK);
+
         }
         epubReaderView.setEpubReaderListener(new EpubReaderView.EpubReaderListener() {
             @Override
@@ -153,7 +153,7 @@ public class epubReaderActivity extends AppCompatActivity {
             @Override
             public void OnBookEndReached() {
                 Log.v(TAG, "end reached");
-                Toast.makeText(context, "End of book reached", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "End of book reached, progress resetting", Toast.LENGTH_SHORT).show();
                 dbHandler.updateLastChapter(columnID, 0);
                 dbHandler.updateLastProgress(columnID, 0);
             }
