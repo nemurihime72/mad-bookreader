@@ -26,6 +26,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_SWIPE = "bookswipepage";
     public static final String COLUMN_FILETYPE = "bookfiletype";
     public static final String COLUMN_CHAPTER = "bookchapter";
+    public static final String COLUMN_PROGRESS = "bookprogress";
 
     public BookDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, BOOKDATABASE, factory, DATABASE_VERSION);
@@ -36,7 +37,9 @@ public class BookDBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_BOOKS_TABLE = "CREATE TABLE " + TABLE_BOOKS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY, "
-                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_FILETYPE + " TEXT, " + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER, " + COLUMN_CHAPTER + " INTEGER" +  ")";
+                + COLUMN_NAME + " TEXT, "  + COLUMN_PDFURI + " TEXT, " + COLUMN_FILETYPE + " TEXT, "
+                + COLUMN_PREVPAGE + " INTEGER, " + COLUMN_SWIPE + " INTEGER, " + COLUMN_CHAPTER + " INTEGER, "
+                + COLUMN_PROGRESS + " REAL" +  ")";
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
@@ -51,11 +54,12 @@ public class BookDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_PREVPAGE, 0);
         values.put(COLUMN_SWIPE, 0);
         values.put(COLUMN_CHAPTER, 0);
+        values.put(COLUMN_PROGRESS, 0);
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.insert(TABLE_BOOKS, null, values); //DO ACTUAL INSERT STATEMENT
         Log.v(TAG, "Adding book " + values.get(COLUMN_NAME) + " into database");
-        findBookID(0);
+        findBookID(id);
         db.close();
     }
 
@@ -271,7 +275,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
     }
 
     public int lastChapter(int colId) {
-        int epubChapter = 1;
+        int epubChapter = 0;
         String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -294,6 +298,33 @@ public class BookDBHandler extends SQLiteOpenHelper {
         Log.v(TAG, UPDATE_LAST_CHAPTER);
         Log.v(TAG, "Updating last chapter read for Column ID: " + colId + " to " + lastChapterRead);
         db.execSQL(UPDATE_LAST_CHAPTER);
+        db.close();
+    }
+
+    public float lastProgress(int colId) {
+        float epubProgress = 0;
+        String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " =\"" + colId + "\"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            Log.v(TAG, "Getting previously left progress from db");
+            epubProgress = Float.parseFloat(cursor.getString(7));
+            Log.v(TAG, "Last progress read is " + epubProgress);
+            cursor.close();
+            db.close();
+        } else {
+            Log.v(TAG, "cursor did not move to first in lastProgress");
+        }
+        return epubProgress;
+    }
+
+    public void updateLastProgress(int colId, float lastProgressRead) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String UPDATE_LAST_PROGRESS = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PROGRESS + " =\"" + lastProgressRead + "\"" + " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
+        Log.v(TAG, UPDATE_LAST_PROGRESS);
+        Log.v(TAG, "Updating last progress read for column ID: " + colId + " to " + lastProgressRead);
+        db.execSQL(UPDATE_LAST_PROGRESS);
         db.close();
     }
 

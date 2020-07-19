@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -415,6 +414,8 @@ public class MainActivity extends AppCompatActivity {
                                             //get last id number and adds 1 (increment)
                                             id = db.lastRowId() + 1;
                                         }
+                                        Log.v("TESTEST","LAST ROW ID: "+db.lastRowId());
+                                        Log.v("TESTTEST","ID IS "+id);
                                         //get thumbnail for display
                                         Bitmap thumbnail = getPdfCover(selectedFile);
                                         //create new book object

@@ -55,7 +55,9 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         BookDBHandler dbHandler = new BookDBHandler(context, null, null, 1);
         final int lastread=dbHandler.lastPage(id);
         final int swipedirection=dbHandler.pageSwipe(id);
-        if (lastread != 0){
+        final int chapter = dbHandler.lastChapter(id);
+        final float progress = dbHandler.lastProgress(id);
+        if (lastread != 0 || chapter != 0 || progress != 0){
             holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
             holder.imgButton.setBackgroundColor(context.getResources().getColor(R.color.colorGreen));
         }
