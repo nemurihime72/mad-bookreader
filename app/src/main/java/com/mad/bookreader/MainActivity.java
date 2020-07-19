@@ -142,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
         //function to display recyclerview
         RecyclerView rView = (RecyclerView) findViewById(R.id.bookCycler);
         rAdaptor = new recyclerAdaptor(bList);
-        int spanCount=pxToDp(getScreenWidth())/130;
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this,spanCount);
+        int spanCount=pxToDp(getScreenWidth())/120;
+        Log.v(TAG, "span count is " + spanCount);
+        GridLayoutManager gLayoutManager = new GridLayoutManager(this, spanCount);
         rView.setLayoutManager(gLayoutManager);
         rView.setAdapter(rAdaptor);
     }
@@ -427,12 +428,6 @@ public class MainActivity extends AppCompatActivity {
                                         //reload recyclerview with updated list of books
                                         recyclerFunction(listBooks);
                                     } else if (fileType.equals("epub")) {
-                                        File file = new File(selectedFile.getPath());
-                                        String[] split = file.getPath().split(":");
-                                        String filePath = split[1];
-                                        Log.v(TAG, "filepath: " + filePath);
-                                        File epubFile = new File(filePath);
-
                                         int id = 0;
                                         if (db.noOfRows() == 0) {
                                             id = 0;
@@ -443,9 +438,9 @@ public class MainActivity extends AppCompatActivity {
                                         //get thumbnail for display
                                         Bitmap thumbnail = initGetEpubCover(selectedFile);
                                         //create new book object
-                                        importedBooks book = new importedBooks(id, titleName, thumbnail, filePath, fileType);
+                                        importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
                                         //add book data to db
-                                        db.addBook(id, titleName, filePath, fileType);
+                                        db.addBook(id, titleName, selectedFileString, fileType);
                                         //add book to list of books
                                         listBooks.add(book);
                                         //reload recyclerview with updated list of books
@@ -499,27 +494,66 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    public Bitmap initGetEpubCover(Uri uri) {
-        //create file from uri
-        File file = new File(uri.getPath());
-        //split filepath string to proper filepath without header
-        String[] split = file.getPath().split(":");
-        //selects proper filepath
-        String filePath = split[1];
-        //get cover image
-        Bitmap coverImage = loadEpubCover(filePath);
-        return coverImage;
 
-
+    public void writeFile(InputStream in, File file) {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    public Bitmap initGetEpubCover(Uri uri) {
+        String fileName = getFileName(uri);
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
+            writeFile(inputStream, file);
+            String filePath = file.getAbsolutePath();
+            //get cover image
+            Bitmap coverImage = loadEpubCover(filePath);
+            return coverImage;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
+    }
+
+
+
+
     public Bitmap getEpubCover(Uri uri) {
-        //create file from uri
-        File file = new File(uri.getPath());
-        //get filepath from uri
-        String filePath = file.getPath();
-        //get cover image from file
-        Bitmap coverImage = loadEpubCover(filePath);
-        return coverImage;
+        String fileName = getFileName(uri);
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
+            writeFile(inputStream, file);
+            String filePath = file.getAbsolutePath();
+            //get cover image
+            Bitmap coverImage = loadEpubCover(filePath);
+            return coverImage;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
+            return noImage;
+        }
 
     }
     public Bitmap loadEpubCover(String filePath) {
@@ -588,18 +622,6 @@ public class MainActivity extends AppCompatActivity {
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
     }
 
-    public static void copy(File src, File dst) throws IOException {
-        try (InputStream in = new FileInputStream(src)) {
-            try (OutputStream out = new FileOutputStream(dst)) {
-                // Transfer bytes from in to out
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-        }
-    }
     @Override
     protected void onStart(){
         super.onStart();
@@ -609,6 +631,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Log.v(TAG, "Resuming...");
+        recyclerFunction(listBooks);
     }
     @Override
     protected void onPause(){

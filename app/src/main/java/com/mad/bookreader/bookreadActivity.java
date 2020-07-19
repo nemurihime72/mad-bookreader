@@ -103,13 +103,13 @@ public class bookreadActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(pdfName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(v.getContext(),MainActivity.class);
                     v.getContext().startActivity(intent);
                 }
-            });
+            });*/
             Log.v(TAG, "Top toolbar set");
 
             pageSwipeDirection=dbHandler.pageSwipe(columnID);
@@ -146,6 +146,7 @@ public class bookreadActivity extends AppCompatActivity {
         Log.v(TAG, "file name: " + pdfName);
         //since Uri is still string, convert back to Uri to load
         uri = Uri.parse(pdfURI);
+        Log.v(TAG, "pdf uri: " + uri);
         pdfview = findViewById(R.id.pdfView);
         if (pageSwipeDirection == 0) {
             pdfview.fromUri(uri).defaultPage(pageLastRead + 1).onPageChange(new OnPageChangeListener() {
@@ -239,7 +240,7 @@ public class bookreadActivity extends AppCompatActivity {
                 return true;
 
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
 
             case R.id.goToPage:
