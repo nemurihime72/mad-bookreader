@@ -69,25 +69,6 @@ public class onlinereadActivity extends AppCompatActivity {
         });
 
 
-        boolean network=haveNetworkConnection();
-        if (network==false){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Not connected to internet")
-                    .setCancelable(false)
-                    .setPositiveButton("Connect to WIFI", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            finish();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-
 
         boolean internetavailable=haveNetworkConnection();
         Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
@@ -351,7 +332,7 @@ public class onlinereadActivity extends AppCompatActivity {
                 final EditText goToPage = (EditText) view.findViewById(R.id.fileTitle);
                 goToPage.setHint("Page no");
                 pagebuilder.setView(view).setTitle("Go To Page")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String pageNo1=goToPage.getText().toString();

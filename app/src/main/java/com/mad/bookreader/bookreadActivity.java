@@ -249,7 +249,7 @@ public class bookreadActivity extends AppCompatActivity {
                 final EditText goToPage = (EditText) view.findViewById(R.id.fileTitle);
                 goToPage.setHint("Page no");
                 pagebuilder.setView(view).setTitle("Go To Page")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String pageNo1=goToPage.getText().toString();

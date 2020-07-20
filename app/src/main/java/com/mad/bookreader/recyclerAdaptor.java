@@ -152,7 +152,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                                 delAlert.setCancelable(true);
                                 delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(context, "Deleting book" + title + "...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Deleting book: " + title + "...", Toast.LENGTH_SHORT).show();
                                         Log.v(TAG,"Deleting book");
                                         db.deleteBook(id);
                                         data.remove(holder.getAdapterPosition());
