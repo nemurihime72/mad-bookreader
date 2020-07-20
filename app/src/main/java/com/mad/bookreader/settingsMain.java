@@ -57,6 +57,7 @@ public class settingsMain extends AppCompatActivity {
 
     }
 
+    //Check sharedpreference to see if night mode is on and display the switch accordingly
     public void checkNightModeSwitch() {
         if (sharedPreferences.getBoolean(KEY_ISNIGHTMODE,false)){
             darkSwitch.setChecked(true);

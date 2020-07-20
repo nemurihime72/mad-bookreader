@@ -91,14 +91,11 @@ public class onlinereadActivity extends AppCompatActivity {
         pageNo=findViewById(R.id.pageNumbers);
         pdfview = findViewById(R.id.pdfViewOnline);
         Intent geturl=getIntent();
-        //currentPage=Integer.parseInt(geturl.getStringExtra("lastread"));
-        //Log.v(TAG,"LAST READ:"+currentPage);
         url=geturl.getStringExtra("urllink");
         id=Integer.parseInt(geturl.getStringExtra("id"));
         Log.v(TAG,"URL IS "+ url);
         currentPage=dbHandler.lastPage(id);
         Log.v(TAG,"LAST READ:"+currentPage);
-        //pageSwipeDirection=Integer.parseInt(geturl.getStringExtra("swipe"));
         pageSwipeDirection=dbHandler.pageSwipe(id);
         if (pageSwipeDirection==0){
             isChecked = false;
@@ -145,54 +142,33 @@ public class onlinereadActivity extends AppCompatActivity {
                         @Override
                         public void onLoad(FileLoadRequest request, FileResponse<File> response) {
                             File pdfFile = response.getBody();
-                            pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
+                            pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage + 1).onPageChange(new OnPageChangeListener() {
                                 @Override
                                 public void onPageChanged(int page, int pageCount) {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
-                                    pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                    if (currentPage == pdfview.getPageCount()-1) {
+                                    pageNo.setText("Page: " + (currentPage + 1) + "/" + noOfPages);
+                                    if (currentPage == pdfview.getPageCount() - 1) {
                                         currentPage = 0;
                                         Log.v(TAG, "Finished reading, page last read returned to the start");
                                     }
-                                    Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
+                                    Log.v(TAG, "LAST READ(PAGE CHANGE):" + currentPage);
                                     dbHandler.updateLastPage(id, currentPage);
-                                    Log.v(TAG,"Updated db last page");
+                                    Log.v(TAG, "Updated db last page");
                                 }
                             }).load();
                         }
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            if (isConnectingToInternet()){
-                                Log.v(TAG,"Url pdf does not exist");
+                            if (isConnectingToInternet()) {
+                                Log.v(TAG, "Url pdf does not exist");
                                 Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
                             }
 
                         }
                     });
         }
-        /*FileLoader.with(this).load(url)
-                .asFile(new FileRequestListener<File>() {
-                    @Override
-                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                        File pdfFile= response.getBody();
-                        pageSwipeDirection=1;
-                        pdfview.fromFile(pdfFile).defaultPage(currentPage-1).enableSwipe(true).onPageChange(new OnPageChangeListener() {
-                            @Override
-                            public void onPageChanged(int page, int pageCount) {
-                                noOfPages = pdfview.getPageCount();
-                                currentPage=pdfview.getCurrentPage()+1;
-                                pageNo.setText("Page: "+currentPage+"/"+noOfPages);
-                            }
-                        }).load();
-                    }
-
-                    @Override
-                    public void onError(FileLoadRequest request, Throwable t) {
-                        Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                    }
-                });*/
     }
 
 
@@ -286,66 +262,6 @@ public class onlinereadActivity extends AppCompatActivity {
             case android.R.id.home:
             finish();
             return true;
-            /*case R.id.scrolldirection:
-                if (pageSwipeDirection==0){
-                    pageSwipeDirection=1;
-                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
-                    FileLoader.with(getApplicationContext()).load(url)
-                            .asFile(new FileRequestListener<File>() {
-                                @Override
-                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                    File pdfFile = response.getBody();
-                                    pdfview.fromFile(pdfFile).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            noOfPages = pdfview.getPageCount();
-                                            currentPage = pdfview.getCurrentPage();
-                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
-                                                currentPage=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(id,currentPage);
-                                        }
-                                    }).load();
-                                }
-
-                                @Override
-                                public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }
-                else{
-                    pageSwipeDirection=0;
-                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
-                    FileLoader.with(getApplicationContext()).load(url)
-                            .asFile(new FileRequestListener<File>() {
-                                @Override
-                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                    File pdfFile = response.getBody();
-                                    pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            noOfPages = pdfview.getPageCount();
-                                            currentPage = pdfview.getCurrentPage();
-                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
-                                                currentPage=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(id,currentPage);
-                                        }
-                                    }).load();
-                                }
-
-                                @Override
-                                public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }
-                return true;*/
 
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
@@ -423,31 +339,6 @@ public class onlinereadActivity extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-                                    /*FileLoader.with(getApplicationContext()).load(url)
-                                            .asFile(new FileRequestListener<File>() {
-                                                @Override
-                                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                                    File pdfFile = response.getBody();
-                                                    pdfview.fromFile(pdfFile).defaultPage(pageNumber-1).onPageChange(new OnPageChangeListener() {
-                                                        @Override
-                                                        public void onPageChanged(int page, int pageCount) {
-                                                            noOfPages = pdfview.getPageCount();
-                                                            currentPage=pdfview.getCurrentPage()+1;
-                                                            pageNo.setText("Page: "+currentPage+"/"+noOfPages);
-                                                            if (currentPage==pdfview.getPageCount()){
-                                                                currentPage=1;
-                                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                                            }
-                                                            dbHandler.updateLastPage(id,currentPage);
-                                                        }
-                                                    }).load();
-                                                }
-
-                                                @Override
-                                                public void onError(FileLoadRequest request, Throwable t) {
-                                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                                }
-                                            });*/
                                 }
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -465,6 +356,7 @@ public class onlinereadActivity extends AppCompatActivity {
         }
     }
 
+    //Check if wifi/data is on
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
@@ -482,6 +374,7 @@ public class onlinereadActivity extends AppCompatActivity {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    //Check if wifi/data got connectivity
     public boolean isConnectingToInternet() {
         if (networkConnectivity()) {
             try {
