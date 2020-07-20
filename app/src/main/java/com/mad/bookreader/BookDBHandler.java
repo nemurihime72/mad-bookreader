@@ -93,9 +93,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
             nameList.add(bookDetails.get(1));
             uriList.add(bookDetails.get(2));
             fileTypeList.add(bookDetails.get(3));
-            //fileTypeList.add(bookDetails.get(3));
             Log.v(TAG, "Name: " + nameList.get(0));
-            //Log.v(TAG, bookDetails.get(3));
         }
         bookList.add(idList);
         bookList.add(nameList);
@@ -246,7 +244,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return result; */
     }
 
-    //Finds page number last read with pdfName
+    //Finds page number last read with id
     public int lastPage(int colId){
         int pdfPage = 0;
         String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
@@ -265,6 +263,8 @@ public class BookDBHandler extends SQLiteOpenHelper {
         }
         return pdfPage;
     }
+    //update last page of pdf read for id pointing to that pdf
+    //for use when page changes
     public void updateLastPage (int colId, int lastPageRead) {
         SQLiteDatabase db = this.getWritableDatabase();
         String UPDATE_LAST_PAGE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PREVPAGE + "=\"" + lastPageRead + "\"" +  " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
@@ -274,6 +274,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //finds last chapter read for epub and returns integer
     public int lastChapter(int colId) {
         int epubChapter = 0;
         String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " = \"" + colId + "\"";
@@ -292,6 +293,8 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return epubChapter;
     }
 
+    //update the last chapter read for an epub book by finding id corresponding to book
+    //for use when chapter changes
     public void updateLastChapter(int colId, int lastChapterRead) {
         SQLiteDatabase db = this.getWritableDatabase();
         String UPDATE_LAST_CHAPTER = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_CHAPTER + "=\"" + lastChapterRead + "\"" +  " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
@@ -301,6 +304,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //finds progress of chapter read and returns a float between 0 and 1
     public float lastProgress(int colId) {
         float epubProgress = 0;
         String query = "SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_ID + " =\"" + colId + "\"";
@@ -319,6 +323,8 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return epubProgress;
     }
 
+    //update progress of chapter read for epub book by finding id corresponding to book
+    //for use when progress of chapter changes
     public void updateLastProgress(int colId, float lastProgressRead) {
         SQLiteDatabase db = this.getWritableDatabase();
         String UPDATE_LAST_PROGRESS = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_PROGRESS + " =\"" + lastProgressRead + "\"" + " WHERE " + COLUMN_ID + "=\"" + colId + "\"";
@@ -328,6 +334,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //updates page swipe direction for pdf reader
     public void updatePageSwipe(int colId,int direction){
         SQLiteDatabase db = this.getWritableDatabase();
         String UPDATE_SWIPE = "UPDATE " + TABLE_BOOKS + " SET " + COLUMN_SWIPE + "=\"" + direction +  "\" WHERE " + COLUMN_ID + "=\"" + colId + "\"";
@@ -336,6 +343,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    //gets page swipe direction for pdf reader
     public int pageSwipe(int colId) {
         int pageSwipe = 0;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -374,6 +382,7 @@ public class BookDBHandler extends SQLiteOpenHelper {
         return rows;
     }
 
+    //gets the number of the last id in db
     public int lastRowId() {
         int id = 0;
         String query = "SELECT MAX(" + COLUMN_ID + ") FROM " + TABLE_BOOKS;

@@ -273,100 +273,76 @@ public class MainActivity extends AppCompatActivity {
 
         return dialogBuilder.create();
     }
-
-
-    public Dialog importDialog() {
-        AlertDialog.Builder importBuilder = new AlertDialog.Builder(this);
-        String[] options = {"Online pdf", "Pdf/Epub"};
-
-        importBuilder.setTitle("Import books")
-                .setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                onlineDialog().show();
-                                break;
-                            case 1:
-                                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    Toast.makeText(getApplicationContext(), "Storage access is needed to read books", Toast.LENGTH_LONG).show();
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                                } else {
-                                    //intent to import only pdf
-                                    Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
-                                    String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
-                                    intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
-                                    intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                                    //starts that intent
-                                    startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
-                                }
-                                break;
-                        }
-                    }
-                });
-        return importBuilder.create();
-    }
-
-    public Dialog onlineDialog(){
-        final BookDBHandler db = new BookDBHandler(this,null, null, 1);
-        android.app.AlertDialog.Builder onlinebuilder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialogue, null);
-        final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
-        onlineUrl.setHint("Enter URL here");
-        onlinebuilder.setView(view).setTitle("Import online pdf")
-                .setPositiveButton("Import", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String url = onlineUrl.getText().toString();
-                        Log.v(TAG, "url is " + url);
-                        if (url.equals("") || url.equals(null)) {
-                            Toast.makeText(getApplicationContext(), "Please enter a title", Toast.LENGTH_SHORT).show();
-                        } else {
-                            int id = 0;
-                            if (db.noOfRows() == 0) {
-                                id = 0;
-                            } else {
-                                id = db.lastRowId() + 1;
-                            }
-                            Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pdficon);
-                            importedBooks book = new importedBooks(id, url, thumbnail, url, "online");
-                            db.addBook(id, url, url, "online");
-                            listBooks.add(book);
-                            recyclerFunction(listBooks);
-                        }
-                    }
-                });
-        return onlinebuilder.create();
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final BookDBHandler db = new BookDBHandler(this,null, null, 1);
         switch (item.getItemId()) {
+            case R.id.importOnline:
+                android.app.AlertDialog.Builder builder=new AlertDialog.Builder(this);
+                View view=LayoutInflater.from(this).inflate(R.layout.dialogue,null);
+                final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
+                onlineUrl.setHint("Enter URL here");
+                builder.setView(view).setTitle("Import online pdf")
+                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String url=onlineUrl.getText().toString();
+                                Log.v(TAG,"url is "+url);
+                                if (url.equals("") || url.equals(null)) {
+                                    Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    int id = 0;
+                                    if (db.noOfRows() == 0) {
+                                        id = 0;
+                                    } else {
+                                        id = db.lastRowId() + 1;
+                                    }
+                                    Bitmap thumbnail = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
+                                    importedBooks book=new importedBooks(id,url,thumbnail,url,"online");
+                                    db.addBook(id,url,url,"online");
+                                    listBooks.add(book);
+                                    recyclerFunction(listBooks);
+
+                                    //Intent intent=new Intent(MainActivity.this,onlinereadActivity.class);
+                                    //intent.putExtra("urllink",url);
+                                    //Log.v(TAG,"Going to online pdf page now");
+                                    //startActivity(intent);
+                                }
+                            }
+                        });
+                AlertDialog alerts=builder.create();
+                Log.v(TAG,"Alert dialog successfully created");
+                alerts.show();
+                return true;
+
             case R.id.deleteallbooks:
-                if (listBooks.size() == 0) {
-                    Log.v(TAG, "No books to delete");
-                    Toast.makeText(this, "No books imported", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.v(TAG, "Delete all books");
-                    androidx.appcompat.app.AlertDialog.Builder delAlert = new androidx.appcompat.app.AlertDialog.Builder(this);
+                if (listBooks.size()==0){
+                    Log.v(TAG,"No books to delete");
+                    Toast.makeText(this,"No books imported",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.v(TAG,"Delete all books");
+                    androidx.appcompat.app.AlertDialog.Builder delAlert=new androidx.appcompat.app.AlertDialog.Builder(this);
                     delAlert.setMessage("Would you like to delete all the books?");
                     delAlert.setCancelable(true);
                     delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Log.v(TAG, "Deleting all book");
+                            Log.v(TAG,"Deleting all book");
+                            //clear db of all entries
                             db.deleteallBooks();
+                            //clear recyclerview list of any books
                             listBooks.clear();
+                            //reload recyclerview with 0 books
                             displayBooks(listBooks);
-                            Log.v(TAG, "All books deleted");
-                            Toast.makeText(getApplicationContext(), "All books deleted", Toast.LENGTH_SHORT).show();
+                            Log.v(TAG,"All books deleted");
+                            Toast.makeText(getApplicationContext(),"All books deleted",Toast.LENGTH_SHORT).show();
                         }
                     });
                     delAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Log.v(TAG, "User choose not to delete all books");
-                            Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                            Log.v(TAG,"User choose not to delete all books");
+                            Toast.makeText(getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
                         }
                     });
                     androidx.appcompat.app.AlertDialog alert = delAlert.create();
@@ -376,20 +352,36 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_settings:
-                Log.v(TAG, "Settings selected");
-                Intent settingsIntent = new Intent(MainActivity.this, settingsMain.class);
+                Log.v(TAG,"Settings selected");
+                Intent settingsIntent=new Intent(MainActivity.this,settingsMain.class);
                 startActivity(settingsIntent);
                 return true;
 
             case R.id.action_import:
-                Log.v(TAG, "Import files selected");
-                importDialog().show();
-                return true;
+                Log.v(TAG,"Import files selected");
+                //check if read storage permission has been granted. if not, prompt for permission
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Storage access is needed to read books", Toast.LENGTH_LONG).show();
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    return false;
+
+                } else {
+                    //intent to import only pdf
+                    Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    //limit the filetypes that can be imported to only pdf and epub
+                    String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+                    //make uri persistable over reboots, so same uri can be used for a long time
+                    intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    //starts import file intent
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
+                    return true;
+                }
+
 
             case R.id.action_sort:
                 Log.v(TAG,"Sorting selected");
                 onCreateSortingDialog().show();
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -400,11 +392,13 @@ public class MainActivity extends AppCompatActivity {
         importedBooks book;
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
         Log.v(TAG, "Loading books in DB");
+        //load books from db
         storedBooks = db.startBooks(storedBooks);
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
             Uri uri = Uri.parse(storedBooks.get(2).get(i));
             if (storedBooks.get(3).get(i).equals("online")){
+                //for online pdf, use pdf picture for thumbnail
                 Bitmap image=BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
                 book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
                 bookList.add(book);
@@ -548,9 +542,8 @@ public class MainActivity extends AppCompatActivity {
             Log.v(TAG, "Error occurred at openPdf finding bitmap");
             ex.printStackTrace(); //print error if any
             //if no image found due to error, will use the no image found drawable
-            //first convert the drawable to bitmap
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage; //returns bitmap of no image found
+            //return converted drawable bitmap
+            return BitmapFactory.decodeResource(getResources(), R.drawable.no_image); //returns bitmap of no image found
         }
 
     }

@@ -103,13 +103,7 @@ public class bookreadActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(pdfName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(v.getContext(),MainActivity.class);
-                    v.getContext().startActivity(intent);
-                }
-            });*/
+
             Log.v(TAG, "Top toolbar set");
 
             pageSwipeDirection=dbHandler.pageSwipe(columnID);
@@ -126,16 +120,6 @@ public class bookreadActivity extends AppCompatActivity {
             Log.v(TAG, "PDF loaded");
 
         }
-
-        //pdfview.fromUri(pdfUri);
-        /*pdfview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.v(TAG, "pdf tapped");
-                setTapCountdown();
-                return false;
-            }
-        });*/
     }
 
     public void loadPDF(final String pdfName, final String pdfURI) {
@@ -202,7 +186,7 @@ public class bookreadActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.vertical:
                 isChecked = !item.isChecked();
-                if (isChecked==true){
+                if (isChecked){
                     pageSwipeDirection=1;
                     dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
                     pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
@@ -219,7 +203,7 @@ public class bookreadActivity extends AppCompatActivity {
                         }
                     }).load();
                 }
-                else if(isChecked==false){
+                else if(!isChecked){
                     pageSwipeDirection=0;
                     dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
                     pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
@@ -255,11 +239,13 @@ public class bookreadActivity extends AppCompatActivity {
                                 String pageNo1=goToPage.getText().toString();
 
                                 if (pageNo1.equals("") || pageNo1.equals(null)) {
-                                    Toast.makeText(getApplicationContext(),"Please enter a title", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),"Please enter a number", Toast.LENGTH_SHORT).show();
                                 } else {
                                     int pageNumber=Integer.parseInt(pageNo1)-1;
                                     pageLastRead=pageNumber;
+                                    //save page into db
                                     dbHandler.updateLastPage(columnID,pageLastRead);
+                                    //load pdf from page
                                     loadPDF(pdfName, pdfUri);
                                 }
                             }
@@ -280,20 +266,6 @@ public class bookreadActivity extends AppCompatActivity {
         }
     }
 
-    private void setTapCountdown() {
-        getSupportActionBar().show();
-        tapCountdown = new CountDownTimer(3000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.v(TAG, "Countdown for app bar: " + millisUntilFinished/1000);
-            }
-
-            @Override
-            public void onFinish() {
-                getSupportActionBar().hide();
-            }
-        }.start();
-    }
     @Override
     protected void onStart(){
         super.onStart();
