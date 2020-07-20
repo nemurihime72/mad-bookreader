@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setTitle("Filter");
 
 
-        String[] type = {"Online", "Epub", "PDF"};
+        String[] type = {"Online", "EPUB", "PDF"};
         boolean[] checkedItems = {false, false, false};
         dialogBuilder.setTitle("Sort by")
                 .setMultiChoiceItems(type, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Dialog importDialog() {
         AlertDialog.Builder importBuilder = new AlertDialog.Builder(this);
-        String[] options = {"Online pdf", "Pdf/Epub"};
+        String[] options = {"Online PDF", "PDF/EPUB"};
 
         importBuilder.setTitle("Import books")
                 .setItems(options, new DialogInterface.OnClickListener() {
@@ -653,6 +653,30 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
+    //delete files in cache
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -695,6 +719,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        deleteCache(this);
         Log.v(TAG, "Destroying!");
     }
 }
