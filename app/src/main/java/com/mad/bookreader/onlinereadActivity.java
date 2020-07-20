@@ -68,32 +68,21 @@ public class onlinereadActivity extends AppCompatActivity {
             }
         });
 
-
-        boolean network=haveNetworkConnection();
-        if (network==false){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Not connected to internet")
-                    .setCancelable(false)
-                    .setPositiveButton("Connect to WIFI", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            finish();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+        if (isConnectingToInternet()) {
+            Log.v(TAG,"Working");
+        }
+        else {
+            boolean internetavailable=haveNetworkConnection();
+            Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
+            if (!internetavailable){
+                Toast.makeText(this,"Not connected to Wifi/Data",Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this,"No internet connectivity",Toast.LENGTH_LONG).show();
+            }
         }
 
 
-        boolean internetavailable=haveNetworkConnection();
-        Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
-        if (internetavailable==false){
-            Toast.makeText(this,"No internet connectivity",Toast.LENGTH_LONG);
-        }
 
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
 
@@ -102,14 +91,11 @@ public class onlinereadActivity extends AppCompatActivity {
         pageNo=findViewById(R.id.pageNumbers);
         pdfview = findViewById(R.id.pdfViewOnline);
         Intent geturl=getIntent();
-        //currentPage=Integer.parseInt(geturl.getStringExtra("lastread"));
-        //Log.v(TAG,"LAST READ:"+currentPage);
         url=geturl.getStringExtra("urllink");
         id=Integer.parseInt(geturl.getStringExtra("id"));
         Log.v(TAG,"URL IS "+ url);
         currentPage=dbHandler.lastPage(id);
         Log.v(TAG,"LAST READ:"+currentPage);
-        //pageSwipeDirection=Integer.parseInt(geturl.getStringExtra("swipe"));
         pageSwipeDirection=dbHandler.pageSwipe(id);
         if (pageSwipeDirection==0){
             isChecked = false;
@@ -143,7 +129,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                            if (isConnectingToInternet()){
+                                Log.v(TAG,"Url pdf does not exist");
+                                Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
         }
@@ -153,50 +142,33 @@ public class onlinereadActivity extends AppCompatActivity {
                         @Override
                         public void onLoad(FileLoadRequest request, FileResponse<File> response) {
                             File pdfFile = response.getBody();
-                            pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
+                            pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage + 1).onPageChange(new OnPageChangeListener() {
                                 @Override
                                 public void onPageChanged(int page, int pageCount) {
                                     noOfPages = pdfview.getPageCount();
                                     currentPage = pdfview.getCurrentPage();
-                                    pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                    if (currentPage == pdfview.getPageCount()-1) {
+                                    pageNo.setText("Page: " + (currentPage + 1) + "/" + noOfPages);
+                                    if (currentPage == pdfview.getPageCount() - 1) {
                                         currentPage = 0;
                                         Log.v(TAG, "Finished reading, page last read returned to the start");
                                     }
-                                    Log.v(TAG,"LAST READ(PAGE CHANGE):"+currentPage);
+                                    Log.v(TAG, "LAST READ(PAGE CHANGE):" + currentPage);
                                     dbHandler.updateLastPage(id, currentPage);
-                                    Log.v(TAG,"Updated db last page");
+                                    Log.v(TAG, "Updated db last page");
                                 }
                             }).load();
                         }
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
+                            if (isConnectingToInternet()) {
+                                Log.v(TAG, "Url pdf does not exist");
+                                Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                            }
+
                         }
                     });
         }
-        /*FileLoader.with(this).load(url)
-                .asFile(new FileRequestListener<File>() {
-                    @Override
-                    public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                        File pdfFile= response.getBody();
-                        pageSwipeDirection=1;
-                        pdfview.fromFile(pdfFile).defaultPage(currentPage-1).enableSwipe(true).onPageChange(new OnPageChangeListener() {
-                            @Override
-                            public void onPageChanged(int page, int pageCount) {
-                                noOfPages = pdfview.getPageCount();
-                                currentPage=pdfview.getCurrentPage()+1;
-                                pageNo.setText("Page: "+currentPage+"/"+noOfPages);
-                            }
-                        }).load();
-                    }
-
-                    @Override
-                    public void onError(FileLoadRequest request, Throwable t) {
-                        Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                    }
-                });*/
     }
 
 
@@ -245,7 +217,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                    if (isConnectingToInternet()){
+                                        Log.v(TAG,"Url pdf does not exist");
+                                        Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                 }
@@ -274,7 +249,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                    if (isConnectingToInternet()){
+                                        Log.v(TAG,"Url pdf does not exist");
+                                        Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                 }
@@ -284,66 +262,6 @@ public class onlinereadActivity extends AppCompatActivity {
             case android.R.id.home:
             finish();
             return true;
-            /*case R.id.scrolldirection:
-                if (pageSwipeDirection==0){
-                    pageSwipeDirection=1;
-                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
-                    FileLoader.with(getApplicationContext()).load(url)
-                            .asFile(new FileRequestListener<File>() {
-                                @Override
-                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                    File pdfFile = response.getBody();
-                                    pdfview.fromFile(pdfFile).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            noOfPages = pdfview.getPageCount();
-                                            currentPage = pdfview.getCurrentPage();
-                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
-                                                currentPage=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(id,currentPage);
-                                        }
-                                    }).load();
-                                }
-
-                                @Override
-                                public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }
-                else{
-                    pageSwipeDirection=0;
-                    dbHandler.updatePageSwipe(id, pageSwipeDirection);
-                    FileLoader.with(getApplicationContext()).load(url)
-                            .asFile(new FileRequestListener<File>() {
-                                @Override
-                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                    File pdfFile = response.getBody();
-                                    pdfview.fromFile(pdfFile).swipeVertical(true).defaultPage(currentPage+1).onPageChange(new OnPageChangeListener() {
-                                        @Override
-                                        public void onPageChanged(int page, int pageCount) {
-                                            noOfPages = pdfview.getPageCount();
-                                            currentPage = pdfview.getCurrentPage();
-                                            pageNo.setText("Page: " + (currentPage+1) + "/" + noOfPages);
-                                            if (currentPage==pdfview.getPageCount()){
-                                                currentPage=0;
-                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                            }
-                                            dbHandler.updateLastPage(id,currentPage);
-                                        }
-                                    }).load();
-                                }
-
-                                @Override
-                                public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }
-                return true;*/
 
             case R.id.goToPage:
                 android.app.AlertDialog.Builder pagebuilder=new AlertDialog.Builder(this);
@@ -351,7 +269,7 @@ public class onlinereadActivity extends AppCompatActivity {
                 final EditText goToPage = (EditText) view.findViewById(R.id.fileTitle);
                 goToPage.setHint("Page no");
                 pagebuilder.setView(view).setTitle("Go To Page")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String pageNo1=goToPage.getText().toString();
@@ -383,7 +301,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                                        if (isConnectingToInternet()){
+                                                            Log.v(TAG,"Url pdf does not exist");
+                                                            Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 });
                                     }
@@ -411,35 +332,13 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
+                                                        if (isConnectingToInternet()){
+                                                            Log.v(TAG,"Url pdf does not exist");
+                                                            Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 });
                                     }
-                                    /*FileLoader.with(getApplicationContext()).load(url)
-                                            .asFile(new FileRequestListener<File>() {
-                                                @Override
-                                                public void onLoad(FileLoadRequest request, FileResponse<File> response) {
-                                                    File pdfFile = response.getBody();
-                                                    pdfview.fromFile(pdfFile).defaultPage(pageNumber-1).onPageChange(new OnPageChangeListener() {
-                                                        @Override
-                                                        public void onPageChanged(int page, int pageCount) {
-                                                            noOfPages = pdfview.getPageCount();
-                                                            currentPage=pdfview.getCurrentPage()+1;
-                                                            pageNo.setText("Page: "+currentPage+"/"+noOfPages);
-                                                            if (currentPage==pdfview.getPageCount()){
-                                                                currentPage=1;
-                                                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                                                            }
-                                                            dbHandler.updateLastPage(id,currentPage);
-                                                        }
-                                                    }).load();
-                                                }
-
-                                                @Override
-                                                public void onError(FileLoadRequest request, Throwable t) {
-                                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                                                }
-                                            });*/
                                 }
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -457,6 +356,7 @@ public class onlinereadActivity extends AppCompatActivity {
         }
     }
 
+    //Check if wifi/data is on
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
@@ -474,14 +374,32 @@ public class onlinereadActivity extends AppCompatActivity {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress address = InetAddress.getByName("www.google.com");
-            return !address.equals("");
-        } catch (UnknownHostException e) {
-            Log.v(TAG,"No internet connectivity");
-        }
-        return false;
+    //Check if wifi/data got connectivity
+    public boolean isConnectingToInternet() {
+        if (networkConnectivity()) {
+            try {
+                Process p1 = Runtime.getRuntime().exec(
+                        "ping -c 1 www.google.com");
+                int returnVal = p1.waitFor();
+                boolean reachable = (returnVal == 0);
+                if (reachable) {
+                    System.out.println("Internet access");
+                    return reachable;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } else
+            return false;
+
+    }
+
+    private boolean networkConnectivity() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 

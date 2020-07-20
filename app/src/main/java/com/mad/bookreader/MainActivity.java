@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(TAG, "permission to read storage granted");
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //Check if nightmode is turned on from the sharedpreference
     public void checkNightModeSwitch() {
         if (sharedPreferences.getBoolean("isNightMode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -281,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
                 onlineUrl.setHint("Enter URL here");
                 builder.setView(view).setTitle("Import online pdf")
-                        .setPositiveButton("Go", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String url=onlineUrl.getText().toString();
@@ -480,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
                                             id = db.lastRowId() + 1;
                                         }
                                         //get thumbnail for display
-                                        Bitmap thumbnail = initGetEpubCover(selectedFile);
+                                        Bitmap thumbnail = getEpubCover(selectedFile);
                                         //create new book object
                                         importedBooks book = new importedBooks(id, titleName, thumbnail, selectedFileString, fileType);
                                         //add book data to db
@@ -539,6 +541,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //write an inputstream to a file
     public void writeFile(InputStream in, File file) {
         OutputStream out = null;
         try {
@@ -563,40 +566,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap initGetEpubCover(Uri uri) {
+      public Bitmap getEpubCover(Uri uri) {
+        //gets file name
         String fileName = getFileName(uri);
         try {
+            //open uri in an inputstream
             InputStream inputStream = getContentResolver().openInputStream(uri);
+            //create new file in cache in folder of file name
             File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
+            //writes file to the cache using inputstream
             writeFile(inputStream, file);
+            //get filepath of the epub file written to cache
             String filePath = file.getAbsolutePath();
-            //get cover image
-            Bitmap coverImage = loadEpubCover(filePath);
-            return coverImage;
+            //get cover image using filepath
+            return loadEpubCover(filePath);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage;
-        }
-    }
-
-
-
-
-    public Bitmap getEpubCover(Uri uri) {
-        String fileName = getFileName(uri);
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-            File file = new File(getCacheDir().getAbsolutePath() + "/" + fileName);
-            writeFile(inputStream, file);
-            String filePath = file.getAbsolutePath();
-            //get cover image
-            Bitmap coverImage = loadEpubCover(filePath);
-            return coverImage;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage;
+            //if file not found, return no image
+            return BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
         }
 
     }
@@ -605,7 +592,6 @@ public class MainActivity extends AppCompatActivity {
             Log.v(TAG, filePath);
             //load file from filepath
             File epubFile = new File(filePath);
-            String fileName = epubFile.getName();
             //load file into inputstream
             InputStream epubInputStream = new FileInputStream(epubFile);
             //load book from inputStream
@@ -619,8 +605,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             //if no image found or exception is caught, bitmap returned is no image
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage;
+            return BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
         }
     }
 
@@ -675,6 +660,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Log.v(TAG, "Resuming...");
+        //restart recyclerview when returning from read activity to show progress update
         recyclerFunction(listBooks);
     }
     @Override
