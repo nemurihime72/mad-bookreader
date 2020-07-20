@@ -71,28 +71,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Uri fileUri = Uri.parse(uri);
-                File file = new File(fileUri.getPath());
-                Log.v(TAG, file.toString());
-                String[] split = file.getPath().split(":");
-                String filePath = split[1];
-                Log.v(TAG, filePath);
-                File pdfFile = new File(filePath);
-                if (pdfFile.exists()) {
-                    Intent intent=new Intent(v.getContext(),bookreadActivity.class);
-                    intent.putExtra("PdfUri", uri);
-                    intent.putExtra("PdfName", p);
-                    Log.v(TAG,"PDF put inside intent, going to the book read activity now");
-                    v.getContext().startActivity(intent);
-                }
-                else {
-                    BookDBHandler db = new BookDBHandler(v.getContext(), null, null, 1);
-                    Toast.makeText(v.getContext(), "File not found, deleting book from database", Toast.LENGTH_SHORT).show();
-                    db.deleteBook(p);
-                    data.remove(holder.getAdapterPosition());
-                    notifyItemRemoved(holder.getAdapterPosition());
-                    notifyItemRangeChanged(holder.getAdapterPosition(),data.size());
-                }*/
                 Log.v(TAG, "filetype is " + fileType);
                 if (fileType.equals("pdf")) {
                     Intent intent=new Intent(v.getContext(),bookreadActivity.class);
@@ -103,15 +81,6 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     v.getContext().startActivity(intent);
                 }
                 else if (fileType.equals("epub")) {
-                    //File file = new File(Uri.parse(uri).getPath());
-
-                    //File epubFile = new File(filePath);
-                    /*if (file.exists()) {
-                        Log.v(TAG, "file exists: filepath: " + filePath);
-                    } else {
-                        Log.v(TAG, filePath);
-                        Log.v(TAG, "file does not exist");
-                    }*/
                     Intent intent = new Intent(v.getContext(), epubReaderActivity.class);
                     intent.putExtra("id",String.valueOf(id));
                     intent.putExtra("Bookpath", uri);
@@ -146,6 +115,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.deleteBook:
+                                //delete book from db and from recyclerview
                                 Log.v(TAG,"Delete book");
                                 AlertDialog.Builder delAlert=new AlertDialog.Builder(v.getContext());
                                 delAlert.setMessage("Would you like to delete this book?");
@@ -174,6 +144,7 @@ public class recyclerAdaptor extends RecyclerView.Adapter<recyclerViewHolder> im
 
 
                             case R.id.editBook:
+                                //edit book title
                                 Log.v(TAG,"Editing book");
                                 AlertDialog.Builder editAlert = new AlertDialog.Builder(v.getContext());
                                 View editView = LayoutInflater.from(v.getContext()).inflate(R.layout.dialogue,null);
