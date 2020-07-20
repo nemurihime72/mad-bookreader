@@ -388,10 +388,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
                 importDialog().show();
+                return true;
 
             case R.id.action_sort:
                 Log.v(TAG,"Sorting selected");
                 onCreateSortingDialog().show();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
