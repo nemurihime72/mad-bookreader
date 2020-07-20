@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".epubReaderActivity"></activity>
+        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".epubReaderActivity" />
         <activity android:name=".epubReadActivity" />
         <activity android:name=".onlinereadActivity" />
         <activity

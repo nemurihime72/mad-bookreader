@@ -395,6 +395,12 @@ public class MainActivity extends AppCompatActivity {
                 onCreateSortingDialog().show();
                 return true;
 
+            case R.id.action_about:
+                Log.v(TAG, "About page selected");
+                Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(aboutIntent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

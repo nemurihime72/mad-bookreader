@@ -7,4 +7,15 @@
     <string name="editbook">Edit</string>
     <string name="deletebook">Delete</string>
     <string name="deletallbook">Delete All Books</string>
+    <string name="about">About</string>
+    <string name="this_app_was_made_for_an_assignment_for_partial_fulfilment_of_the_coursework_of_mobile_applications_development_ay2020_21_in_ngee_ann_polytechnic">This app was made for an assignment for partial fulfilment of the coursework of Mobile Applications Development AY2020/21 in Ngee Ann Polytechnic.</string>
+    <string name="libraries_used">Libraries used</string>
+    <string name="barteksc_s_androidpdfviewer">barteksc\'s AndroidPdfViewer</string>
+    <string name="https_github_com_barteksc_androidpdfviewer">https://github.com/barteksc/AndroidPdfViewer</string>
+    <string name="barteksc_s_pdfiumandroid">barteksc\'s PdfiumAndroid</string>
+    <string name="https_github_com_barteksc_pdfiumandroid">https://github.com/barteksc/PdfiumAndroid</string>
+    <string name="paul_siegmann_s_epublib">Paul Siegmann\'s Epublib</string>
+    <string name="https_github_com_psiegman_epublib">https://github.com/psiegman/epublib</string>
+    <string name="nashapp_s_epublibdroid">nashapp\'s epublibDroid</string>
+    <string name="https_github_com_avinashskaranth_epublibdroid">https://github.com/AvinashSKaranth/epublibDroid</string>
 </resources>
