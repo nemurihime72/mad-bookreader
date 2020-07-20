@@ -328,8 +328,11 @@ public class MainActivity extends AppCompatActivity {
                     delAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Log.v(TAG,"Deleting all book");
+                            //clear db of all entries
                             db.deleteallBooks();
+                            //clear recyclerview list of any books
                             listBooks.clear();
+                            //reload recyclerview with 0 books
                             displayBooks(listBooks);
                             Log.v(TAG,"All books deleted");
                             Toast.makeText(getApplicationContext(),"All books deleted",Toast.LENGTH_SHORT).show();
@@ -356,6 +359,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_import:
                 Log.v(TAG,"Import files selected");
+                //check if read storage permission has been granted. if not, prompt for permission
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Storage access is needed to read books", Toast.LENGTH_LONG).show();
                     ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -364,10 +368,12 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     //intent to import only pdf
                     Intent intent = new Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    //limit the filetypes that can be imported to only pdf and epub
                     String[] extraMimeTypes = {"application/pdf", "application/epub+zip"};
                     intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+                    //make uri persistable over reboots, so same uri can be used for a long time
                     intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                    //starts that intent
+                    //starts import file intent
                     startActivityForResult(Intent.createChooser(intent, "Select a file"), 123);
                     return true;
                 }
@@ -386,11 +392,13 @@ public class MainActivity extends AppCompatActivity {
         importedBooks book;
         BookDBHandler db = new BookDBHandler(this, null, null, 1);
         Log.v(TAG, "Loading books in DB");
+        //load books from db
         storedBooks = db.startBooks(storedBooks);
         Log.v(TAG, "storeBooks books: " + storedBooks.get(1).size());
         for (int i = 0; i < storedBooks.get(1).size(); i++){
             Uri uri = Uri.parse(storedBooks.get(2).get(i));
             if (storedBooks.get(3).get(i).equals("online")){
+                //for online pdf, use pdf picture for thumbnail
                 Bitmap image=BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.pdficon);
                 book = new importedBooks(Integer.parseInt(storedBooks.get(0).get(i)),storedBooks.get(1).get(i), image, storedBooks.get(2).get(i), storedBooks.get(3).get(i));
                 bookList.add(book);
@@ -534,9 +542,8 @@ public class MainActivity extends AppCompatActivity {
             Log.v(TAG, "Error occurred at openPdf finding bitmap");
             ex.printStackTrace(); //print error if any
             //if no image found due to error, will use the no image found drawable
-            //first convert the drawable to bitmap
-            Bitmap noImage = BitmapFactory.decodeResource(getResources(), R.drawable.no_image);
-            return noImage; //returns bitmap of no image found
+            //return converted drawable bitmap
+            return BitmapFactory.decodeResource(getResources(), R.drawable.no_image); //returns bitmap of no image found
         }
 
     }
