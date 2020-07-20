@@ -32,6 +32,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +41,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     List<importedBooks> listBooks = new ArrayList<>();
     private recyclerAdaptor rAdaptor;
     SharedPreferences sharedPreferences;
+    SharedPreferences sortingPreferences;
     int checkedItem = 0;
 
     @Override
@@ -175,22 +178,64 @@ public class MainActivity extends AppCompatActivity {
     public Dialog onCreateSortingDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         String [] options = {"Title", "Type"};
+
         dialogBuilder.setTitle("Sort by")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch(which) {
                             case 0:
-                                onCreateOrderDialog().show();
+                                OrderDialog().show();
                             case 1:
-                                Collections.sort(listBooks, importedBooks.bookTypeComparator);
+                                TypeDialog().show();
                         }
                     }
                 });
         return dialogBuilder.create();
     }
 
-    public Dialog onCreateOrderDialog() {
+    public Dialog TypeDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Filter");
+
+
+        String[] type = {"Online", "Epub", "PDF"};
+        boolean[] checkedItems = {false, false, false};
+        dialogBuilder.setTitle("Sort by")
+                .setMultiChoiceItems(type, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                }
+            });
+        dialogBuilder.setNegativeButton("Cancel", null);
+
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String[] type = {"online", "epub", "pdf"};
+                List<importedBooks> filteredList = new ArrayList<>();
+                ListView lv = ((AlertDialog) dialog).getListView();
+                SparseBooleanArray posList= lv.getCheckedItemPositions();
+
+                for (int i = 0; i < posList.size(); i++) {
+                    if (posList.get(i) == true){
+                        for(int k = 0; k < listBooks.size(); k++){
+                            Log.v(TAG, "Checklist item " + (listBooks.get(k).getFileType() == type[i]));
+
+                            if(listBooks.get(k).getFileType() == type[i]){
+                                Log.v(TAG, "Filtered");
+                            }
+                        }
+                    }
+                }
+                recyclerFunction(filteredList);
+            }
+        });
+
+        return dialogBuilder.create();
+
+    }
+    public Dialog OrderDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle("Sort by");
 
@@ -329,8 +374,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sort:
                 Log.v(TAG,"Sorting selected");
                 onCreateSortingDialog().show();
-                /*Collections.sort(listBooks, importedBooks.bookComparator);
-                recyclerFunction(listBooks);*/
+
             default:
                 return super.onOptionsItemSelected(item);
         }
