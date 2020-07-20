@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    //Dialog to choose sorting type
     public Dialog onCreateSortingDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         String [] options = {"Title", "Type"};
@@ -189,19 +190,22 @@ public class MainActivity extends AppCompatActivity {
                         switch(which) {
                             case 0:
                                 OrderDialog().show();
+                                break;
                             case 1:
                                 TypeDialog().show();
+                                break;
                         }
                     }
                 });
         return dialogBuilder.create();
     }
 
+    //Dialog to sort with type of file
     public Dialog TypeDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle("Filter");
 
-
+        //Sets dialog options
         String[] type = {"Online", "EPUB", "PDF"};
         boolean[] checkedItems = {false, false, false};
         dialogBuilder.setTitle("Sort by")
@@ -212,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             });
         dialogBuilder.setNegativeButton("Cancel", null);
 
+        //Sets "OK" button
         dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -219,16 +224,23 @@ public class MainActivity extends AppCompatActivity {
                 List<importedBooks> filteredList = new ArrayList<>();
                 ListView lv = ((AlertDialog) dialog).getListView();
                 SparseBooleanArray posList= lv.getCheckedItemPositions();
+                Log.v(TAG,"Confirm type");
 
-                for (int i = 0; i < posList.size(); i++) {
-                    if (posList.get(i) == true){
+                for (int i = 0; i < lv.getCount(); i++) {
+                    Log.v(TAG, "" + posList.valueAt(i));
+                    if (posList.get(i)){
                         for(int k = 0; k < listBooks.size(); k++){
-                            Log.v(TAG, "Checklist item " + (listBooks.get(k).getFileType().equals(type[i])));
-
                             if(listBooks.get(k).getFileType().equals(type[i])){
                                 Log.v(TAG, "Filtered");
+                                filteredList.add(listBooks.get(k));
+                            }
+                            else{
+                                continue;
                             }
                         }
+                    }
+                    else{
+                        continue;
                     }
                 }
                 recyclerFunction(filteredList);
@@ -238,10 +250,11 @@ public class MainActivity extends AppCompatActivity {
         return dialogBuilder.create();
 
     }
+
+    //Dialog to sort titles by ascending and descending
     public Dialog OrderDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle("Sort by");
-
         String[] order = {"Ascending", "Descending"};
         dialogBuilder.setSingleChoiceItems(order, checkedItem, new DialogInterface.OnClickListener(){
             @Override
