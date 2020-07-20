@@ -68,13 +68,21 @@ public class onlinereadActivity extends AppCompatActivity {
             }
         });
 
-
-
-        boolean internetavailable=haveNetworkConnection();
-        Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
-        if (internetavailable==false){
-            Toast.makeText(this,"No internet connectivity",Toast.LENGTH_LONG);
+        if (isConnectingToInternet()) {
+            Log.v(TAG,"Working");
         }
+        else {
+            boolean internetavailable=haveNetworkConnection();
+            Log.v(TAG,"CHECKING INTERNETAVAILBLE"+internetavailable);
+            if (!internetavailable){
+                Toast.makeText(this,"Not connected to Wifi/Data",Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this,"No internet connectivity",Toast.LENGTH_LONG).show();
+            }
+        }
+
+
 
         final BookDBHandler dbHandler = new BookDBHandler(this, null, null, 1);
 
@@ -124,7 +132,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                            if (isConnectingToInternet()){
+                                Log.v(TAG,"Url pdf does not exist");
+                                Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
         }
@@ -153,7 +164,11 @@ public class onlinereadActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(FileLoadRequest request, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
+                            if (isConnectingToInternet()){
+                                Log.v(TAG,"Url pdf does not exist");
+                                Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                            }
+
                         }
                     });
         }
@@ -226,7 +241,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                    if (isConnectingToInternet()){
+                                        Log.v(TAG,"Url pdf does not exist");
+                                        Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                 }
@@ -255,7 +273,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onError(FileLoadRequest request, Throwable t) {
-                                    Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                    if (isConnectingToInternet()){
+                                        Log.v(TAG,"Url pdf does not exist");
+                                        Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                 }
@@ -364,7 +385,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(),"Error loading pdf",Toast.LENGTH_LONG).show();
+                                                        if (isConnectingToInternet()){
+                                                            Log.v(TAG,"Url pdf does not exist");
+                                                            Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 });
                                     }
@@ -392,7 +416,10 @@ public class onlinereadActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void onError(FileLoadRequest request, Throwable t) {
-                                                        Toast.makeText(getApplicationContext(), "Error loading pdf", Toast.LENGTH_LONG).show();
+                                                        if (isConnectingToInternet()){
+                                                            Log.v(TAG,"Url pdf does not exist");
+                                                            Toast.makeText(getApplicationContext(), "Url of pdf does not exist", Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 });
                                     }
@@ -455,14 +482,31 @@ public class onlinereadActivity extends AppCompatActivity {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress address = InetAddress.getByName("www.google.com");
-            return !address.equals("");
-        } catch (UnknownHostException e) {
-            Log.v(TAG,"No internet connectivity");
-        }
-        return false;
+    public boolean isConnectingToInternet() {
+        if (networkConnectivity()) {
+            try {
+                Process p1 = Runtime.getRuntime().exec(
+                        "ping -c 1 www.google.com");
+                int returnVal = p1.waitFor();
+                boolean reachable = (returnVal == 0);
+                if (reachable) {
+                    System.out.println("Internet access");
+                    return reachable;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } else
+            return false;
+
+    }
+
+    private boolean networkConnectivity() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 

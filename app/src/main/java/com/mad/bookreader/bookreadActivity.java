@@ -274,50 +274,6 @@ public class bookreadActivity extends AppCompatActivity {
                 pagealert.show();
                 return true;
 
-            //To change the scroll direction between vertical and horizontal
-            /*case R.id.scrolldirection:
-                Log.v(TAG,"(CASE)PAGE SWIPE DIRECTION="+pageSwipeDirection);
-                //Change from vertical to horizontal
-                if (pageSwipeDirection==1){
-                    pageSwipeDirection=0;
-                    dbHandler.updatePageSwipe(columnID, pageSwipeDirection);
-                    pdfview.fromUri(uri).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
-                        @Override
-                        public void onPageChanged(int page, int pageCount) {
-                            pageLastRead=pdfview.getCurrentPage();
-                            Log.v(TAG,"Page changed to: "+pageLastRead);
-                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
-                            if (pageLastRead+1==pdfview.getPageCount()){
-                                pageLastRead=0;
-                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                            }
-                            dbHandler.updateLastPage(columnID,pageLastRead);
-                        }
-                    }).load();
-                    Log.v(TAG,"Setting scrolling to horizontal");
-                    return true;
-                }
-                //Change from horizontal to vertical scrolling
-                else if (pageSwipeDirection==0){
-                    pageSwipeDirection=1;
-                    Log.v(TAG,"pageswipe: "+dbHandler.pageSwipe(columnID));
-                    dbHandler.updatePageSwipe(columnID,pageSwipeDirection);
-                    pdfview.fromUri(uri).swipeVertical(true).defaultPage(pageLastRead+1).onPageChange(new OnPageChangeListener() {
-                        @Override
-                        public void onPageChanged(int page, int pageCount) {
-                            pageLastRead=pdfview.getCurrentPage();
-                            Log.v(TAG,"Page changed to: "+pageLastRead);
-                            pageNo.setText("Page: "+(pageLastRead+1)+"/"+noOfPages);
-                            if (pageLastRead+1==pdfview.getPageCount()){
-                                pageLastRead=0;
-                                Log.v(TAG,"Finished reading, page last read returned to the start");
-                            }
-                            dbHandler.updateLastPage(columnID,pageLastRead);
-                        }
-                    }).load();
-                    Log.v(TAG,"Setting scrolling changed to vertical");
-                    return true;
-                }*/
 
             default:
                 return super.onOptionsItemSelected(item);

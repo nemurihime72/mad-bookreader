@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //Check if nightmode is turned on from the sharedpreference
     public void checkNightModeSwitch() {
         if (sharedPreferences.getBoolean("isNightMode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
