@@ -8,4 +8,5 @@
     <color name="bgcolor">#262626</color>
     <color name="textcolor">#ffffff</color>
     <color name="titlebg">#404040</color>
+    <color name="hintcolor">#d2d4d2</color>
 </resources>
