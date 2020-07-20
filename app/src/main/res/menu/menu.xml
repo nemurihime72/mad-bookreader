@@ -31,10 +31,6 @@
         android:title="@string/deletallbook"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/importOnline"
-        android:title="Import online pdf"
-        app:showAsAction="never"/>
 
 
 </menu>
