@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -312,7 +313,11 @@ public class MainActivity extends AppCompatActivity {
         android.app.AlertDialog.Builder onlinebuilder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialogue, null);
         final EditText onlineUrl = (EditText) view.findViewById(R.id.fileTitle);
+        ColorStateList colorStateList = ContextCompat.getColorStateList(this, R.color.textcolor);
+        ColorStateList colorStateList2 = ContextCompat.getColorStateList(this, R.color.hintcolor);
         onlineUrl.setHint("Enter URL here");
+        onlineUrl.setTextColor(colorStateList);
+        onlineUrl.setHintTextColor(colorStateList2);
         onlinebuilder.setView(view).setTitle("Import online pdf")
                 .setPositiveButton("Import", new DialogInterface.OnClickListener() {
                     @Override
