@@ -222,9 +222,9 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < posList.size(); i++) {
                     if (posList.get(i) == true){
                         for(int k = 0; k < listBooks.size(); k++){
-                            Log.v(TAG, "Checklist item " + (listBooks.get(k).getFileType() == type[i]));
+                            Log.v(TAG, "Checklist item " + (listBooks.get(k).getFileType().equals(type[i])));
 
-                            if(listBooks.get(k).getFileType() == type[i]){
+                            if(listBooks.get(k).getFileType().equals(type[i])){
                                 Log.v(TAG, "Filtered");
                             }
                         }
