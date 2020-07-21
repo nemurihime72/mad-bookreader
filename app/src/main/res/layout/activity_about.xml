@@ -23,7 +23,9 @@
             android:id="@+id/textView"
             android:layout_width="376dp"
             android:layout_height="88dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/this_app_was_made_for_an_assignment_for_partial_fulfilment_of_the_coursework_of_mobile_applications_development_ay2020_21_in_ngee_ann_polytechnic"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,12 +68,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="189dp"
             android:text="@string/barteksc_s_androidpdfviewer"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.529"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -85,7 +87,6 @@
             android:autoLink="web"
             android:text="@string/https_github_com_barteksc_androidpdfviewer"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
@@ -158,10 +159,12 @@
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            android:text="@string/https_github_com_avinashskaranth_epublibdroid"
+            android:layout_marginEnd="70dp"
             android:autoLink="web"
+            android:text="@string/https_github_com_avinashskaranth_epublibdroid"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
