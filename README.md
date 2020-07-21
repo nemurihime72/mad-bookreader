@@ -67,7 +67,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 ## Pdf/Online pdf guide
 ### Change scroll direction when reading or go to a certain page(For pdf and online pdf books)
-![Import button](https://i.imgur.com/QlPgO3P.png)
+![Import button](https://i.imgur.com/il0LzTU.png)
 
 ## Epub guide
 ![Import button](https://i.imgur.com/eAX85qv.png)
