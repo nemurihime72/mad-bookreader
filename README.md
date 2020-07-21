@@ -72,7 +72,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ### Delete all books/ Settings page / About page / Sorting of books
 ![Import button](https://i.imgur.com/tLORhC8.png)
 ### Dark mode
-Click Settings
+###### Click Settings
 ![Import button](https://i.imgur.com/u7TKWmR.png)
 
 
