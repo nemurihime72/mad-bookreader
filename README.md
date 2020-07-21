@@ -65,16 +65,31 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ### Edit or delete existing book title
 ![Import button](https://i.imgur.com/K03KEqa.png)
 
-## Change scroll direction when reading or go to a certain page(For pdf and online pdf books)
+## Pdf/Online pdf guide
+### Change scroll direction when reading or go to a certain page(For pdf and online pdf books)
 ![Import button](https://i.imgur.com/QlPgO3P.png)
+
+## Epub guide
+![Import button](https://i.imgur.com/eAX85qv.png)
+### Changing to dark theme for epub books
+###### Click on the moon icon at the bottom of the reader
+
+### Going to another chapter for epub books
+###### Click on the menu icon at the bottom of the reader
+![Import button]([https://i.imgur.com/LnxNbHA.png)
 
 ## Other features
 ### Delete all books/ Settings page / About page / Sorting of books
 ![Import button](https://i.imgur.com/tLORhC8.png)
-### Dark mode
+### Dark mode as app theme
 ###### Click Settings
 ![Import button](https://i.imgur.com/u7TKWmR.png)
-
+### Sort
+![Import button](https://i.imgur.com/rkV3cEV.png)
+#### Sort by title
+![Import button](https://i.imgur.com/feWvReg.png)
+#### Sort and filter by file type
+![Import button](https://i.imgur.com/TqxYYr9.png)
 
 
 # Future plans
