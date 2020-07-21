@@ -70,16 +70,6 @@ public class BookDBHandler extends SQLiteOpenHelper {
         List<String> nameList = new ArrayList<>();
         List<String> uriList = new ArrayList<>();
         List<String> fileTypeList = new ArrayList<>();
-        /*for(int i = 0; i < rows ; i++){
-            ArrayList<String> bookDetails = findBookID(i);
-            idList.add(bookDetails.get(0));
-            nameList.add(bookDetails.get(1));
-            uriList.add(bookDetails.get(2));
-            fileTypeList.add(bookDetails.get(3));
-            //fileTypeList.add(bookDetails.get(3));
-            Log.v(TAG, "Name: " + nameList.get(0));
-            //Log.v(TAG, bookDetails.get(3));
-        }*/
         ArrayList<Integer> bookIDList = bookIdList();
         for (Integer i: bookIDList
              ) {
@@ -122,13 +112,6 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.close();
         return idList;
         }
-        /*if (cursor.moveToFirst()) {
-            idList.add(cursor.getInt(0));
-            Log.v(TAG, String.valueOf(idList));
-            cursor.close();
-        }
-        db.close();
-        return idList;*/
 
     //Finds books based on their id
     public ArrayList<String> findBookID(int id){
@@ -225,23 +208,6 @@ public class BookDBHandler extends SQLiteOpenHelper {
         db.delete(TABLE_BOOKS,null,null);
         db.close();
         return true;
-
-        /*boolean result = false;
-        String query = "SELECT * FROM " + TABLE_BOOKS;
-        SQLiteDatabase db = this.getWritableDatabase();
-        int rows = noOfRows();
-        Cursor cursor = db.rawQuery(query, null);
-
-        for(int i = 0; i < rows; i++) {
-            if (cursor.moveToFirst()) {
-                int id = Integer.parseInt(cursor.getString(0));
-                db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
-                cursor.close();
-                result = true;
-            }
-        }
-        db.close();
-        return result; */
     }
 
     //Finds page number last read with id
