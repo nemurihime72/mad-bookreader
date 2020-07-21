@@ -49,15 +49,21 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ### Click on the import button
 ![Import button](https://i.imgur.com/zJa9sul.jpg)
 
-### Select the pdf file
-![Import button](https://i.imgur.com/JS9yrRk.jpg)
+### Select the type of book to import
+![Import button](https://i.imgur.com/QssRfJl.png)
 
-### Set title
-![Import button](https://i.imgur.com/aN2KtBH.jpg)
+### Select books (for pdf and epub books)
+![Import button](https://i.imgur.com/HCUbgHp.png)
+
+### Set title (for pdf and epub books)
+![Import button](https://i.imgur.com/kZRv6eN.png)
+
+### Import online pdf books
+![Import button](https://i.imgur.com/UVnpanF.png)
 
 ## Editing and Deleting
 ### Edit or delete existing book title
-![Import button](https://i.imgur.com/WOUft9m.jpg)
+![Import button](https://i.imgur.com/K03KEqa.png)
 ### Delete all books(To be updated)
 ![Import button]()
 
