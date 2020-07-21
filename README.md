@@ -64,11 +64,18 @@ A book reader that imports pdf file of books and allows user to import and gathe
 ## Editing and Deleting
 ### Edit or delete existing book title
 ![Import button](https://i.imgur.com/K03KEqa.png)
-### Delete all books(To be updated)
-![Import button]()
 
-## Change scroll direction when reading(To be updated)
-![Import button]()
+## Change scroll direction when reading or go to a certain page(For pdf and online pdf books)
+![Import button](https://i.imgur.com/QlPgO3P.png)
+
+## Other features
+### Delete all books/ Settings page / About page / Sorting of books
+![Import button](https://i.imgur.com/tLORhC8.png)
+### Dark mode
+Click Settings
+![Import button](https://i.imgur.com/u7TKWmR.png)
+
+
 
 # Future plans
 ## Main Activity
