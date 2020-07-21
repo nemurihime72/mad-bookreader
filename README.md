@@ -47,7 +47,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 ## Importing a book
 ### Click on the import button
-![Import button](https://imgur.com/zJa9sul)
+![Import button](https://i.imgur.com/zJa9sul.jpg)
 
 ### Select the pdf file
 ![Import button](https://i.imgur.com/JS9yrRk.jpg)
