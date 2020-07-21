@@ -76,7 +76,7 @@ A book reader that imports pdf file of books and allows user to import and gathe
 
 ### Going to another chapter for epub books
 ###### Click on the menu icon at the bottom of the reader
-![Import button]([https://i.imgur.com/LnxNbHA.png)
+![Import button](https://i.imgur.com/LnxNbHA.png)
 
 ## Other features
 ### Delete all books/ Settings page / About page / Sorting of books
